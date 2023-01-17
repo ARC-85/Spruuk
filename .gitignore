@@ -42,3 +42,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+#GoogleService-Info.plist contains Google Service API
+/ios/Runner/GoogleService-Info.plist
+
+# exclude all .env files from source control
+*.env
+env.g.dart
