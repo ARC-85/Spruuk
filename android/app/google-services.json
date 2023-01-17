@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "456408330601",
+    "project_id": "spruuk",
+    "storage_bucket": "spruuk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:456408330601:android:e64b94efc2f64b0ce0cdf8",
+        "android_client_info": {
+          "package_name": "spruuk.com.spruuk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "456408330601-6946vhkha2lhuiddqloa0ffr5uomqqne.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABE5jbm1TcfBJKZbO7wfwbdf96HtMOvC4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "456408330601-6946vhkha2lhuiddqloa0ffr5uomqqne.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "456408330601-ft8f17uk5k3necanmuiiov97u7g3hg1f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "spruuk.com.spruuk"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
