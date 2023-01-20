@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "456408330601-er7pst07a8lguc1e82irg1v3g9qmipo7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "spruuk.com.spruuk",
+            "certificate_hash": "8ee55b9a27f0438144a5472d693c3e89ad31671a"
+          }
+        },
+        {
           "client_id": "456408330601-6946vhkha2lhuiddqloa0ffr5uomqqne.apps.googleusercontent.com",
           "client_type": 3
         }

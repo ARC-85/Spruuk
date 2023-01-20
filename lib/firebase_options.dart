@@ -62,7 +62,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBK54rxKx-MeCeAtpTlnvXGLQpUDambvpI',
-    appId: '1:456408330601:ios:e70c053f131d91b2e0cdf8',
+    appId: '1:456408330601:ios:e53913b6be0ec7a1e0cdf8',
     messagingSenderId: '456408330601',
     projectId: 'spruuk',
     storageBucket: 'spruuk.appspot.com',
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBK54rxKx-MeCeAtpTlnvXGLQpUDambvpI',
-    appId: '1:456408330601:ios:e70c053f131d91b2e0cdf8',
+    appId: '1:456408330601:ios:e53913b6be0ec7a1e0cdf8',
     messagingSenderId: '456408330601',
     projectId: 'spruuk',
     storageBucket: 'spruuk.appspot.com',

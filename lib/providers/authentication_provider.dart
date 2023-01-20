@@ -10,5 +10,4 @@ final authenticationProvider = Provider<FirebaseAuthentication>((ref) {
 // Provider for accessing/reading the state of the FirebaseAuthentication provider, taken from https://bishwajeet-parhi.medium.com/firebase-authentication-using-flutter-and-riverpod-f302ab749383
 final authStateProvider = StreamProvider<User?>((ref) {
   return ref.read(authenticationProvider).authStateChange;
-}
-);
+});
