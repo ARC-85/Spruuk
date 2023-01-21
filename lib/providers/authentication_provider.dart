@@ -11,3 +11,7 @@ final authenticationProvider = Provider<FirebaseAuthentication>((ref) {
 final authStateProvider = StreamProvider<User?>((ref) {
   return ref.read(authenticationProvider).authStateChange;
 });
+
+final currentUserProvider = Provider((ref) {
+  return FirebaseAuthentication.getCurrentUser();
+});

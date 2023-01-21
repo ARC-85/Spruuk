@@ -1,11 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/database_provider.dart';
+import 'package:spruuk/providers/user_provider.dart';
 
 enum AuthStatus { login, signUp }
 
@@ -86,20 +88,32 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                             }
                           }));
             } else {
-              UserModel newUser = UserModel(email: _email.text, password: _password.text);
-              final response = ref.read(databaseProvider);
-              await response.addUser(newUser);
+
               loading();
               await _auth
                   .signUpWithEmailAndPassword(
                       _email.text, _password.text, context)
                   .whenComplete(
-                      () => _auth.authStateChange.listen((event) async {
+                      () =>
+                          _auth.authStateChange.listen((event) async {
                             if (event == null) {
+
+                              final FirebaseAuth _authFirebase = FirebaseAuth.instance;
+                              final User? user = _authFirebase.currentUser;
+                              final String? aid = FirebaseAuth.instance.currentUser?.uid;
+                              final _uid = user?.uid;
+                              UserModel newUser = UserModel( uid: "5678",
+                                  email: _email.text, password: _password.text);
+
+                              print("what's going on screen ${aid}");
+                              final response = ref.read(userProvider);
+                              await response.addUser(newUser);
+
                               loading();
                               return;
                             }
                           }));
+
             }
           }
 

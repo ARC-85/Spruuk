@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseAuthentication {
   // Generate an instance of FirebaseAuth
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //Check for whether user is logged in
   Stream<User?> get authStateChange => _auth.authStateChanges();
@@ -94,5 +94,15 @@ class FirebaseAuthentication {
   // Sign out current user
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  // Get current user
+  static Future<User?> getCurrentUser() async {
+    return _auth.currentUser;
+  }
+
+  // Get current user
+  static Future<String?> getCurrentUserId() async {
+    return _auth.currentUser?.uid;
   }
 }
