@@ -8,7 +8,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // first variable is to get the data of Authenticated User
-    final data = ref.watch(authenticationProvider);
+    final data = ref.watch(fireBaseAuthProvider);
 
     //  Second variable to access the Logout Function
     final _auth = ref.watch(authenticationProvider);
@@ -16,13 +16,13 @@ class HomePage extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text(/*data.currentUser!.email ??*/ 'You are logged In'),
+              child: Text(data.currentUser!.email ?? 'You are logged In'),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text(/*data.currentUser!.displayName ??*/
+              child: Text(data.currentUser!.uid ??
                   ' Great you have Completed this step'),
             ),
             Container(

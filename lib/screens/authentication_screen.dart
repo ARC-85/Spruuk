@@ -4,22 +4,20 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:spruuk/firebase/firebase_authentication.dart';
-import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/user_provider.dart';
+import 'package:spruuk/widgets/dropdown_menu.dart';
+
 
 enum AuthStatus { login, signUp }
 
-class AuthenticationScreen extends StatefulWidget {
+class AuthenticationScreen extends ConsumerStatefulWidget {
   static const routename = '/AuthenticationPage';
   const AuthenticationScreen({Key? key}) : super(key: key);
-
   @override
   _AuthenticationScreenState createState() => _AuthenticationScreenState();
 }
 
-class _AuthenticationScreenState extends State<AuthenticationScreen> {
+class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
   //GlobalKey required to validate the form
   final GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -29,12 +27,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final TextEditingController _email = TextEditingController(text: '');
   final TextEditingController _password = TextEditingController(text: '');
 
+  // Variable for user type
+
+
   // Bool variables for animation while loading
   bool _isLoading = false;
   bool _isLoadingGoogle = false;
-
-  // Variable for obscuring password
-  bool _obscureText = true;
 
   // Method for setting the state of loading
   void loading() {
@@ -65,6 +63,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -88,32 +87,19 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                             }
                           }));
             } else {
-
+              String? userType = selectedValue;
+              print("this is userType $userType");
               loading();
               await _auth
                   .signUpWithEmailAndPassword(
-                      _email.text, _password.text, context)
+                      _email.text, _password.text, userType!, context)
                   .whenComplete(
-                      () =>
-                          _auth.authStateChange.listen((event) async {
+                      () => _auth.authStateChange.listen((event) async {
                             if (event == null) {
-
-                              final FirebaseAuth _authFirebase = FirebaseAuth.instance;
-                              final User? user = _authFirebase.currentUser;
-                              final String? aid = FirebaseAuth.instance.currentUser?.uid;
-                              final _uid = user?.uid;
-                              UserModel newUser = UserModel( uid: "5678",
-                                  email: _email.text, password: _password.text);
-
-                              print("what's going on screen ${aid}");
-                              final response = ref.read(userProvider);
-                              await response.addUser(newUser);
-
                               loading();
                               return;
                             }
                           }));
-
             }
           }
 
@@ -231,6 +217,18 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                                   : null,
                             ),
                           ),
+                        if (_authStatus == AuthStatus.signUp)
+                          Container(
+                            height: 70,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 4),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(25)),
+                              child: const MyDropdownButton(
+                                  items: ["Vendor", "Client"])),
                         const Spacer()
                       ],
                     ),

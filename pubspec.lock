@@ -28,7 +28,7 @@ packages:
       name: args
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.1"
+    version: "2.3.2"
   async:
     dependency: transitive
     description:
@@ -204,6 +204,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.4"
+  dropdown_button2:
+    dependency: "direct main"
+    description:
+      name: dropdown_button2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.9.2"
   envied:
     dependency: "direct main"
     description:
@@ -470,7 +477,7 @@ packages:
       name: io
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.3"
+    version: "1.0.4"
   js:
     dependency: transitive
     description:
@@ -484,7 +491,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.7.0"
+    version: "4.8.0"
   lints:
     dependency: transitive
     description:
@@ -671,7 +678,7 @@ packages:
       name: timing
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   typed_data:
     dependency: transitive
     description:

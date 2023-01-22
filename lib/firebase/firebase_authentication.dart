@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseAuthentication {
   // Generate an instance of FirebaseAuth
@@ -32,10 +33,20 @@ class FirebaseAuthentication {
   }
 
   // Sign up new user with email and password
-  Future<void> signUpWithEmailAndPassword(
-      String email, String password, BuildContext context) async {
+  Future<void> signUpWithEmailAndPassword(String email, String password,
+      String userType, BuildContext context) async {
     try {
-      _auth.createUserWithEmailAndPassword(email: email, password: password);
+      _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((currentUser) => FirebaseFirestore.instance
+                  .collection('vendor_users')
+                  .doc(currentUser.user?.uid)
+                  .set({
+                "uid": currentUser.user?.uid,
+                "email": email,
+                "password": password,
+                "userType": userType,
+              }));
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
@@ -73,7 +84,15 @@ class FirebaseAuthentication {
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
     try {
-      await _auth.signInWithCredential(credential);
+      await _auth.signInWithCredential(credential).then((currentUser) =>
+          FirebaseFirestore.instance
+              .collection('vendor_users')
+              .doc(currentUser.user?.uid)
+              .set({
+            "uid": currentUser.user?.uid,
+            "email": currentUser.user?.email,
+            "password": "Google User",
+          }));
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
