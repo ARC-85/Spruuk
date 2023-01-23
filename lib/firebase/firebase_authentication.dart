@@ -33,8 +33,16 @@ class FirebaseAuthentication {
   }
 
   // Sign up new user with email and password
-  Future<void> signUpWithEmailAndPassword(String email, String password,
-      String userType, BuildContext context) async {
+  Future<void> signUpWithEmailAndPassword(
+      String email,
+      String password,
+      String userType,
+      String firstName,
+      String lastName,
+      String userImage,
+      List<String> userProjectFavourites,
+      List<String> userVendorFavourites,
+      BuildContext context) async {
     try {
       _auth
           .createUserWithEmailAndPassword(email: email, password: password)
@@ -46,6 +54,11 @@ class FirebaseAuthentication {
                 "email": email,
                 "password": password,
                 "userType": userType,
+                "firstName": firstName,
+                "lastName": lastName,
+                "userImage": userImage,
+                "userProjectFavourites": userProjectFavourites,
+                "userVendorFavourites": userVendorFavourites,
               }));
     } on FirebaseAuthException catch (e) {
       await showDialog(

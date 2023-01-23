@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:spruuk/providers/authentication_provider.dart';
 import 'firebase_options.dart';
 import 'package:spruuk/widgets/authentication_checker.dart';
 import 'package:spruuk/screens/error_screen.dart';
 import 'package:spruuk/screens/loading_screen.dart';
+import 'package:spruuk/widgets/check.dart';
+import 'package:stack_trace/stack_trace.dart' as stack_trace;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +28,8 @@ class SpruukApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Using Riverpod function to watch provider and see if Firebase is initialized
     final initialize = ref.watch(firebaseInitializerProvider);
+    final data = ref.watch(fireBaseAuthProvider);
+    final String? userId = data.currentUser?.uid;
 
     return MaterialApp(
         title: 'Spruuk',
@@ -34,9 +39,14 @@ class SpruukApp extends ConsumerWidget {
         //If initialize is shows Firebase is initialized, then run AuthChecker, otherwise show loading or error screen (taken from https://bishwajeet-parhi.medium.com/firebase-authentication-using-flutter-and-riverpod-f302ab749383)
         home: initialize.when(
             data: (data) {
+              //if (userId != null) return const AuthenticationChecker();
+              // return const AuthenticationCheckerNoUser();
               return const AuthenticationChecker();
+
             },
             error: (e, stackTrace) => ErrorScreen(e, stackTrace),
             loading: () => const LoadingScreen()));
   }
 }
+
+

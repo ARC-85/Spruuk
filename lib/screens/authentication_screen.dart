@@ -27,7 +27,13 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
   final TextEditingController _email = TextEditingController(text: '');
   final TextEditingController _password = TextEditingController(text: '');
 
-  // Variable for user type
+  // Initial user variable setup
+  String? userType;
+  String firstName = "";
+  String lastName = "";
+  String userImage = "";
+  List<String> userProjectFavourites = const ["test"];
+  List<String> userVendorFavourites = const ["test"];
 
 
   // Bool variables for animation while loading
@@ -36,6 +42,10 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
 
   // Method for setting the state of loading
   void loading() {
+    // Check mounted property for state class of widget. https://www.stephenwenceslao.com/blog/error-might-indicate-memory-leak-if-setstate-being-called-because-another-object-retaining
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _isLoading = !_isLoading;
     });
@@ -87,12 +97,12 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                             }
                           }));
             } else {
-              String? userType = selectedValue;
+              userType = selectedValue;
               print("this is userType $userType");
               loading();
               await _auth
                   .signUpWithEmailAndPassword(
-                      _email.text, _password.text, userType!, context)
+                      _email.text, _password.text, userType!, firstName, lastName, userImage, userProjectFavourites, userVendorFavourites, context)
                   .whenComplete(
                       () => _auth.authStateChange.listen((event) async {
                             if (event == null) {
