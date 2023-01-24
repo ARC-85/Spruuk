@@ -7,7 +7,6 @@ import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/screens/home_screen.dart';
 import 'package:spruuk/screens/error_screen.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
-import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/loading_screen.dart';
 
 class AuthenticationChecker extends ConsumerWidget {
@@ -32,7 +31,7 @@ class AuthenticationChecker extends ConsumerWidget {
 
     return authState.when(
         data: (data) {
-          if (data != null) return const JointProjectsListScreen();
+          if (data != null) return const HomePage();
           return const AuthenticationScreen();
         },
         loading: () => const LoadingScreen(),
