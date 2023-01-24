@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +7,7 @@ import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/screens/home_screen.dart';
 import 'package:spruuk/screens/error_screen.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
+import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/loading_screen.dart';
 
 class AuthenticationChecker extends ConsumerWidget {
@@ -18,38 +17,26 @@ class AuthenticationChecker extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final data = ref.watch(fireBaseAuthProvider);
-    final String? userId = data.currentUser?.uid;
-    Future<DocumentSnapshot<Object?>>? snapshot;
-    snapshot = getUserData();
+    String? userId = data.currentUser?.uid;
+    Future<UserModel>? userData;
+    if (userId != null) {
+      userData = ref.watch(userProvider).getCurrentUserData(userId!);
+    }
 
-    return FutureBuilder<DocumentSnapshot<Object?>>(
-      future: snapshot,
-      builder: (BuildContext context,
-          AsyncSnapshot<DocumentSnapshot<Object?>> snapshot) {
-        var docData = snapshot.data as DocumentSnapshot;
-        print("this is docData $docData");
-        String? userType;
-        if (userId != null) {
-          userType = docData[
-          'userType'];
-        } //https://stackoverflow.com/questions/66074484/type-documentsnapshot-is-not-a-subtype-of-type-mapstring-dynamic
 
-        return authState.when(
-            data: (data) {
-              if (data != null && userType == "Vendor") return const HomePage();
-              return const AuthenticationScreen();
-            },
-            loading: () => const LoadingScreen(),
-            error: (e, trace) => ErrorScreen(e, trace));
-      },
-    );
+    //String? userType = ref.watch(userProvider).currentUserData.userType;
+
+    print("this is userId $userId");
+    print("this is userData $userData");
+    //print("this is userType $userType");
+
+    return authState.when(
+        data: (data) {
+          if (data != null) return const JointProjectsListScreen();
+          return const AuthenticationScreen();
+        },
+        loading: () => const LoadingScreen(),
+        error: (e, trace) => ErrorScreen(e, trace));
+
   }
-}
-
-Future<DocumentSnapshot<Object?>> getUserData() async {
-  Future<DocumentSnapshot<Object?>> data = FirebaseFirestore.instance
-      .collection('vendor_users')
-      .doc(FirebaseAuth.instance.currentUser?.uid)
-      .get();
-  return data;
 }

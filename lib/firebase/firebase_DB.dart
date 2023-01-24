@@ -6,7 +6,6 @@ class FirebaseDB {
   FirebaseFirestore.instance.collection('vendor_users');
 
   Future<void> fbAddVendorUser(UserModel user) async {
-    print("what's going on db ${user.email}");
     return vendorUserCollection.doc(user.uid).set(user.toJson());
   }
 
