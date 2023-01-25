@@ -7,7 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/widgets/dropdown_menu.dart';
 
-
 enum AuthStatus { login, signUp }
 
 class AuthenticationScreen extends ConsumerStatefulWidget {
@@ -34,7 +33,6 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
   String userImage = "";
   List<String> userProjectFavourites = const ["test"];
   List<String> userVendorFavourites = const ["test"];
-
 
   // Bool variables for animation while loading
   bool _isLoading = false;
@@ -73,7 +71,6 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -88,28 +85,36 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
               loading();
               await _auth
                   .loginWithEmailAndPassword(
-                      _email.text, _password.text, context)
+                  _email.text, _password.text, context)
                   .whenComplete(
                       () => _auth.authStateChange.listen((event) async {
-                            if (event == null) {
-                              loading();
-                              return;
-                            }
-                          }));
+                    if (event == null) {
+                      loading();
+                      return;
+                    }
+                  }));
             } else {
               userType = selectedValue;
               print("this is userType $userType");
               loading();
               await _auth
                   .signUpWithEmailAndPassword(
-                      _email.text, _password.text, userType!, firstName, lastName, userImage, userProjectFavourites, userVendorFavourites, context)
+                  _email.text,
+                  _password.text,
+                  userType!,
+                  firstName,
+                  lastName,
+                  userImage,
+                  userProjectFavourites,
+                  userVendorFavourites,
+                  context)
                   .whenComplete(
                       () => _auth.authStateChange.listen((event) async {
-                            if (event == null) {
-                              loading();
-                              return;
-                            }
-                          }));
+                    if (event == null) {
+                      loading();
+                      return;
+                    }
+                  }));
             }
           }
 
@@ -118,17 +123,18 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
             await _auth
                 .loginWithGoogle(context)
                 .whenComplete(() => _auth.authStateChange.listen((event) async {
-                      if (event == null) {
-                        loadingGoogle();
-                        return;
-                      }
-                    }));
+              if (event == null) {
+                loadingGoogle();
+                return;
+              }
+            }));
           }
 
           return Form(
             key: _formKey,
             child: Column(
               children: [
+
                 Expanded(
                   flex: 3,
                   child: Container(
@@ -156,7 +162,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                               decoration: InputDecoration(
                                 hintText: 'Email Address',
                                 hintStyle:
-                                    const TextStyle(color: Colors.black45),
+                                const TextStyle(color: Colors.black45),
                                 icon: Icon(Icons.email_outlined,
                                     color: Colors.blue.shade700, size: 24),
                                 alignLabelWithHint: true,
@@ -211,7 +217,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                               decoration: InputDecoration(
                                 hintText: 'Confirm password',
                                 hintStyle:
-                                    const TextStyle(color: Colors.black45),
+                                const TextStyle(color: Colors.black45),
                                 icon: Icon(CupertinoIcons.lock_circle,
                                     color: Colors.blue.shade700, size: 24),
                                 alignLabelWithHint: true,
@@ -219,17 +225,17 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                               ),
                               validator: _authStatus == AuthStatus.signUp
                                   ? (value) {
-                                      if (value != _password.text) {
-                                        return 'Passwords do not match!';
-                                      }
-                                      return null;
-                                    }
+                                if (value != _password.text) {
+                                  return 'Passwords do not match!';
+                                }
+                                return null;
+                              }
                                   : null,
                             ),
                           ),
                         if (_authStatus == AuthStatus.signUp)
                           Container(
-                            height: 70,
+                              height: 70,
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 24, vertical: 8),
                               padding: const EdgeInsets.symmetric(
@@ -259,28 +265,28 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                             width: double.infinity,
                             child: _isLoading
                                 ? const Center(
-                                    child: CircularProgressIndicator())
+                                child: CircularProgressIndicator())
                                 : MaterialButton(
-                                    onPressed: _onPressedFunction,
-                                    textColor: Colors.blue.shade700,
-                                    textTheme: ButtonTextTheme.primary,
-                                    minWidth: 100,
-                                    padding: const EdgeInsets.all(
-                                      18,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade700),
-                                    ),
-                                    child: Text(
-                                      _authStatus == AuthStatus.login
-                                          ? 'Login'
-                                          : 'Sign up',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
+                              onPressed: _onPressedFunction,
+                              textColor: Colors.blue.shade700,
+                              textTheme: ButtonTextTheme.primary,
+                              minWidth: 100,
+                              padding: const EdgeInsets.all(
+                                18,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(
+                                    color: Colors.blue.shade700),
+                              ),
+                              child: Text(
+                                _authStatus == AuthStatus.login
+                                    ? 'Login'
+                                    : 'Sign up',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.only(top: 32.0),
@@ -288,31 +294,31 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                             width: double.infinity,
                             child: _isLoadingGoogle
                                 ? const Center(
-                                    child: CircularProgressIndicator())
+                                child: CircularProgressIndicator())
                                 : MaterialButton(
-                                    onPressed: _loginWithGoogle,
-                                    textColor: Colors.blue.shade700,
-                                    textTheme: ButtonTextTheme.primary,
-                                    minWidth: 100,
-                                    padding: const EdgeInsets.all(18),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade700),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: const [
-                                        FaIcon(FontAwesomeIcons.google),
-                                        Text(
-                                          'Login with Google',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ],
-                                    ),
+                              onPressed: _loginWithGoogle,
+                              textColor: Colors.blue.shade700,
+                              textTheme: ButtonTextTheme.primary,
+                              minWidth: 100,
+                              padding: const EdgeInsets.all(18),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(
+                                    color: Colors.blue.shade700),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: const [
+                                  FaIcon(FontAwesomeIcons.google),
+                                  Text(
+                                    'Login with Google',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600),
                                   ),
+                                ],
+                              ),
+                            ),
                           ),
                           const Spacer(),
                           Padding(
