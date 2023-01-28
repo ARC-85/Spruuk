@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/widgets/dropdown_menu.dart';
 import 'package:spruuk/widgets/text_input.dart';
@@ -33,12 +39,104 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
   // Initial user variable setup
   String? userType;
   String userImage = "";
+  File? userImageFile;
   List<String> userProjectFavourites = const ["test"];
   List<String> userVendorFavourites = const ["test"];
+
+  // Value of user type drop down menu
+  String selectedValue = "Vendor";
 
   // Bool variables for animation while loading
   bool _isLoading = false;
   bool _isLoadingGoogle = false;
+
+  // Dialog box for selecting source of images, adapted from https://www.udemy.com/course/learn-flutter-3-firebase-build-photo-sharing-social-app/
+  void _showImageDialog()
+  {
+    showDialog(
+        context: context,
+        builder: (context)
+        {
+          return AlertDialog(
+            title: const Text("Please choose an option"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: ()
+                  {
+                    _getFromCamera();
+                  },
+                  child: Row(
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.camera,
+                          color: Colors.red,
+                        ),
+                      ),
+                      Text(
+                        "Camera",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: ()
+                  {
+                    _getFromGallery();
+                  },
+                  child: Row(
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.image,
+                          color: Colors.red,
+                        ),
+                      ),
+                      Text(
+                        "Gallery",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+    );
+  }
+
+  void _getFromCamera() async
+  {
+    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    _cropImage(pickedFile!.path);
+    Navigator.pop(context);
+  }
+
+  void _getFromGallery() async
+  {
+    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    _cropImage(pickedFile!.path);
+    Navigator.pop(context);
+  }
+
+  void _cropImage(filePath) async
+  {
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
+
+    if(croppedImage != null)
+    {
+      setState(() {
+        userImageFile = File(croppedImage.path);
+      });
+    }
+  }
 
   // Method for setting the state of loading
   void loading() {
@@ -71,7 +169,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
     }
   }
 
-  // Adapted from https://stackoverflow.com/questions/67993074/how-to-pass-a-function-as-a-validator-in-a-textformfield
+  // Validator for email inputs adapted from https://stackoverflow.com/questions/67993074/how-to-pass-a-function-as-a-validator-in-a-textformfield
   String? customEmailValidator(String? emailContent) {
     if (emailContent!.isEmpty || !emailContent.contains('@')) {
       return 'Invalid email!';
@@ -79,6 +177,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
     return null;
   }
 
+  // Validator for password inputs
   String? customPasswordValidator(String? passwordContent) {
     if (passwordContent!.isEmpty || passwordContent.length < 8) {
       return 'Password is too short!';
@@ -86,6 +185,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
     return null;
   }
 
+  // Validator for check password inputs
   String? customCheckPasswordValidator(String? checkPasswordContent) {
     if (_authStatus == AuthStatus.signUp) {
       if (checkPasswordContent!.isEmpty || checkPasswordContent.length < 8) {
@@ -96,12 +196,16 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
     null;
   }
 
+  // Validator for name inputs
   String? customNameValidator(String? nameContent) {
     if (nameContent!.isEmpty || nameContent.length < 2) {
       return 'Name is too short!';
     }
     return null;
   }
+
+  // Controller for scrollbars, taken from https://stackoverflow.com/questions/69853729/flutter-the-scrollbars-scrollcontroller-has-no-scrollposition-attached
+  ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -129,27 +233,38 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                             }
                           }));
             } else {
-              userType = selectedValue;
-              print("this is userType $userType");
-              loading();
-              await _auth
-                  .signUpWithEmailAndPassword(
-                      _email.text,
-                      _password.text,
-                      userType!,
-                      _firstName.text,
-                      _lastName.text,
-                      userImage,
-                      userProjectFavourites,
-                      userVendorFavourites,
-                      context)
-                  .whenComplete(
-                      () => _auth.authStateChange.listen((event) async {
-                            if (event == null) {
-                              loading();
-                              return;
-                            }
-                          }));
+              try {
+                userType = selectedValue;
+                print("this is userType $userType");
+                loading();
+                final ref = FirebaseStorage.instance.ref().child('user_images').child('${DateTime.now()}.jpg');
+                await ref.putFile(userImageFile!);
+                userImage = await ref.getDownloadURL();
+                if (!mounted) return;
+                await _auth
+                    .signUpWithEmailAndPassword(
+                    _email.text,
+                    _password.text,
+                    userType!,
+                    _firstName.text,
+                    _lastName.text,
+                    userImage,
+                    userProjectFavourites,
+                    userVendorFavourites,
+                    context)
+                    .whenComplete(
+                        () => _auth.authStateChange.listen((event) async {
+                      if (event == null) {
+                        loading();
+                        return;
+                      }
+                    }));
+
+              } catch(error)
+              {
+                Fluttertoast.showToast(msg: error.toString());
+              }
+
             }
           }
 
@@ -201,11 +316,13 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                         height: screenDimensions.height * 0.45,
                         width: screenDimensions.width,
                         child: Scrollbar(
+                          controller: _scrollController,
                           thumbVisibility: true,
                           thickness: 10,
                           radius: Radius.circular(20),
                           scrollbarOrientation: ScrollbarOrientation.right,
                           child: SingleChildScrollView(
+                            controller: _scrollController,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -216,6 +333,21 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
+                                        if (_authStatus == AuthStatus.signUp)
+                                        GestureDetector(
+                                          onTap: ()
+                                          {
+                                            _showImageDialog();
+                                          },
+                                          child: CircleAvatar(
+                                            radius: 90,
+                                            backgroundImage: userImageFile == null
+                                                ?
+                                            const AssetImage("assets/images/circular_avatar.png")
+                                                :
+                                            Image.file(userImageFile!).image,
+                                          ),
+                                        ),
                                         if (_authStatus == AuthStatus.signUp)
                                           Container(
                                               margin: const EdgeInsets.symmetric(
@@ -317,7 +449,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                                     Icon(
                                                       Icons.list,
                                                       size: 16,
-                                                      color: Colors.yellow,
+                                                      color: Colors.black45,
                                                     ),
                                                     SizedBox(
                                                       width: 4,
@@ -328,7 +460,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                                         style: TextStyle(
                                                           fontSize: 14,
                                                           fontWeight: FontWeight.bold,
-                                                          color: Colors.yellow,
+                                                          color: Colors.black45,
                                                         ),
                                                         overflow: TextOverflow.ellipsis,
                                                       ),
