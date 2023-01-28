@@ -48,6 +48,9 @@ dependencies:
   envied: ^0.3.0 # Used to securely handle secret keys
   font_awesome_flutter: ^10.3.0
   dropdown_button2: ^1.9.2 # Used for dropdown menu button
+  image_picker: ^0.8.6+1 # Used for selecting images from different sources
+  image_cropper: ^3.0.1 # Used for cropping selected images from different sources
+  fluttertoast: ^8.1.2 # Used for providing on screen notifications (e.g. errors)
 
 
 
@@ -82,6 +85,7 @@ flutter:
     - assets/images/spruuk_logo.jpeg
     - assets/images/spruuk_logo_white.png
     - assets/images/spruuk_logo_transparent.png
+    - assets/images/circular_avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

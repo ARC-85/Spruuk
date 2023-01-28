@@ -19,7 +19,7 @@ class AuthenticationChecker extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
     final data = ref.watch(fireBaseAuthProvider);
     String? userId = data.currentUser?.uid;
-    Future<UserModel>? userData;
+    Future<UserModel?> userData;
     if (userId != null) {
       userData = ref.watch(userProvider).getCurrentUserData(userId!);
     }
@@ -28,7 +28,7 @@ class AuthenticationChecker extends ConsumerWidget {
     //String? userType = ref.watch(userProvider).currentUserData.userType;
 
     print("this is userId $userId");
-    print("this is userData $userData");
+    //print("this is userData $userData");
     //print("this is userType $userType");
 
     return authState.when(
