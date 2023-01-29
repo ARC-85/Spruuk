@@ -13,23 +13,31 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/widgets/dropdown_menu.dart';
 import 'package:spruuk/widgets/text_input.dart';
 
-
 enum AuthStatus { login, signUp }
 
-class AuthenticationScreen2 extends ConsumerStatefulWidget {
-  static const routename = '/AuthenticationPage';
-  const AuthenticationScreen2({Key? key}) : super(key: key);
+class SignupScreen extends ConsumerStatefulWidget {
+  static const routename = '/SignupScreen';
+  const SignupScreen({Key? key}) : super(key: key);
   @override
-  _AuthenticationScreenState createState() => _AuthenticationScreenState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
+class _SignupScreenState extends ConsumerState<SignupScreen> {
   //GlobalKey required to validate the form
   final GlobalKey<FormState> _formKey = GlobalKey();
+  FirebaseAuthentication _auth = FirebaseAuthentication();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _auth = ref.watch(authenticationProvider);
+  }
 
   AuthStatus _authStatus = AuthStatus.login;
 
@@ -54,7 +62,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
   bool _isLoading = false;
   bool _isLoadingGoogle = false;
 
-  // Dialog box for selecting source of images, adapted from https://www.udemy.com/course/learn-flutter-3-firebase-build-photo-sharing-social-app/
+  // Dialog box for selecting source of profile images, adapted from https://www.udemy.com/course/learn-flutter-3-firebase-build-photo-sharing-social-app/
   void _showImageDialog() {
     showDialog(
         context: context,
@@ -64,6 +72,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                //checking if the app is on mobile (i.e. not web)
                 if (!kIsWeb)
                   InkWell(
                     onTap: () {
@@ -85,6 +94,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                       ],
                     ),
                   ),
+                //checking if the app is on mobile (i.e. not web)
                 if (!kIsWeb)
                   InkWell(
                     onTap: () {
@@ -106,6 +116,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                       ],
                     ),
                   ),
+                //checking if the app is on web (i.e. not mobile)
                 if (kIsWeb)
                   InkWell(
                     onTap: () {
@@ -244,22 +255,54 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
 
   @override
   Widget build(BuildContext context) {
+    // Variable for adjusting widget sizes to relative size of screen being used
     final screenDimensions = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Consumer(builder: (context, ref, _) {
-          final _auth = ref.watch(authenticationProvider);
-
+          // Press function used when the user submits form for signup
           Future<void> _onPressedFunction() async {
+            // Perform validation of form, if not valid then return/do nothing
             if (!_formKey.currentState!.validate()) {
               return;
             }
-            if (_authStatus == AuthStatus.login) {
+
+            try {
+              userType = selectedValue;
+              print("this is userType $userType");
               loading();
+              final ref = FirebaseStorage.instance
+                  .ref()
+                  .child('user_images')
+                  .child('${DateTime.now()}.jpg');
+              if (kIsWeb) {
+                //final tempDir = await getTemporaryDirectory();
+                //File file = await File('${tempDir.path}/image.png').create();
+                //file.writeAsBytesSync(webImage!);
+
+                //userImageFile?.writeAsBytesSync(webImage!);
+                await ref.putData(
+                    webImage!,
+                    SettableMetadata(
+                        contentType:
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+              } else {
+                await ref.putFile(userImageFile!);
+              }
+              userImage = await ref.getDownloadURL();
+              if (!mounted) return;
               await _auth
-                  .loginWithEmailAndPassword(
-                      _email.text, _password.text, context)
+                  .signUpWithEmailAndPassword(
+                      _email.text,
+                      _password.text,
+                      userType!,
+                      _firstName.text,
+                      _lastName.text,
+                      userImage,
+                      userProjectFavourites,
+                      userVendorFavourites,
+                      context)
                   .whenComplete(
                       () => _auth.authStateChange.listen((event) async {
                             if (event == null) {
@@ -267,48 +310,8 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                               return;
                             }
                           }));
-            } else {
-              try {
-                userType = selectedValue;
-                print("this is userType $userType");
-                loading();
-                final ref = FirebaseStorage.instance
-                    .ref()
-                    .child('user_images')
-                    .child('${DateTime.now()}.jpg');
-                if (kIsWeb) {
-                  //final tempDir = await getTemporaryDirectory();
-                  //File file = await File('${tempDir.path}/image.png').create();
-                  //file.writeAsBytesSync(webImage!);
-
-                  //userImageFile?.writeAsBytesSync(webImage!);
-                  await ref.putData(webImage!, SettableMetadata(contentType: 'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
-                } else {
-                  await ref.putFile(userImageFile!);
-                }
-                userImage = await ref.getDownloadURL();
-                if (!mounted) return;
-                await _auth
-                    .signUpWithEmailAndPassword(
-                        _email.text,
-                        _password.text,
-                        userType!,
-                        _firstName.text,
-                        _lastName.text,
-                        userImage,
-                        userProjectFavourites,
-                        userVendorFavourites,
-                        context)
-                    .whenComplete(
-                        () => _auth.authStateChange.listen((event) async {
-                              if (event == null) {
-                                loading();
-                                return;
-                              }
-                            }));
-              } catch (error) {
-                Fluttertoast.showToast(msg: error.toString());
-              }
+            } catch (error) {
+              Fluttertoast.showToast(msg: error.toString());
             }
           }
 
@@ -731,5 +734,4 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
       ),
     );
   }
-
 }

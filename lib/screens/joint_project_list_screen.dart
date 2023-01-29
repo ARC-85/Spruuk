@@ -20,8 +20,9 @@ class JointProjectsListScreen extends ConsumerStatefulWidget {
 class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  late UserType _userType = UserType.vendor;
-  UserModel? currentUser;
+  UserType? _userType;
+  UserModel? currentUser1;
+  UserProvider? user;
 
   // Bool variables for animation while loading
   bool _isLoading = false;
@@ -38,22 +39,30 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final authData = ref.watch(fireBaseAuthProvider);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
+    final authData = ref.watch(fireBaseAuthProvider);
     ref
         .watch(userProvider)
         .getCurrentUserData(authData.currentUser!.uid)
         .then((value) {
       setState(() {
-        currentUser = value;
+        currentUser1 = value;
       });
     });
-    if (currentUser?.userType == "Client") {
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
     } else {
       _userType = UserType.vendor;
     }
+    String? userImage = currentUser1?.userImage;
+    print("this is userImage $userImage");
     final _auth = ref.watch(authenticationProvider);
     return Scaffold(
         body: SafeArea(child: Consumer(builder: (context, ref, _) {
@@ -61,6 +70,14 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
             body: SafeArea(
               child: Column(
                 children: [
+                  CircleAvatar(
+                    radius: 90,
+                    backgroundImage: currentUser1?.userImage == null
+                        ?
+                    const AssetImage("assets/images/circular_avatar.png")
+                        :
+                    Image.network(userImage!).image,
+                  ),
                   if (_userType == UserType.client)
                   const Padding(
                     padding: EdgeInsets.all(8.0),

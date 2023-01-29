@@ -51,9 +51,11 @@ dependencies:
   image_picker: ^0.8.6+1 # Used for selecting images from different sources
   image_cropper: ^3.0.1 # Used for cropping selected images from different sources
   fluttertoast: ^8.1.2 # Used for providing on screen notifications (e.g. errors)
+  path_provider: ^2.0.12 # Used for storing temporary files
 
 
-
+dependency_overrides:
+  path_provider_android: 2.0.22
 
 dev_dependencies:
   flutter_test:
