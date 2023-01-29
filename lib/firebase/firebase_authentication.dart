@@ -1,12 +1,22 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:spruuk/firebase/firebase_DB.dart';
 
 class FirebaseAuthentication {
   // Generate an instance of FirebaseAuth
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Generate an instance of Firebase users database
+  final CollectionReference vendorUserCollection =
+      FirebaseFirestore.instance.collection('vendor_users');
+
+  // Variable for current user
+  User? user;
 
   //Check for whether user is logged in
   Stream<User?> get authStateChange => _auth.authStateChanges();
@@ -97,15 +107,18 @@ class FirebaseAuthentication {
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
     try {
-      await _auth.signInWithCredential(credential).then((currentUser) =>
-          FirebaseFirestore.instance
-              .collection('vendor_users')
-              .doc(currentUser.user?.uid)
-              .set({
-            "uid": currentUser.user?.uid,
-            "email": currentUser.user?.email,
-            "password": "Google User",
-          }));
+      await _auth
+          .signInWithCredential(credential)
+          .then((currentUser) => user = currentUser.user)
+      .then((value) => null);
+      final currentUser1 = await FirebaseDB().fbGetVendorUserData(user!.uid);
+      print("this is currentUser1 $currentUser1");
+
+      FirebaseFirestore.instance.collection('vendor_users').doc(user?.uid).set({
+        "uid": user?.uid,
+        "email": user?.email,
+        "password": "Google User",
+      });
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
