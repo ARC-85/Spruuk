@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:spruuk/firebase/firebase_DB.dart';
+import 'package:spruuk/models/user_model.dart';
 
 class FirebaseAuthentication {
   // Generate an instance of FirebaseAuth
@@ -18,6 +19,9 @@ class FirebaseAuthentication {
   // Variable for current user
   User? user;
 
+  // Bool variable to check if first time signing in using Google login
+  bool _firstTime = true;
+
   //Check for whether user is logged in
   Stream<User?> get authStateChange => _auth.authStateChanges();
 
@@ -26,6 +30,7 @@ class FirebaseAuthentication {
       String email, String password, BuildContext context) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+      // Navigator.pushNamed(context, '/JointProjectListScreen');
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
@@ -46,7 +51,7 @@ class FirebaseAuthentication {
   Future<void> signUpWithEmailAndPassword(
       String email,
       String password,
-      String userType,
+      String? userType,
       String firstName,
       String lastName,
       String userImage,
@@ -94,7 +99,7 @@ class FirebaseAuthentication {
   }
 
   // Sign up a user with Google authentication
-  Future<void> loginWithGoogle(BuildContext context) async {
+  Future<bool> loginWithGoogle(BuildContext context) async {
     // Start the authentication process
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -107,18 +112,27 @@ class FirebaseAuthentication {
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
     try {
-      await _auth
-          .signInWithCredential(credential)
-          .then((currentUser) => user = currentUser.user)
-      .then((value) => null);
-      final currentUser1 = await FirebaseDB().fbGetVendorUserData(user!.uid);
-      print("this is currentUser1 $currentUser1");
+      UserCredential authResult = await _auth.signInWithCredential(credential);
+      user = authResult.user;
+      print("this is user in auth $user");
+      if (authResult.additionalUserInfo?.isNewUser != true) {
+        print("not first time!!");
+        _firstTime = false;
+      } else {
+        _firstTime = true;
+      }
 
-      FirebaseFirestore.instance.collection('vendor_users').doc(user?.uid).set({
-        "uid": user?.uid,
-        "email": user?.email,
-        "password": "Google User",
-      });
+
+
+      /*await _auth.signInWithCredential(credential).then((currentUser) =>
+          FirebaseFirestore.instance
+              .collection('vendor_users')
+              .doc(currentUser.user?.uid)
+              .set({
+            "uid": currentUser.user?.uid,
+            "email": currentUser.user?.email,
+            "password": "Google User",
+          })); */
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
@@ -134,6 +148,7 @@ class FirebaseAuthentication {
                 ],
               ));
     }
+    return _firstTime;
   }
 
   // Sign out current user
@@ -149,5 +164,83 @@ class FirebaseAuthentication {
   // Get current user
   static Future<String?> getCurrentUserId() async {
     return _auth.currentUser?.uid;
+  }
+
+  /*void _clientTypeUser(BuildContext context, User user) async {
+    await _auth.signInWithCredential(credential).then((currentUser) =>
+        FirebaseFirestore.instance
+            .collection('vendor_users')
+            .doc(currentUser.user?.uid)
+            .set({
+          "uid": currentUser.user?.uid,
+          "email": currentUser.user?.email,
+          "password": "Google User",
+          "userType": "Client",
+          "firstName": (currentUser.user?.displayName)?.split(' ').first,
+          "lastName": (currentUser.user?.displayName)?.split(' ').last,
+          "userImage": currentUser.user?.photoURL,
+          "userProjectFavourites": ["test"],
+          "userVendorFavourites": ["test"],
+
+
+        }));
+    Navigator.pushNamed(context, '/JointProjectListScreen');
+  }*/
+
+  Future<void> clientTypeUser(BuildContext context, User? user) async {
+        FirebaseFirestore.instance
+            .collection('vendor_users')
+            .doc(user?.uid)
+            .set({
+          "uid": user?.uid,
+          "email": user?.email,
+          "password": "Google User",
+          "userType": "Client",
+          "firstName": (user?.displayName)?.split(' ').first,
+          "lastName": (user?.displayName)?.split(' ').last,
+          "userImage": user?.photoURL,
+          "userProjectFavourites": ["test"],
+          "userVendorFavourites": ["test"],
+
+
+        });
+  }
+
+  /*void _vendorTypeUser(BuildContext context, OAuthCredential credential) async {
+    await _auth.signInWithCredential(credential).then((currentUser) =>
+        FirebaseFirestore.instance
+            .collection('vendor_users')
+            .doc(currentUser.user?.uid)
+            .set({
+          "uid": currentUser.user?.uid,
+          "email": currentUser.user?.email,
+          "password": "Google User",
+          "userType": "Vendor",
+          "firstName": (currentUser.user?.displayName)?.split(' ').first,
+          "lastName": (currentUser.user?.displayName)?.split(' ').last,
+          "userImage": currentUser.user?.photoURL,
+          "userProjectFavourites": ["test"],
+          "userVendorFavourites": ["test"],
+        }));
+    Navigator.pushNamed(context, '/JointProjectListScreen');
+  }*/
+
+  Future<void> vendorTypeUser(BuildContext context, User? user) async {
+    FirebaseFirestore.instance
+        .collection('vendor_users')
+        .doc(user?.uid)
+        .set({
+      "uid": user?.uid,
+      "email": user?.email,
+      "password": "Google User",
+      "userType": "Vendor",
+      "firstName": (user?.displayName)?.split(' ').first,
+      "lastName": (user?.displayName)?.split(' ').last,
+      "userImage": user?.photoURL,
+      "userProjectFavourites": ["test"],
+      "userVendorFavourites": ["test"],
+
+
+    });
   }
 }
