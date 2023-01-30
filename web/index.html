@@ -19,6 +19,7 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project for the construction and landscaping industry.">
+  <meta name="google-signin-client_id" content="1051940751908-jihlej7a52t41asm2si15j6ut7bjp750.apps.googleusercontent.com">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -41,6 +42,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.css" />
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+
+
 </head>
 <body>
   <script>
@@ -56,6 +59,22 @@
         return appRunner.runApp();
       });
     });
+  </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCTKhxuO7bqZme9_p-0FP49339aqcgxsoQ",
+    authDomain: "spruuk.firebaseapp.com",
+    projectId: "spruuk",
+    storageBucket: "spruuk.appspot.com",
+    messagingSenderId: "456408330601",
+    appId: "1:456408330601:web:f53b48337f0bad2de0cdf8"
+  };
+
+  const app = initializeApp(firebaseConfig);
   </script>
 </body>
 </html>
