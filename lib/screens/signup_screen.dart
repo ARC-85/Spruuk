@@ -18,10 +18,8 @@ import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/widgets/dropdown_menu.dart';
 import 'package:spruuk/widgets/text_input.dart';
 
-enum AuthStatus { login, signUp }
-
 class SignupScreen extends ConsumerStatefulWidget {
-  static const routename = '/SignupScreen';
+  static const routeName = '/SignupScreen';
   const SignupScreen({Key? key}) : super(key: key);
   @override
   _SignupScreenState createState() => _SignupScreenState();
@@ -38,8 +36,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     _auth = ref.watch(authenticationProvider);
   }
-
-  AuthStatus _authStatus = AuthStatus.login;
 
   // TextEditingControllers for data inputs
   final TextEditingController _email = TextEditingController(text: '');
@@ -202,19 +198,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     });
   }
 
-  // Method for switching between login and sign up mode on authentication screen
-  void _switchType() {
-    if (_authStatus == AuthStatus.signUp) {
-      setState(() {
-        _authStatus = AuthStatus.login;
-      });
-    } else {
-      setState(() {
-        _authStatus = AuthStatus.signUp;
-      });
-    }
-  }
-
   // Validator for email inputs adapted from https://stackoverflow.com/questions/67993074/how-to-pass-a-function-as-a-validator-in-a-textformfield
   String? customEmailValidator(String? emailContent) {
     if (emailContent!.isEmpty || !emailContent.contains('@')) {
@@ -233,13 +216,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   // Validator for check password inputs
   String? customCheckPasswordValidator(String? checkPasswordContent) {
-    if (_authStatus == AuthStatus.signUp) {
-      if (checkPasswordContent!.isEmpty || checkPasswordContent.length < 8) {
-        return 'Password is too short!';
-      }
-      return null;
+    if (checkPasswordContent!.isEmpty || checkPasswordContent.length < 8) {
+      return 'Password is too short!';
     }
-    null;
+    return null;
   }
 
   // Validator for name inputs
@@ -261,27 +241,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Consumer(builder: (context, ref, _) {
+
           // Press function used when the user submits form for signup
           Future<void> _onPressedFunction() async {
             // Perform validation of form, if not valid then return/do nothing
             if (!_formKey.currentState!.validate()) {
               return;
             }
-
+            // Try block for uploading data to Firebase
             try {
+              // User type selected by dropdown menu
               userType = selectedValue;
-              print("this is userType $userType");
               loading();
+              // Get firebase storage ref for storing profile images
               final ref = FirebaseStorage.instance
                   .ref()
                   .child('user_images')
                   .child('${DateTime.now()}.jpg');
+              // Special method for uploading images on web app, i.e. data not a file
               if (kIsWeb) {
-                //final tempDir = await getTemporaryDirectory();
-                //File file = await File('${tempDir.path}/image.png').create();
-                //file.writeAsBytesSync(webImage!);
-
-                //userImageFile?.writeAsBytesSync(webImage!);
                 await ref.putData(
                     webImage!,
                     SettableMetadata(
@@ -290,13 +268,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               } else {
                 await ref.putFile(userImageFile!);
               }
+              // Getting the URL for the image once uploaded to Firebase storage
               userImage = await ref.getDownloadURL();
+              // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
+              // Using email and password to sign up in Firebase, passing details on user.
               await _auth
                   .signUpWithEmailAndPassword(
                       _email.text,
                       _password.text,
-                      userType!,
+                      userType,
                       _firstName.text,
                       _lastName.text,
                       userImage,
@@ -310,21 +291,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                               return;
                             }
                           }));
+              // Checking if widget mounted when using multiple awaits
+              if (!mounted) return;
+              Navigator.pushReplacementNamed(context, "/AuthenticationChecker");
             } catch (error) {
               Fluttertoast.showToast(msg: error.toString());
             }
-          }
-
-          Future<void> _loginWithGoogle() async {
-            loadingGoogle();
-            await _auth
-                .loginWithGoogle(context)
-                .whenComplete(() => _auth.authStateChange.listen((event) async {
-                      if (event == null) {
-                        loadingGoogle();
-                        return;
-                      }
-                    }));
           }
 
           return Column(
@@ -333,7 +305,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 children: <Widget>[
                   Container(
                     width: screenDimensions.width,
-                    height: screenDimensions.height * 0.65,
+                    height: screenDimensions.height * 0.75,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -357,9 +329,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         ),
                       )),
                   Positioned(
-                    top: screenDimensions.height * 0.20,
+                    top: screenDimensions.height * 0.15,
                     child: SizedBox(
-                        height: screenDimensions.height * 0.45,
+                        height: screenDimensions.height * 0.60,
                         width: screenDimensions.width,
                         child: Scrollbar(
                             controller: _scrollController,
@@ -381,7 +353,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          if (_authStatus == AuthStatus.signUp)
                                             GestureDetector(
                                               onTap: () {
                                                 _showImageDialog();
@@ -403,7 +374,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                                             .image,
                                               ),
                                             ),
-                                          if (_authStatus == AuthStatus.signUp)
                                             Container(
                                                 margin:
                                                     const EdgeInsets.symmetric(
@@ -427,7 +397,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                                   validator:
                                                       customNameValidator,
                                                 )),
-                                          if (_authStatus == AuthStatus.signUp)
                                             Container(
                                                 margin:
                                                     const EdgeInsets.symmetric(
@@ -495,7 +464,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                                 validator:
                                                     customPasswordValidator,
                                               )),
-                                          if (_authStatus == AuthStatus.signUp)
                                             AnimatedContainer(
                                               duration: const Duration(
                                                   milliseconds: 600),
@@ -520,7 +488,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                                     customCheckPasswordValidator,
                                               ),
                                             ),
-                                          if (_authStatus == AuthStatus.signUp)
                                             Container(
                                                 height: 70,
                                                 margin:
@@ -668,40 +635,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           borderRadius: BorderRadius.circular(25),
                           side: BorderSide(color: Colors.blue.shade700),
                         ),
-                        child: Text(
-                          _authStatus == AuthStatus.login ? 'Login' : 'Sign up',
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: 32.0),
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                width: double.infinity,
-                child: _isLoadingGoogle
-                    ? const Center(child: CircularProgressIndicator())
-                    : MaterialButton(
-                        onPressed: _loginWithGoogle,
-                        textColor:
-                            const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
-                        textTheme: ButtonTextTheme.primary,
-                        minWidth: 100,
-                        padding: const EdgeInsets.all(18),
-                        color: const Color.fromRGBO(242, 151, 101, 1)
-                            .withOpacity(1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: BorderSide(color: Colors.blue.shade700),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            FaIcon(FontAwesomeIcons.google),
-                            Text(
-                              'Login with Google',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ],
+                        child: const Text('Sign up',
+                          style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
               ),
@@ -710,19 +645,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: RichText(
                   text: TextSpan(
-                    text: _authStatus == AuthStatus.login
-                        ? 'Don\'t have an account?'
-                        : 'Already have an account?',
+                    text: 'Already have an account?',
                     style: const TextStyle(color: Colors.black),
                     children: [
                       TextSpan(
-                          text: _authStatus == AuthStatus.login
-                              ? 'Sign up now'
-                              : 'Log in',
+                          text: 'Log in',
                           style: TextStyle(color: Colors.blue.shade700),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              _switchType();
+                              Navigator.pushNamed(context, '/AuthenticationScreen');
                             })
                     ],
                   ),

@@ -21,13 +21,13 @@ import 'package:spruuk/widgets/text_input.dart';
 enum AuthStatus { login, signUp }
 
 class AuthenticationScreen2 extends ConsumerStatefulWidget {
-  static const routename = '/AuthenticationPage';
+  static const routeName = '/AuthenticationScreen2';
   const AuthenticationScreen2({Key? key}) : super(key: key);
   @override
-  _AuthenticationScreenState createState() => _AuthenticationScreenState();
+  _AuthenticationScreenState2 createState() => _AuthenticationScreenState2();
 }
 
-class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
+class _AuthenticationScreenState2 extends ConsumerState<AuthenticationScreen2> {
   //GlobalKey required to validate the form
   final GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -135,21 +135,21 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
 
   void _getFromCamera() async {
     XFile? pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
+    await ImagePicker().pickImage(source: ImageSource.camera);
     _cropImage(pickedFile!.path);
     Navigator.pop(context);
   }
 
   void _getFromGallery() async {
     XFile? pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     _cropImage(pickedFile!.path);
     Navigator.pop(context);
   }
 
   void _getFromWebGallery() async {
     XFile? pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       var f = await pickedFile.readAsBytes();
       setState(() {
@@ -186,6 +186,9 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
 
   // Method for setting the state of loading during Google sign in
   void loadingGoogle() {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _isLoadingGoogle = !_isLoadingGoogle;
     });
@@ -251,7 +254,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
         child: Consumer(builder: (context, ref, _) {
           final _auth = ref.watch(authenticationProvider);
 
-          Future<void> _onPressedFunction() async {
+          Future<void> _onPressedRegisterFunction() async {
             if (!_formKey.currentState!.validate()) {
               return;
             }
@@ -259,14 +262,14 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
               loading();
               await _auth
                   .loginWithEmailAndPassword(
-                      _email.text, _password.text, context)
+                  _email.text, _password.text, context)
                   .whenComplete(
                       () => _auth.authStateChange.listen((event) async {
-                            if (event == null) {
-                              loading();
-                              return;
-                            }
-                          }));
+                    if (event == null) {
+                      loading();
+                      return;
+                    }
+                  }));
             } else {
               try {
                 userType = selectedValue;
@@ -290,22 +293,22 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                 if (!mounted) return;
                 await _auth
                     .signUpWithEmailAndPassword(
-                        _email.text,
-                        _password.text,
-                        userType!,
-                        _firstName.text,
-                        _lastName.text,
-                        userImage,
-                        userProjectFavourites,
-                        userVendorFavourites,
-                        context)
+                    _email.text,
+                    _password.text,
+                    userType!,
+                    _firstName.text,
+                    _lastName.text,
+                    userImage,
+                    userProjectFavourites,
+                    userVendorFavourites,
+                    context)
                     .whenComplete(
                         () => _auth.authStateChange.listen((event) async {
-                              if (event == null) {
-                                loading();
-                                return;
-                              }
-                            }));
+                      if (event == null) {
+                        loading();
+                        return;
+                      }
+                    }));
               } catch (error) {
                 Fluttertoast.showToast(msg: error.toString());
               }
@@ -317,11 +320,11 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
             await _auth
                 .loginWithGoogle(context)
                 .whenComplete(() => _auth.authStateChange.listen((event) async {
-                      if (event == null) {
-                        loadingGoogle();
-                        return;
-                      }
-                    }));
+              if (event == null) {
+                loadingGoogle();
+                return;
+              }
+            }));
           }
 
           return Column(
@@ -374,9 +377,9 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                       key: _formKey,
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                         children: [
                                           if (_authStatus == AuthStatus.signUp)
                                             GestureDetector(
@@ -387,81 +390,81 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                                 radius: 90,
                                                 backgroundImage: !kIsWeb
                                                     ? userImageFile == null
-                                                        ? const AssetImage(
-                                                            "assets/images/circular_avatar.png")
-                                                        : Image.file(
-                                                                userImageFile!)
-                                                            .image
+                                                    ? const AssetImage(
+                                                    "assets/images/circular_avatar.png")
+                                                    : Image.file(
+                                                    userImageFile!)
+                                                    .image
                                                     : webImage == null
-                                                        ? const AssetImage(
-                                                            "assets/images/circular_avatar.png")
-                                                        : Image.memory(
-                                                                webImage!)
-                                                            .image,
+                                                    ? const AssetImage(
+                                                    "assets/images/circular_avatar.png")
+                                                    : Image.memory(
+                                                    webImage!)
+                                                    .image,
                                               ),
                                             ),
                                           if (_authStatus == AuthStatus.signUp)
                                             Container(
                                                 margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 16),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 16),
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 4),
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
+                                                    BorderRadius.circular(
+                                                        25)),
                                                 child: CustomTextInput(
                                                   hintText: 'First Name',
                                                   textEditingController:
-                                                      _firstName,
+                                                  _firstName,
                                                   isTextObscured: false,
                                                   icon: (Icons.person),
                                                   validator:
-                                                      customNameValidator,
+                                                  customNameValidator,
                                                 )),
                                           if (_authStatus == AuthStatus.signUp)
                                             Container(
                                                 margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 16),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 16),
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 4),
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
+                                                    BorderRadius.circular(
+                                                        25)),
                                                 child: CustomTextInput(
                                                   hintText: 'Last Name',
                                                   textEditingController:
-                                                      _lastName,
+                                                  _lastName,
                                                   isTextObscured: false,
                                                   icon: (Icons.person),
                                                   validator:
-                                                      customNameValidator,
+                                                  customNameValidator,
                                                 )),
                                           Container(
                                               margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 16),
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 4),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 4),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                                  BorderRadius.circular(
+                                                      25)),
                                               child: CustomTextInput(
                                                 hintText: 'Email Address',
                                                 textEditingController: _email,
@@ -471,70 +474,70 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                               )),
                                           Container(
                                               margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 16),
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 4),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 4),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                                  BorderRadius.circular(
+                                                      25)),
                                               child: CustomTextInput(
                                                 hintText: 'Password',
                                                 textEditingController:
-                                                    _password,
+                                                _password,
                                                 isTextObscured: true,
                                                 icon: (Icons.password_outlined),
                                                 validator:
-                                                    customPasswordValidator,
+                                                customPasswordValidator,
                                               )),
                                           if (_authStatus == AuthStatus.signUp)
                                             AnimatedContainer(
                                               duration: const Duration(
                                                   milliseconds: 600),
                                               margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 16),
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 4),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 4),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                                  BorderRadius.circular(
+                                                      25)),
                                               child: CustomTextInput(
                                                 hintText: 'Confirm password',
                                                 isTextObscured: true,
                                                 icon: (Icons.password_outlined),
                                                 validator:
-                                                    customCheckPasswordValidator,
+                                                customCheckPasswordValidator,
                                               ),
                                             ),
                                           if (_authStatus == AuthStatus.signUp)
                                             Container(
                                                 height: 70,
                                                 margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 8),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 8),
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 4),
                                                 decoration: BoxDecoration(
                                                     color: const Color.fromRGBO(
-                                                            0, 0, 95, 1)
+                                                        0, 0, 95, 1)
                                                         .withOpacity(0),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
+                                                    BorderRadius.circular(
+                                                        25)),
                                                 child: DropdownButton2(
                                                   isExpanded: true,
                                                   hint: Row(
@@ -553,9 +556,9 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                                           style: TextStyle(
                                                             fontSize: 14,
                                                             fontWeight:
-                                                                FontWeight.bold,
+                                                            FontWeight.bold,
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                           ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
@@ -565,27 +568,27 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                                   ),
                                                   items: ["Vendor", "Client"]
                                                       .map((item) =>
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value: item,
-                                                            child: Text(
-                                                              item,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black45,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ))
+                                                      DropdownMenuItem<
+                                                          String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style:
+                                                          const TextStyle(
+                                                            color: Colors
+                                                                .black45,
+                                                          ),
+                                                          overflow:
+                                                          TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ))
                                                       .toList(),
                                                   value: selectedValue,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       selectedValue =
-                                                          value as String;
+                                                      value as String;
                                                     });
                                                   },
                                                   icon: const Icon(
@@ -594,21 +597,21 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                                   ),
                                                   iconSize: 14,
                                                   iconEnabledColor:
-                                                      const Color.fromRGBO(
-                                                              0, 0, 95, 1)
-                                                          .withOpacity(1),
+                                                  const Color.fromRGBO(
+                                                      0, 0, 95, 1)
+                                                      .withOpacity(1),
                                                   iconDisabledColor:
-                                                      Colors.grey,
+                                                  Colors.grey,
                                                   buttonHeight: 50,
                                                   buttonWidth: 160,
                                                   buttonPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, right: 14),
+                                                  const EdgeInsets.only(
+                                                      left: 14, right: 14),
                                                   buttonDecoration:
-                                                      BoxDecoration(
+                                                  BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            14),
+                                                    BorderRadius.circular(
+                                                        14),
                                                     border: Border.all(
                                                       color: Colors.black26,
                                                     ),
@@ -617,21 +620,21 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                                                   buttonElevation: 2,
                                                   itemHeight: 40,
                                                   itemPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, right: 14),
+                                                  const EdgeInsets.only(
+                                                      left: 14, right: 14),
                                                   dropdownMaxHeight: 200,
                                                   dropdownWidth: 200,
                                                   dropdownPadding: null,
                                                   dropdownDecoration:
-                                                      BoxDecoration(
+                                                  BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            14),
+                                                    BorderRadius.circular(
+                                                        14),
                                                     color: Colors.white,
                                                   ),
                                                   dropdownElevation: 8,
                                                   scrollbarRadius:
-                                                      const Radius.circular(40),
+                                                  const Radius.circular(40),
                                                   scrollbarThickness: 6,
                                                   scrollbarAlwaysShow: true,
                                                   offset: const Offset(-20, 0),
@@ -651,25 +654,25 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : MaterialButton(
-                        onPressed: _onPressedFunction,
-                        textColor:
-                            const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
-                        textTheme: ButtonTextTheme.primary,
-                        minWidth: 100,
-                        color: const Color.fromRGBO(242, 151, 101, 1)
-                            .withOpacity(1),
-                        padding: const EdgeInsets.all(
-                          18,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: BorderSide(color: Colors.blue.shade700),
-                        ),
-                        child: Text(
-                          _authStatus == AuthStatus.login ? 'Login' : 'Sign up',
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
+                  onPressed: _onPressedRegisterFunction,
+                  textColor:
+                  const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
+                  textTheme: ButtonTextTheme.primary,
+                  minWidth: 100,
+                  color: const Color.fromRGBO(242, 151, 101, 1)
+                      .withOpacity(1),
+                  padding: const EdgeInsets.all(
+                    18,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    side: BorderSide(color: Colors.blue.shade700),
+                  ),
+                  child: Text(
+                    _authStatus == AuthStatus.login ? 'Login' : 'Sign up',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
               ),
               Container(
                 padding: const EdgeInsets.only(top: 32.0),
@@ -678,29 +681,29 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen2> {
                 child: _isLoadingGoogle
                     ? const Center(child: CircularProgressIndicator())
                     : MaterialButton(
-                        onPressed: _loginWithGoogle,
-                        textColor:
-                            const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
-                        textTheme: ButtonTextTheme.primary,
-                        minWidth: 100,
-                        padding: const EdgeInsets.all(18),
-                        color: const Color.fromRGBO(242, 151, 101, 1)
-                            .withOpacity(1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: BorderSide(color: Colors.blue.shade700),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            FaIcon(FontAwesomeIcons.google),
-                            Text(
-                              'Login with Google',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
+                  onPressed: _loginWithGoogle,
+                  textColor:
+                  const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
+                  textTheme: ButtonTextTheme.primary,
+                  minWidth: 100,
+                  padding: const EdgeInsets.all(18),
+                  color: const Color.fromRGBO(242, 151, 101, 1)
+                      .withOpacity(1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    side: BorderSide(color: Colors.blue.shade700),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      FaIcon(FontAwesomeIcons.google),
+                      Text(
+                        'Login with Google',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
+                    ],
+                  ),
+                ),
               ),
               const Spacer(),
               Padding(

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:spruuk/screens/authentication_screen.dart';
+import 'package:spruuk/screens/joint_project_list_screen.dart';
+import 'package:spruuk/screens/signup_screen.dart';
+import 'package:spruuk/screens/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:spruuk/widgets/authentication_checker.dart';
 import 'package:spruuk/screens/error_screen.dart';
@@ -27,16 +31,31 @@ class SpruukApp extends ConsumerWidget {
     final initialize = ref.watch(firebaseInitializerProvider);
 
     return MaterialApp(
-        title: 'Spruuk',
-        theme: ThemeData(
-          primarySwatch: Colors.blueGrey,
-        ),
-        //If initialize is shows Firebase is initialized, then run AuthChecker, otherwise show loading or error screen (taken from https://bishwajeet-parhi.medium.com/firebase-authentication-using-flutter-and-riverpod-f302ab749383)
-        home: initialize.when(
-            data: (data) {
-              return const AuthenticationChecker();
-            },
-            error: (e, stackTrace) => ErrorScreen(e, stackTrace),
-            loading: () => const LoadingScreen()));
+      title: 'Spruuk',
+      theme: ThemeData(
+        primarySwatch: Colors.blueGrey,
+      ),
+      //If initialize is shows Firebase is initialized, then run AuthChecker, otherwise show loading or error screen (taken from https://bishwajeet-parhi.medium.com/firebase-authentication-using-flutter-and-riverpod-f302ab749383)
+      home: initialize.when(
+          data: (data) {
+            return SplashScreen();
+          },
+          error: (e, stackTrace) => ErrorScreen(e, stackTrace),
+          loading: () => const LoadingScreen()),
+      routes: {
+        // Route for Joint Projects List Screen
+        JointProjectsListScreen.routeName: (context) =>
+            const JointProjectsListScreen(),
+        // Route for Authentication Screen
+        AuthenticationScreen.routeName: (context) =>
+            const AuthenticationScreen(),
+        // Route for Authentication Checker Widget
+        AuthenticationChecker.routeName: (context) =>
+            const AuthenticationChecker(),
+        // Route for Signup Screen
+        SignupScreen.routeName: (context) =>
+        const SignupScreen(),
+      },
+    );
   }
 }

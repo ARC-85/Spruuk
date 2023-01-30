@@ -54,9 +54,6 @@ dependencies:
   path_provider: ^2.0.12 # Used for storing temporary files
 
 
-dependency_overrides:
-  path_provider_android: 2.0.22
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

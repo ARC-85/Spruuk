@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
@@ -23,6 +24,7 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
   UserType? _userType;
   UserModel? currentUser1;
   UserProvider? user;
+  FirebaseAuthentication? _auth;
 
   // Bool variables for animation while loading
   bool _isLoading = false;
@@ -38,9 +40,15 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
     });
   }
 
+  Future<void> _onPressedSignOutFunction() async {
+    _auth?.signOut();
+    Navigator.pushNamed(context, '/AuthenticationScreen');
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _auth = ref.watch(authenticationProvider);
 
     final authData = ref.watch(fireBaseAuthProvider);
     ref
@@ -63,7 +71,7 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
     }
     String? userImage = currentUser1?.userImage;
     print("this is userImage $userImage");
-    final _auth = ref.watch(authenticationProvider);
+
     return Scaffold(
         body: SafeArea(child: Consumer(builder: (context, ref, _) {
           return Scaffold(
@@ -93,7 +101,7 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     width: double.infinity,
                     child: MaterialButton(
-                      onPressed: () => _auth.signOut(),
+                      onPressed: () => _onPressedSignOutFunction(),
                       textColor: Colors.blue.shade700,
                       textTheme: ButtonTextTheme.primary,
                       minWidth: 100,
