@@ -58,7 +58,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 )),
             Positioned(
                 top: screenDimensions.height * 0.6,
-                left: screenDimensions.width * 0.5,
+                left: screenDimensions.width * 0.49,
                 child: SizedBox(
                   height: screenDimensions.height * 0.4,
                   width: screenDimensions.width,
