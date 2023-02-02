@@ -25,6 +25,7 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
   UserModel? currentUser1;
   UserProvider? user;
   FirebaseAuthentication? _auth;
+  String? userImage;
 
   // Bool variables for animation while loading
   bool _isLoading = false;
@@ -57,69 +58,86 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
         .then((value) {
       setState(() {
         currentUser1 = value;
+        userImage = currentUser1?.userImage;
+        print("this is userImage $userImage");
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
+    final screenDimensions = MediaQuery.of(context).size;
     if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
     } else {
       _userType = UserType.vendor;
     }
-    String? userImage = currentUser1?.userImage;
-    print("this is userImage $userImage");
 
-    return Scaffold(
-        body: SafeArea(child: Consumer(builder: (context, ref, _) {
-          return Scaffold(
-            body: SafeArea(
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 90,
-                    backgroundImage: currentUser1?.userImage == null
-                        ?
-                    const AssetImage("assets/images/circular_avatar.png")
-                        :
-                    Image.network(userImage!).image,
+
+    return Scaffold(body: SafeArea(child: Consumer(builder: (context, ref, _) {
+      return Scaffold(
+        body: Stack(children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              CircleAvatar(
+                radius: 90,
+                backgroundImage: currentUser1?.userImage == null
+                    ? const AssetImage("assets/images/circular_avatar.png")
+                    : Image.network(userImage!).image,
+              ),
+              if (_userType == UserType.client)
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('You are a client'),
+                ),
+              if (_userType == UserType.vendor)
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('You are a vendor'),
+                ),
+              Container(
+                padding: const EdgeInsets.only(top: 48.0),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                width: double.infinity,
+                child: MaterialButton(
+                  onPressed: () => _onPressedSignOutFunction(),
+                  textColor: Colors.blue.shade700,
+                  textTheme: ButtonTextTheme.primary,
+                  minWidth: 100,
+                  padding: const EdgeInsets.all(18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    side: BorderSide(color: Colors.blue.shade700),
                   ),
-                  if (_userType == UserType.client)
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('You are a client'),
+                  child: const Text(
+                    'Log Out',
+                    style: TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  if (_userType == UserType.vendor)
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('You are a vendor'),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(top: 48.0),
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    width: double.infinity,
-                    child: MaterialButton(
-                      onPressed: () => _onPressedSignOutFunction(),
-                      textColor: Colors.blue.shade700,
-                      textTheme: ButtonTextTheme.primary,
-                      minWidth: 100,
-                      padding: const EdgeInsets.all(18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        side: BorderSide(color: Colors.blue.shade700),
-                      ),
-                      child: const Text(
-                        'Log Out',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: screenDimensions.height * 0.8,
+            width: screenDimensions.width * 1.7,
+            child:FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/VendorAddProjectScreen');
+              },
+              materialTapTargetSize: MaterialTapTargetSize.padded,
+              backgroundColor:
+              const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+              child: const Icon(
+                Icons.add_circle,
               ),
             ),
-          );
-        })));
+          )
+        ],
+
+        ),
+      );
+    })));
   }
 }
