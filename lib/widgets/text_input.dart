@@ -8,7 +8,7 @@ class CustomTextInput extends ConsumerWidget {
   final TextEditingController? textEditingController;
   final String? hintText;
   final bool isTextObscured;
-  final IconData icon;
+  final IconData? icon;
   final String? Function(String?)? validator;
 
   const CustomTextInput({
@@ -16,7 +16,7 @@ class CustomTextInput extends ConsumerWidget {
     this.textEditingController,
     required this.hintText,
     required this.isTextObscured,
-    required this.icon,
+    this.icon,
     this.validator,
   }) : super(key: key);
 

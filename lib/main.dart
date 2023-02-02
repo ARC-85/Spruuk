@@ -5,6 +5,7 @@ import 'package:spruuk/screens/authentication_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/signup_screen.dart';
 import 'package:spruuk/screens/splash_screen.dart';
+import 'package:spruuk/screens/vendor_add_project_screen.dart';
 import 'firebase_options.dart';
 import 'package:spruuk/widgets/authentication_checker.dart';
 import 'package:spruuk/screens/error_screen.dart';
@@ -55,6 +56,9 @@ class SpruukApp extends ConsumerWidget {
         // Route for Signup Screen
         SignupScreen.routeName: (context) =>
         const SignupScreen(),
+        // Route for Vendor Project Add Screen
+        VendorAddProjectScreen.routeName: (context) =>
+        const VendorAddProjectScreen(),
       },
     );
   }
