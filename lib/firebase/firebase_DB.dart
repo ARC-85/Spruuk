@@ -31,4 +31,8 @@ class FirebaseDB {
   Future<void> fbAddProject(ProjectModel project) async {
     return projectCollection.doc(project.projectId).set(project.toJson());
   }
+
+  Future<QuerySnapshot> getProjects() async {
+    return projectCollection.get();
+  }
 }

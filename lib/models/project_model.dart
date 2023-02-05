@@ -77,7 +77,7 @@ class ProjectModel {
     );
   }
 
-  // Create User a Map of key values pairs from UserModel object
+  // Create a Map of key Project values pairs from ProjectModel object
   Map<String, dynamic> toJson() => _userToJson(this);
 }
 
