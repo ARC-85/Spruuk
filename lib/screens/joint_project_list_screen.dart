@@ -61,8 +61,11 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
       _auth = ref.watch(authenticationProvider);
 
       final authData = ref.watch(fireBaseAuthProvider);
-      currentUser1 = ref.watch(userProvider).currentUserData;
-      // allProjects = ref.watch(projectProvider).allProjects;
+
+      ref.watch(userProvider).getCurrentUserData(authData.currentUser!.uid);
+
+      ref.watch(projectProvider).getAllProjects();
+      allProjects = ref.watch(projectProvider).allProjects!;
       // print("this is all projects $allProjects");
       /*ref
           .watch(userProvider)
@@ -88,10 +91,11 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
     } else {
       _userType = UserType.vendor;
     }
+    currentUser1 = ref.watch(userProvider).currentUserData;
     allProjects = ref.watch(projectProvider).allProjects!;
     print("this is all projects $allProjects");
 
-    print("this is all project title ${allProjects[0].projectTitle}");
+    //print("this is all project title ${allProjects[0].projectTitle}");
 
 
     return Scaffold(
