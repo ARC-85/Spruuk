@@ -64,8 +64,13 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
 
       ref.watch(userProvider).getCurrentUserData(authData.currentUser!.uid);
 
-      ref.watch(projectProvider).getAllProjects();
-      allProjects = ref.watch(projectProvider).allProjects!;
+      // Load all projects first time page is entered, then watch for change in projects below in build.
+      ref.watch(projectProvider).getAllProjects().then((value) {
+        setState(() {
+          allProjects = value!;
+        });
+      });
+      // allProjects = ref.watch(projectProvider).allProjects!;
       // print("this is all projects $allProjects");
       /*ref
           .watch(userProvider)

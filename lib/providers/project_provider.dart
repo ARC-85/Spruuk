@@ -7,6 +7,7 @@ import 'package:spruuk/firebase/firebase_DB.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 class ProjectProvider {
@@ -62,3 +63,5 @@ final webProjectImage7Provider = StateProvider<Uint8List?>((ref) => null);
 final webProjectImage8Provider = StateProvider<Uint8List?>((ref) => null);
 final webProjectImage9Provider = StateProvider<Uint8List?>((ref) => null);
 final webProjectImage10Provider = StateProvider<Uint8List?>((ref) => null);
+
+final projectLatLngProvider = StateProvider<LatLng?>((ref) => null);

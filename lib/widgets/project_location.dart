@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -22,234 +26,61 @@ class MyProjectLocation extends ConsumerStatefulWidget {
   ConsumerState<MyProjectLocation> createState() => _MyProjectLocation();
 }
 
-
 class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
 
+  static const CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(37.42796133580664, -122.085749655962),
+    zoom: 14.4746,
+  );
 
-  // Dialog box for selecting source of profile images, adapted from https://www.udemy.com/course/learn-flutter-3-firebase-build-photo-sharing-social-app/
-  /*void _showImageDialog() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text("Please choose an option"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                //checking if the app is on mobile (i.e. not web)
-                if (!kIsWeb)
-                  InkWell(
-                    onTap: () {
-                      _getFromCamera();
-                    },
-                    child: Row(
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.all(4.0),
-                          child: Icon(
-                            Icons.camera,
-                            color: Colors.red,
-                          ),
-                        ),
-                        Text(
-                          "Camera",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ),
-                //checking if the app is on mobile (i.e. not web)
-                if (!kIsWeb)
-                  InkWell(
-                    onTap: () {
-                      _getFromGallery();
-                    },
-                    child: Row(
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.all(4.0),
-                          child: Icon(
-                            Icons.image,
-                            color: Colors.red,
-                          ),
-                        ),
-                        Text(
-                          "Gallery",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ),
-                //checking if the app is on web (i.e. not mobile)
-                if (kIsWeb)
-                  InkWell(
-                    onTap: () {
-                      _getFromWebGallery();
-                    },
-                    child: Row(
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.all(4.0),
-                          child: Icon(
-                            Icons.image,
-                            color: Colors.red,
-                          ),
-                        ),
-                        Text(
-                          "File",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          );
-        });
-  }
+  static const CameraPosition _kLake = CameraPosition(
+      bearing: 192.8334901395799,
+      target: LatLng(37.43296265331129, -122.08832357078792),
+      tilt: 59.440717697143555,
+      zoom: 19.151926040649414);
 
-  void _getFromCamera() async {
-    XFile? pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.camera);
-    _cropImage(pickedFile!.path);
-    Navigator.pop(context);
-  }
+  /*LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
+  GoogleMapController? _controller;
+  Location _location = Location();
 
-  void _getFromGallery() async {
-    XFile? pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
-    _cropImage(pickedFile!.path);
-    Navigator.pop(context);
-  }
-
-  void _getFromWebGallery() async {
-    XFile? pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      var f = await pickedFile.readAsBytes();
-      setState(() {
-        webProjectImage = f;
-        if (widget.webProjectImage1Provider != null) {
-          ref.read(widget.webProjectImage1Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage2Provider != null) {
-          ref.read(widget.webProjectImage2Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage3Provider != null) {
-          ref.read(widget.webProjectImage3Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage4Provider != null) {
-          ref.read(widget.webProjectImage4Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage5Provider != null) {
-          ref.read(widget.webProjectImage5Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage6Provider != null) {
-          ref.read(widget.webProjectImage6Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage7Provider != null) {
-          ref.read(widget.webProjectImage7Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage8Provider != null) {
-          ref.read(widget.webProjectImage8Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage9Provider != null) {
-          ref.read(widget.webProjectImage9Provider!.notifier).state =
-              webProjectImage;
-        }
-        if (widget.webProjectImage10Provider != null) {
-          ref.read(widget.webProjectImage10Provider!.notifier).state =
-              webProjectImage;
-        }
-        projectImageFile = File('a');
-      });
-    } else {
-      print("No image has been picked");
-    }
-    Navigator.pop(context);
-  }
-
-  void _cropImage(filePath) async {
-    CroppedFile? croppedImage = await ImageCropper()
-        .cropImage(sourcePath: filePath, maxHeight: 1080, maxWidth: 1080);
-
-    if (croppedImage != null) {
-      setState(() {
-        projectImageFile = File(croppedImage.path);
-        if (widget.projectImage1Provider != null) {
-          ref.read(widget.projectImage1Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage2Provider != null) {
-          ref.read(widget.projectImage2Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage3Provider != null) {
-          ref.read(widget.projectImage3Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage4Provider != null) {
-          ref.read(widget.projectImage4Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage5Provider != null) {
-          ref.read(widget.projectImage5Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage6Provider != null) {
-          ref.read(widget.projectImage6Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage7Provider != null) {
-          ref.read(widget.projectImage7Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage8Provider != null) {
-          ref.read(widget.projectImage8Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage9Provider != null) {
-          ref.read(widget.projectImage9Provider!.notifier).state =
-              projectImageFile;
-        }
-        if (widget.projectImage10Provider != null) {
-          ref.read(widget.projectImage10Provider!.notifier).state =
-              projectImageFile;
-        }
-      });
-    }
+  void _onMapCreated(GoogleMapController _cntlr)
+  {
+    _controller = _cntlr;
+    _location.onLocationChanged.listen((l) {
+      _controller?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(l.latitude!, l.longitude!),zoom: 15),
+        ),
+      );
+    });
   }*/
+
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        /*GestureDetector(
-          onTap: () {
-            _showImageDialog();
-          },
-          child: CircleAvatar(
-            radius: 90,
-            backgroundImage: !kIsWeb
-                ? projectImageFile == null
-                ? const AssetImage("assets/images/circular_avatar.png")
-                : Image.file(projectImageFile!).image
-                : webProjectImage == null
-                ? const AssetImage("assets/images/circular_avatar.png")
-                : Image.memory(webProjectImage!).image,
+    return Container(
+        height: 800,
+        width: 800,
+        child: Stack(children: [
+          GoogleMap(
+            mapType: MapType.hybrid,
+            initialCameraPosition: _kGooglePlex,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
           ),
-        ),*/
-      ],
-    );
+          /*FloatingActionButton.extended(
+            onPressed: _goToTheLake,
+            label: const Text('To the lake!'),
+            icon: const Icon(Icons.directions_boat),
+          )*/
+        ]));
+  }
+
+  Future<void> _goToTheLake() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
 }
