@@ -17,6 +17,7 @@ import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
+import 'package:spruuk/widgets/project_location.dart';
 import 'package:spruuk/widgets/text_input.dart';
 import 'dart:io';
 
@@ -621,6 +622,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                   border: InputBorder.none,
                                                 ),
                                               )),
+                                          MyProjectLocation(),
                                           if (projectImageFile != null ||
                                               webProjectImage != null)
                                             const MyTextLabel(textLabel: "Additional Project Images",

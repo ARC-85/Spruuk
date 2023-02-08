@@ -52,6 +52,11 @@ dependencies:
   image_cropper: ^3.0.1 # Used for cropping selected images from different sources
   fluttertoast: ^8.1.2 # Used for providing on screen notifications (e.g. errors)
   path_provider: ^2.0.12 # Used for storing temporary files
+  google_maps_flutter: ^2.2.3 # Used for accessing Google maps
+  location: ^4.4.0 # Used for accessing user's current location
+  flutter_config: ^2.0.0 # Used for accessing Flutter environmental variables
+
+
 
 
 dev_dependencies:

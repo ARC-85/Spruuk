@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
@@ -13,6 +14,7 @@ import 'package:spruuk/screens/loading_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterConfig.loadEnvVariables();
   runApp(const ProviderScope(child: SpruukApp()));
 }
 
