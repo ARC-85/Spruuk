@@ -27,7 +27,19 @@ class MyProjectLocation extends ConsumerStatefulWidget {
 }
 
 class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
-  final Completer<GoogleMapController> _controller =
+  bool firstLoad = true;
+
+  @override
+  void didChangeDependencies() {
+    if (firstLoad = true) {
+      setState(() {
+        getPermissions();
+      });
+    }
+    firstLoad = false;
+    super.didChangeDependencies();
+  }
+  /*final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -39,28 +51,111 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
       bearing: 192.8334901395799,
       target: LatLng(37.43296265331129, -122.08832357078792),
       tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+      zoom: 19.151926040649414);*/
 
-  /*LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
+  LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
   GoogleMapController? _controller;
-  Location _location = Location();
 
-  void _onMapCreated(GoogleMapController _cntlr)
-  {
+  double? lat;
+  double? lng;
+
+  final Location location = Location();
+
+  bool? _serviceEnabled;
+  PermissionStatus? _permissionGranted;
+  LocationData? _locationData;
+
+  // Setting up the map, taken from https://levelup.gitconnected.com/how-to-add-google-maps-in-a-flutter-app-and-get-the-current-location-of-the-user-dynamically-2172f0be53f6
+  void _onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
-    _location.onLocationChanged.listen((l) {
+    location.onLocationChanged.listen((l) {
+      //lat = l.latitude;
+      //lng = l.longitude;
       _controller?.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude!, l.longitude!),zoom: 15),
+          lat == null
+              ? CameraPosition(
+                  target: LatLng(l.latitude!, l.longitude!), zoom: 15)
+              : CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
         ),
       );
     });
-  }*/
+  }
+
+  Future<void> getPermissions() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled!) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled!) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+  }
 
 
   @override
   Widget build(BuildContext context) {
+    getPermissions();
+    lat = ref.watch(projectLatLngProvider)?.latitude;
+    lng = ref.watch(projectLatLngProvider)?.longitude;
+
+
+
     return Container(
+      height: 300,
+      width: 300,
+      child: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition:
+                CameraPosition(target: _initialcameraposition),
+            mapType: MapType.normal,
+            onMapCreated: _onMapCreated,
+            myLocationEnabled: true,
+            markers: <Marker>{
+              // taken from https://stackoverflow.com/questions/55003179/flutter-drag-marker-and-get-new-position
+              Marker(
+                  onTap: () {
+                    //Navigator.pushNamed(context, '/LocationSelectionScreen');
+                  },
+                  //draggable: true,
+                  markerId: MarkerId('Marker'),
+                  position: lat != null ? LatLng(lat!, lng!) : const LatLng(0, 0),
+                  onDragEnd: ((newPosition) {
+                    //lat = newPosition.latitude;
+                    //lng = newPosition.longitude;
+                    print(newPosition.latitude);
+                    print(newPosition.longitude);
+                  }))
+            },
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/LocationSelectionScreen');
+            },
+            materialTapTargetSize: MaterialTapTargetSize.padded,
+            backgroundColor:
+            const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+            child: const Icon(
+              Icons.map_outlined,
+            ),
+          )
+        ],
+      ),
+    );
+
+    /*return Container(
         height: 800,
         width: 800,
         child: Stack(children: [
@@ -76,11 +171,13 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
             label: const Text('To the lake!'),
             icon: const Icon(Icons.directions_boat),
           )*/
-        ]));
+        ]));*/
   }
 
-  Future<void> _goToTheLake() async {
+
+
+  /*Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
+  }*/
 }
