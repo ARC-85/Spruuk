@@ -13,6 +13,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
 
+
 class MyProjectLocation extends ConsumerStatefulWidget {
   const MyProjectLocation({
     Key? key,
@@ -140,8 +141,12 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
                   }))
             },
           ),
+          // Floating action button to allow user to switch to bigger map when entering location of project.
           FloatingActionButton(
             onPressed: () {
+              // Provider is initialised to prevent no marker appearing on location screen, i.e. if lat/lng are still null.
+              LatLng _latLng = LatLng(_locationData!.latitude!, _locationData!.longitude!);
+              lat == null ? ref.read(projectLatLngProvider.notifier).state = _latLng : ref.read(projectLatLngProvider.notifier).state = LatLng(lat!, lng!);
               Navigator.pushNamed(context, '/LocationSelectionScreen');
             },
             materialTapTargetSize: MaterialTapTargetSize.padded,
