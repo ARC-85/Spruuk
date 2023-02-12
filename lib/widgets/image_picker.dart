@@ -33,26 +33,26 @@ class MyImagePicker extends ConsumerStatefulWidget {
     this.webProjectImage9Provider,
     this.webProjectImage10Provider,
   }) : super(key: key);
-  final StateProvider<File?>? projectImage1Provider;
-  final StateProvider<File?>? projectImage2Provider;
-  final StateProvider<File?>? projectImage3Provider;
-  final StateProvider<File?>? projectImage4Provider;
-  final StateProvider<File?>? projectImage5Provider;
-  final StateProvider<File?>? projectImage6Provider;
-  final StateProvider<File?>? projectImage7Provider;
-  final StateProvider<File?>? projectImage8Provider;
-  final StateProvider<File?>? projectImage9Provider;
-  final StateProvider<File?>? projectImage10Provider;
-  final StateProvider<Uint8List?>? webProjectImage1Provider;
-  final StateProvider<Uint8List?>? webProjectImage2Provider;
-  final StateProvider<Uint8List?>? webProjectImage3Provider;
-  final StateProvider<Uint8List?>? webProjectImage4Provider;
-  final StateProvider<Uint8List?>? webProjectImage5Provider;
-  final StateProvider<Uint8List?>? webProjectImage6Provider;
-  final StateProvider<Uint8List?>? webProjectImage7Provider;
-  final StateProvider<Uint8List?>? webProjectImage8Provider;
-  final StateProvider<Uint8List?>? webProjectImage9Provider;
-  final StateProvider<Uint8List?>? webProjectImage10Provider;
+  final AutoDisposeStateProvider<File?>? projectImage1Provider;
+  final AutoDisposeStateProvider<File?>? projectImage2Provider;
+  final AutoDisposeStateProvider<File?>? projectImage3Provider;
+  final AutoDisposeStateProvider<File?>? projectImage4Provider;
+  final AutoDisposeStateProvider<File?>? projectImage5Provider;
+  final AutoDisposeStateProvider<File?>? projectImage6Provider;
+  final AutoDisposeStateProvider<File?>? projectImage7Provider;
+  final AutoDisposeStateProvider<File?>? projectImage8Provider;
+  final AutoDisposeStateProvider<File?>? projectImage9Provider;
+  final AutoDisposeStateProvider<File?>? projectImage10Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage1Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage2Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage3Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage4Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage5Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage6Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage7Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage8Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage9Provider;
+  final AutoDisposeStateProvider<Uint8List?>? webProjectImage10Provider;
   @override
   ConsumerState<MyImagePicker> createState() => _MyImagePicker();
 }

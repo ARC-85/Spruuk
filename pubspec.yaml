@@ -55,6 +55,7 @@ dependencies:
   google_maps_flutter: ^2.2.3 # Used for accessing Google maps
   location: ^4.4.0 # Used for accessing user's current location
   flutter_config: ^2.0.0 # Used for accessing Flutter environmental variables
+  calendar_date_picker2: ^0.3.7 # Used for inputting dates
 
 
 

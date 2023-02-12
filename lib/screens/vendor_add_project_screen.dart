@@ -1,3 +1,4 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,7 @@ import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
+import 'package:spruuk/widgets/date_picker.dart';
 import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
 import 'package:spruuk/widgets/project_location.dart';
@@ -54,6 +56,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
       });
     });
   }
+
 
 // TextEditingControllers for data inputs
   final TextEditingController _projectTitle = TextEditingController(text: '');
@@ -143,6 +146,8 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
   // Controller for scrollbars, taken from https://stackoverflow.com/questions/69853729/flutter-the-scrollbars-scrollcontroller-has-no-scrollposition-attached
   ScrollController _scrollController = ScrollController();
 
+
+
   @override
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
@@ -212,6 +217,15 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
             webProjectImage10
           ];
 
+          // Set up variables for location based on provider
+          projectLat = ref.watch(projectLatLngProvider)?.latitude;
+          projectLng = ref.watch(projectLatLngProvider)?.longitude;
+
+          // Set up variables for completion date based on provider
+          projectCompletionDay = ref.watch(projectDateProvider)?[0]?.day;
+          projectCompletionMonth = ref.watch(projectDateProvider)?[0]?.month;
+          projectCompletionYear = ref.watch(projectDateProvider)?[0]?.year;
+
           // Special function for uploading image 1 on web and Android apps
           Future<void> _image1Upload() async {
             // If web...
@@ -219,18 +233,19 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
               projectImages?.clear();
               if (webProjectImage != null) {
                 // Get firebase storage ref for storing profile images
-                final ref = FirebaseStorage.instance
+                final fbRef = FirebaseStorage.instance
                     .ref()
                     .child('project_images')
                     .child('${currentUser1?.uid}${DateTime.now()}1.jpg');
-                await ref.putData(
+                await fbRef.putData(
                     webProjectImage!,
                     SettableMetadata(
                         contentType:
                             'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
-                final imageDownloadURL = await ref.getDownloadURL();
+                final imageDownloadURL = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL);
+                ref.read(webProjectImageProvider.notifier).state = null;
               }
             } else {
               // If Android...
@@ -281,18 +296,19 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
             if (kIsWeb) {
               if (webProjectImage2 != null) {
                 // Get firebase storage ref for storing profile images
-                final ref = FirebaseStorage.instance
+                final fbRef = FirebaseStorage.instance
                     .ref()
                     .child('project_images')
                     .child('${currentUser1?.uid}${DateTime.now()}2.jpg');
-                await ref.putData(
+                await fbRef.putData(
                     webProjectImage2!,
                     SettableMetadata(
                         contentType:
                             'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
-                final imageDownloadURL2 = await ref.getDownloadURL();
+                final imageDownloadURL2 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL2);
+                ref.read(webProjectImage2Provider.notifier).state = null;
               }
             } else {
               // If Android...
@@ -314,6 +330,294 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
             }
           }
 
+          // Special function for uploading image 3 on web and Android apps
+          Future<void> _image3Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage3 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}3.jpg');
+                await fbRef.putData(
+                    webProjectImage3!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL3 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL3);
+                ref.read(webProjectImage3Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile3 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}3.jpg');
+                await fbRef.putFile(projectImageFile3!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL3 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL3);
+                ref.read(projectImage3Provider.notifier).state = null;
+              }
+            }
+          }
+
+          // Special function for uploading image 4 on web and Android apps
+          Future<void> _image4Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage4 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}4.jpg');
+                await fbRef.putData(
+                    webProjectImage4!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL4 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL4);
+                ref.read(webProjectImage4Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile4 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}4.jpg');
+                await fbRef.putFile(projectImageFile4!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL4 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL4);
+                ref.read(projectImage4Provider.notifier).state = null;
+              }
+            }
+          }
+
+          // Special function for uploading image 5 on web and Android apps
+          Future<void> _image5Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage5 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}5.jpg');
+                await fbRef.putData(
+                    webProjectImage5!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL5 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL5);
+                ref.read(webProjectImage5Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile5 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}5.jpg');
+                await fbRef.putFile(projectImageFile5!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL5 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL5);
+                ref.read(projectImage5Provider.notifier).state = null;
+              }
+            }
+          }
+
+          // Special function for uploading image 6 on web and Android apps
+          Future<void> _image6Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage6 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}6.jpg');
+                await fbRef.putData(
+                    webProjectImage6!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL6 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL6);
+                ref.read(webProjectImage6Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile6 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}6.jpg');
+                await fbRef.putFile(projectImageFile6!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL6 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL6);
+                ref.read(projectImage6Provider.notifier).state = null;
+              }
+            }
+          }
+
+          // Special function for uploading image 7 on web and Android apps
+          Future<void> _image7Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage7 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}7.jpg');
+                await fbRef.putData(
+                    webProjectImage7!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL7 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL7);
+                ref.read(webProjectImage7Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile7 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}7.jpg');
+                await fbRef.putFile(projectImageFile7!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL7 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL7);
+                ref.read(projectImage7Provider.notifier).state = null;
+              }
+            }
+          }
+
+          // Special function for uploading image 8 on web and Android apps
+          Future<void> _image8Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage8 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}8.jpg');
+                await fbRef.putData(
+                    webProjectImage8!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL8 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL8);
+                ref.read(webProjectImage8Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile8 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}8.jpg');
+                await fbRef.putFile(projectImageFile8!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL8 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL8);
+                ref.read(projectImage8Provider.notifier).state = null;
+              }
+            }
+          }
+
+          // Special function for uploading image 9 on web and Android apps
+          Future<void> _image9Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage9 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}9.jpg');
+                await fbRef.putData(
+                    webProjectImage9!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL9 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL9);
+                ref.read(webProjectImage9Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile9 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}9.jpg');
+                await fbRef.putFile(projectImageFile9!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL9 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL9);
+                ref.read(projectImage9Provider.notifier).state = null;
+              }
+            }
+          }
+
+          // Special function for uploading image 9 on web and Android apps
+          Future<void> _image10Upload() async {
+            // If web...
+            if (kIsWeb) {
+              if (webProjectImage10 != null) {
+                // Get firebase storage ref for storing profile images
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}10.jpg');
+                await fbRef.putData(
+                    webProjectImage10!,
+                    SettableMetadata(
+                        contentType:
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL10 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL10);
+                ref.read(webProjectImage9Provider.notifier).state = null;
+              }
+            } else {
+              // If Android...
+              if (projectImageFile10 != null && currentUser1?.uid != null) {
+                final fbRef = FirebaseStorage.instance
+                    .ref()
+                    .child('project_images')
+                    .child('${currentUser1?.uid}${DateTime.now()}10.jpg');
+                await fbRef.putFile(projectImageFile10!);
+                // Getting the URL for the image once uploaded to Firebase storage
+                final imageDownloadURL10 = await fbRef.getDownloadURL();
+                projectImages?.add(imageDownloadURL10);
+                ref.read(projectImage10Provider.notifier).state = null;
+              }
+            }
+          }
+
           // Press function used when the user submits form for project upload
           Future<void> _onPressedFunction() async {
             // Perform validation of form, if not valid then return/do nothing
@@ -328,6 +632,14 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
               print("this is 2nd projectIMages $projectImages");
               await _image1Upload();
               await _image2Upload();
+              await _image3Upload();
+              await _image4Upload();
+              await _image5Upload();
+              await _image6Upload();
+              await _image7Upload();
+              await _image8Upload();
+              await _image9Upload();
+              await _image10Upload();
 
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
@@ -426,6 +738,10 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                             projectImage1Provider:
                                                 projectImageProvider,
                                           ),
+                                          const MyTextLabel(textLabel: "Image 1",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
                                           Container(
                                               height: 70,
                                               margin:
@@ -623,6 +939,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                 ),
                                               )),
                                           MyProjectLocation(),
+                                          MyDatePicker(),
                                           if (projectImageFile != null ||
                                               webProjectImage != null)
                                             const MyTextLabel(textLabel: "Additional Project Images",
@@ -635,6 +952,108 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                             projectImage2Provider:
                                                 projectImage2Provider,
                                           ),
+                                          if (projectImageFile != null ||
+                                              webProjectImage != null)
+                                          const MyTextLabel(textLabel: "Image 2",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile2 != null ||
+                                              webProjectImage2 != null)
+                                            MyImagePicker(
+                                              projectImage3Provider:
+                                              projectImage3Provider,
+                                            ),
+                                          if (projectImageFile2 != null ||
+                                              webProjectImage2 != null)
+                                          const MyTextLabel(textLabel: "Image 3",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile3 != null ||
+                                              webProjectImage3 != null)
+                                            MyImagePicker(
+                                              projectImage4Provider:
+                                              projectImage4Provider,
+                                            ),
+                                          if (projectImageFile3 != null ||
+                                              webProjectImage3 != null)
+                                          const MyTextLabel(textLabel: "Image 4",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile4 != null ||
+                                              webProjectImage4 != null)
+                                            MyImagePicker(
+                                              projectImage5Provider:
+                                              projectImage5Provider,
+                                            ),
+                                          if (projectImageFile4 != null ||
+                                              webProjectImage4 != null)
+                                          const MyTextLabel(textLabel: "Image 5",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile5 != null ||
+                                              webProjectImage5 != null)
+                                            MyImagePicker(
+                                              projectImage6Provider:
+                                              projectImage6Provider,
+                                            ),
+                                          if (projectImageFile5 != null ||
+                                              webProjectImage5 != null)
+                                          const MyTextLabel(textLabel: "Image 6",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile6 != null ||
+                                              webProjectImage6 != null)
+                                            MyImagePicker(
+                                              projectImage7Provider:
+                                              projectImage7Provider,
+                                            ),
+                                          if (projectImageFile6 != null ||
+                                              webProjectImage6 != null)
+                                          const MyTextLabel(textLabel: "Image 7",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile7 != null ||
+                                              webProjectImage7 != null)
+                                            MyImagePicker(
+                                              projectImage8Provider:
+                                              projectImage8Provider,
+                                            ),
+                                          if (projectImageFile7 != null ||
+                                              webProjectImage7 != null)
+                                          const MyTextLabel(textLabel: "Image 8",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile8 != null ||
+                                              webProjectImage8 != null)
+                                            MyImagePicker(
+                                              projectImage9Provider:
+                                              projectImage9Provider,
+                                            ),
+                                          if (projectImageFile8 != null ||
+                                              webProjectImage8 != null)
+                                          const MyTextLabel(textLabel: "Image 9",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
+                                          if (projectImageFile9 != null ||
+                                              webProjectImage9 != null)
+                                            MyImagePicker(
+                                              projectImage10Provider:
+                                              projectImage10Provider,
+                                            ),
+                                          if (projectImageFile9 != null ||
+                                              webProjectImage9 != null)
+                                          const MyTextLabel(textLabel: "Image 10",
+                                              color: null,
+                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,)),
                                         ],
                                       ),
                                     )
@@ -677,4 +1096,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
       ),
     );
   }
+
+
+
 }

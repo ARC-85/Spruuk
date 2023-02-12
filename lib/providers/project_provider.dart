@@ -42,26 +42,27 @@ class ProjectProvider {
 final projectProvider = Provider((ref) => ProjectProvider());
 
 // StateProviders to assist multiple image uploads for projects all within one image picker widget. Looked up https://felixblaschke.medium.com/riverpod-simplified-an-introduction-to-flutters-most-advanced-state-management-package-c698b4d5a019
-final projectImageProvider = StateProvider<File?>((ref) => null);
-final projectImage2Provider = StateProvider<File?>((ref) => null);
-final projectImage3Provider = StateProvider<File?>((ref) => null);
-final projectImage4Provider = StateProvider<File?>((ref) => null);
-final projectImage5Provider = StateProvider<File?>((ref) => null);
-final projectImage6Provider = StateProvider<File?>((ref) => null);
-final projectImage7Provider = StateProvider<File?>((ref) => null);
-final projectImage8Provider = StateProvider<File?>((ref) => null);
-final projectImage9Provider = StateProvider<File?>((ref) => null);
-final projectImage10Provider = StateProvider<File?>((ref) => null);
+final projectImageProvider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage2Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage3Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage4Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage5Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage6Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage7Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage8Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage9Provider = StateProvider.autoDispose<File?>((ref) => null);
+final projectImage10Provider = StateProvider.autoDispose<File?>((ref) => null);
 
-final webProjectImageProvider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage2Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage3Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage4Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage5Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage6Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage7Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage8Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage9Provider = StateProvider<Uint8List?>((ref) => null);
-final webProjectImage10Provider = StateProvider<Uint8List?>((ref) => null);
+final webProjectImageProvider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage2Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage3Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage4Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage5Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage6Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage7Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage8Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage9Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage10Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
 
-final projectLatLngProvider = StateProvider<LatLng?>((ref) => null);
+final projectLatLngProvider = StateProvider.autoDispose<LatLng?>((ref) => null);
+final projectDateProvider = StateProvider.autoDispose<List<DateTime?>?>((ref) => null);
