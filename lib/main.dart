@@ -11,6 +11,7 @@ import 'firebase_options.dart';
 import 'package:spruuk/widgets/authentication_checker.dart';
 import 'package:spruuk/screens/error_screen.dart';
 import 'package:spruuk/screens/loading_screen.dart';
+import 'package:spruuk/screens/location_selection_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +62,9 @@ class SpruukApp extends ConsumerWidget {
         // Route for Vendor Project Add Screen
         VendorAddProjectScreen.routeName: (context) =>
         const VendorAddProjectScreen(),
+        // Route for Location Selection Screen
+        LocationSelectionScreen.routeName: (context) =>
+        const LocationSelectionScreen(),
       },
     );
   }
