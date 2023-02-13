@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
 
 class MyDatePicker extends ConsumerStatefulWidget {
+  const MyDatePicker({super.key});
+
 
   @override
   ConsumerState<MyDatePicker> createState() => _MyDatePicker();
@@ -83,7 +85,7 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 5),
         //const Text('Single Date Picker (With default value)'),
         CalendarDatePicker2(
           config: config,
@@ -93,11 +95,11 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
                 _singleDatePickerValueWithDefaultValue = values;
                 ref.read(projectDateProvider.notifier).state = _singleDatePickerValueWithDefaultValue;}),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 5),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Selection(s):  '),
+            const Text('Selection:  '),
             const SizedBox(width: 10),
             Text(
               _getValueText(
@@ -119,16 +121,16 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
       child: SizedBox(
         width: screenDimensions.width,
         child: Container(
-            height: 430,
+            height: 405,
             width: 400,
             margin:
             const EdgeInsets.symmetric(
                 horizontal: 24,
-                vertical: 16),
+                vertical: 2),
             padding:
             const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 4),
+                vertical: 2),
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius:

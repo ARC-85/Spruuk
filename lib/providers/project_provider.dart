@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,4 +66,7 @@ final webProjectImage9Provider = StateProvider.autoDispose<Uint8List?>((ref) => 
 final webProjectImage10Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
 
 final projectLatLngProvider = StateProvider.autoDispose<LatLng?>((ref) => null);
+
 final projectDateProvider = StateProvider.autoDispose<List<DateTime?>?>((ref) => null);
+
+final projectCostProvider = StateProvider.autoDispose<RangeValues?>((ref) => null);
