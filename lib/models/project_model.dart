@@ -7,8 +7,8 @@ class ProjectModel {
   String projectUserEmail;
   String? projectUserImage;
   String? projectType;
-  int? projectMinCost;
-  int? projectMaxCost;
+  double? projectMinCost;
+  double? projectMaxCost;
   double? projectLat;
   double? projectLng;
   double? projectZoom;
@@ -32,8 +32,8 @@ class ProjectModel {
     this.projectUserEmail = "",
     this.projectUserImage = "",
     this.projectType = "",
-    this.projectMinCost = 0,
-    this.projectMaxCost = 0,
+    this.projectMinCost = 0.0,
+    this.projectMaxCost = 0.0,
     this.projectLat = 0.0,
     this.projectLng = 0.0,
     this.projectZoom = 0.0,

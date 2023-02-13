@@ -3,6 +3,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,6 +17,7 @@ import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
+import 'package:spruuk/widgets/cost_range.dart';
 import 'package:spruuk/widgets/date_picker.dart';
 import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
@@ -24,6 +26,8 @@ import 'package:spruuk/widgets/text_input.dart';
 import 'dart:io';
 
 import 'package:spruuk/widgets/text_label.dart';
+
+enum AdvancedStatus { basic, advanced }
 
 class VendorAddProjectScreen extends ConsumerStatefulWidget {
   static const routeName = '/VendorAddProjectScreen';
@@ -36,6 +40,8 @@ class VendorAddProjectScreen extends ConsumerStatefulWidget {
 
 class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  AdvancedStatus _advancedStatus = AdvancedStatus.basic;
 
   UserModel? currentUser1;
   UserProvider? user;
@@ -57,7 +63,6 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
     });
   }
 
-
 // TextEditingControllers for data inputs
   final TextEditingController _projectTitle = TextEditingController(text: '');
   final TextEditingController _projectBriefDescription =
@@ -74,8 +79,8 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
   String? projectUserId;
   String? projectUserEmail;
   String? projectUserImage;
-  int? projectMinCost;
-  int? projectMaxCost;
+  double? projectMinCost;
+  double? projectMaxCost;
   double? projectLat;
   double? projectLng;
   double? projectZoom;
@@ -112,8 +117,11 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
   List<File?>? projectImageFileList;
   List<Uint8List?>? webProjectImageList;
 
-  // Value of user type drop down menu
+  // Value of project type drop down menu
   String selectedValue = "New Build";
+
+  // Value of project style drop down menu
+  String selectedStyleValue = "None";
 
   bool _isLoading = false;
 
@@ -146,7 +154,17 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
   // Controller for scrollbars, taken from https://stackoverflow.com/questions/69853729/flutter-the-scrollbars-scrollcontroller-has-no-scrollposition-attached
   ScrollController _scrollController = ScrollController();
 
-
+  void _switchAdvanced() {
+    if (_advancedStatus == AdvancedStatus.basic) {
+      setState(() {
+        _advancedStatus = AdvancedStatus.advanced;
+      });
+    } else {
+      setState(() {
+        _advancedStatus = AdvancedStatus.basic;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,15 +172,13 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
     final _projectProvider = ref.watch(projectProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Vendor Project Add"),
-      actions: [
-        IconButton(onPressed: () => Navigator.of(context).pop(),
+      appBar: AppBar(title: const Text("Vendor Project Add"), actions: [
+        IconButton(
+            onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(
-                Icons.cancel,
-            size: 25,
-            )
-        ),
+              Icons.cancel,
+              size: 25,
+            )),
       ]),
       resizeToAvoidBottomInset: false,
       drawer: NavDrawer(),
@@ -225,6 +241,10 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
           projectCompletionDay = ref.watch(projectDateProvider)?[0]?.day;
           projectCompletionMonth = ref.watch(projectDateProvider)?[0]?.month;
           projectCompletionYear = ref.watch(projectDateProvider)?[0]?.year;
+
+          // Set up variables for price range values based on provider
+          projectMinCost = ref.watch(projectCostProvider)?.start;
+          projectMaxCost = ref.watch(projectCostProvider)?.end;
 
           // Special function for uploading image 1 on web and Android apps
           Future<void> _image1Upload() async {
@@ -344,7 +364,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage3!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL3 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL3);
@@ -380,7 +400,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage4!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL4 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL4);
@@ -416,7 +436,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage5!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL5 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL5);
@@ -452,7 +472,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage6!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL6 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL6);
@@ -488,7 +508,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage7!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL7 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL7);
@@ -524,7 +544,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage8!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL8 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL8);
@@ -560,7 +580,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage9!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL9 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL9);
@@ -596,7 +616,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage10!,
                     SettableMetadata(
                         contentType:
-                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL10 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL10);
@@ -628,6 +648,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
             try {
               // User type selected by dropdown menu
               projectType = selectedValue;
+              projectStyle = selectedStyleValue;
               loading();
               print("this is 2nd projectIMages $projectImages");
               await _image1Upload();
@@ -733,15 +754,18 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-
                                           MyImagePicker(
                                             projectImage1Provider:
                                                 projectImageProvider,
                                           ),
-                                          const MyTextLabel(textLabel: "Image 1",
+                                          const MyTextLabel(
+                                              textLabel: "Image 1",
                                               color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                              textStyle: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.0,
+                                              )),
                                           Container(
                                               height: 70,
                                               margin:
@@ -905,155 +929,404 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                 icon: (Icons.add),
                                                 validator: customTitleValidator,
                                               )),
-                                          Container(
-                                            height: 100,
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 4),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
-                                              child: TextFormField(  // Need to have a special text input to accommodate long version
-                                                cursorColor: Colors.white,
-                                                obscureText: false,
-                                                controller: _projectLongDescription,
-                                                keyboardType: TextInputType.multiline, // From https://stackoverflow.com/questions/45900387/multi-line-textfield-in-flutter
-                                                maxLines: null,
-                                                decoration: const InputDecoration(
-                                                  hintText: "Long Description",
-                                                  hintStyle: TextStyle(color: Colors.black45),
-                                                  helperStyle: TextStyle(
-                                                    color: Colors.black45,
-                                                    fontSize: 18.0,
-                                                  ),
-
-                                                  alignLabelWithHint: true,
-                                                  border: InputBorder.none,
-                                                ),
+                                          const MyTextLabel(
+                                              textLabel: "Project Location",
+                                              color: null,
+                                              textStyle: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20.0,
                                               )),
                                           MyProjectLocation(),
-                                          MyDatePicker(),
-                                          if (projectImageFile != null ||
-                                              webProjectImage != null)
-                                            const MyTextLabel(textLabel: "Additional Project Images",
-                                                color: null,
-                                                textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                  fontSize: 20.0,)),
-                                          if (projectImageFile != null ||
-                                              webProjectImage != null)
-                                          MyImagePicker(
-                                            projectImage2Provider:
-                                                projectImage2Provider,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 16, bottom: 4.0),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                text: _advancedStatus ==
+                                                        AdvancedStatus.basic
+                                                    ? 'Show Advanced Inputs?'
+                                                    : 'Show Basic Inputs?',
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                children: [
+                                                  TextSpan(
+                                                      text: ' Click Here',
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .blue.shade300,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                      recognizer:
+                                                          TapGestureRecognizer()
+                                                            ..onTap = () {
+                                                              _switchAdvanced();
+                                                            })
+                                                ],
+                                              ),
+                                            ),
                                           ),
+                                          if (_advancedStatus ==
+                                              AdvancedStatus.advanced)
+                                            Container(
+                                                height: 100,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 24,
+                                                        vertical: 16),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 4),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25)),
+                                                child: TextFormField(
+                                                  // Need to have a special text input to accommodate long version
+                                                  cursorColor: Colors.white,
+                                                  obscureText: false,
+                                                  controller:
+                                                      _projectLongDescription,
+                                                  keyboardType: TextInputType
+                                                      .multiline, // From https://stackoverflow.com/questions/45900387/multi-line-textfield-in-flutter
+                                                  maxLines: null,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    hintText:
+                                                        "Long Description",
+                                                    hintStyle: TextStyle(
+                                                        color: Colors.black45),
+                                                    helperStyle: TextStyle(
+                                                      color: Colors.black45,
+                                                      fontSize: 18.0,
+                                                    ),
+                                                    alignLabelWithHint: true,
+                                                    border: InputBorder.none,
+                                                  ),
+                                                )),
+                                          if (_advancedStatus ==
+                                              AdvancedStatus.advanced)
+                                            const MyTextLabel(
+                                                textLabel:
+                                                    "Project Completion Date",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20.0,
+                                                )),
+                                          if (_advancedStatus ==
+                                              AdvancedStatus.advanced)
+                                            MyDatePicker(),
+                                          if (_advancedStatus ==
+                                              AdvancedStatus.advanced)
+                                            const MyTextLabel(
+                                                textLabel: "Project Style",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20.0,
+                                                )),
+                                          if (_advancedStatus ==
+                                              AdvancedStatus.advanced)
+                                            Container(
+                                                height: 70,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 24,
+                                                        vertical: 8),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 4),
+                                                decoration: BoxDecoration(
+                                                    color: const Color.fromRGBO(
+                                                            0, 0, 95, 1)
+                                                        .withOpacity(0),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25)),
+                                                child: DropdownButton2(
+                                                  isExpanded: true,
+                                                  hint: Row(
+                                                    children: const [
+                                                      Icon(
+                                                        Icons.list,
+                                                        size: 16,
+                                                        color: Colors.black45,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Expanded(
+                                                        child: Text(
+                                                          'Project Style',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black45,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  items: [
+                                                    "None",
+                                                    "Traditional",
+                                                    "Contemporary",
+                                                    "Modern",
+                                                    "Retro",
+                                                    "Minimalist"
+                                                  ]
+                                                      .map((item) =>
+                                                          DropdownMenuItem<
+                                                              String>(
+                                                            value: item,
+                                                            child: Text(
+                                                              item,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .black45,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ))
+                                                      .toList(),
+                                                  value: selectedStyleValue,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedStyleValue =
+                                                          value as String;
+                                                    });
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons
+                                                        .arrow_forward_ios_outlined,
+                                                  ),
+                                                  iconSize: 14,
+                                                  iconEnabledColor:
+                                                      const Color.fromRGBO(
+                                                              0, 0, 95, 1)
+                                                          .withOpacity(1),
+                                                  iconDisabledColor:
+                                                      Colors.grey,
+                                                  buttonHeight: 50,
+                                                  buttonWidth: 160,
+                                                  buttonPadding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
+                                                  buttonDecoration:
+                                                      BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            14),
+                                                    border: Border.all(
+                                                      color: Colors.black26,
+                                                    ),
+                                                    color: Colors.white,
+                                                  ),
+                                                  buttonElevation: 2,
+                                                  itemHeight: 40,
+                                                  itemPadding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
+                                                  dropdownMaxHeight: 200,
+                                                  dropdownWidth: 200,
+                                                  dropdownPadding: null,
+                                                  dropdownDecoration:
+                                                      BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            14),
+                                                    color: Colors.white,
+                                                  ),
+                                                  dropdownElevation: 8,
+                                                  scrollbarRadius:
+                                                      const Radius.circular(40),
+                                                  scrollbarThickness: 6,
+                                                  scrollbarAlwaysShow: true,
+                                                  offset: const Offset(-20, 0),
+                                                )),
+                                          if (_advancedStatus ==
+                                              AdvancedStatus.advanced)
+                                            const MyTextLabel(
+                                                textLabel: "Project Cost Range",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20.0,
+                                                )),
+                                          if (_advancedStatus ==
+                                              AdvancedStatus.advanced)
+                                            const MyCostRange(),
                                           if (projectImageFile != null ||
                                               webProjectImage != null)
-                                          const MyTextLabel(textLabel: "Image 2",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel:
+                                                    "Additional Project Images",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20.0,
+                                                )),
+                                          if (projectImageFile != null ||
+                                              webProjectImage != null)
+                                            MyImagePicker(
+                                              projectImage2Provider:
+                                                  projectImage2Provider,
+                                            ),
+                                          if (projectImageFile != null ||
+                                              webProjectImage != null)
+                                            const MyTextLabel(
+                                                textLabel: "Image 2",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile2 != null ||
                                               webProjectImage2 != null)
                                             MyImagePicker(
                                               projectImage3Provider:
-                                              projectImage3Provider,
+                                                  projectImage3Provider,
                                             ),
                                           if (projectImageFile2 != null ||
                                               webProjectImage2 != null)
-                                          const MyTextLabel(textLabel: "Image 3",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 3",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile3 != null ||
                                               webProjectImage3 != null)
                                             MyImagePicker(
                                               projectImage4Provider:
-                                              projectImage4Provider,
+                                                  projectImage4Provider,
                                             ),
                                           if (projectImageFile3 != null ||
                                               webProjectImage3 != null)
-                                          const MyTextLabel(textLabel: "Image 4",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 4",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile4 != null ||
                                               webProjectImage4 != null)
                                             MyImagePicker(
                                               projectImage5Provider:
-                                              projectImage5Provider,
+                                                  projectImage5Provider,
                                             ),
                                           if (projectImageFile4 != null ||
                                               webProjectImage4 != null)
-                                          const MyTextLabel(textLabel: "Image 5",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 5",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile5 != null ||
                                               webProjectImage5 != null)
                                             MyImagePicker(
                                               projectImage6Provider:
-                                              projectImage6Provider,
+                                                  projectImage6Provider,
                                             ),
                                           if (projectImageFile5 != null ||
                                               webProjectImage5 != null)
-                                          const MyTextLabel(textLabel: "Image 6",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 6",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile6 != null ||
                                               webProjectImage6 != null)
                                             MyImagePicker(
                                               projectImage7Provider:
-                                              projectImage7Provider,
+                                                  projectImage7Provider,
                                             ),
                                           if (projectImageFile6 != null ||
                                               webProjectImage6 != null)
-                                          const MyTextLabel(textLabel: "Image 7",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 7",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile7 != null ||
                                               webProjectImage7 != null)
                                             MyImagePicker(
                                               projectImage8Provider:
-                                              projectImage8Provider,
+                                                  projectImage8Provider,
                                             ),
                                           if (projectImageFile7 != null ||
                                               webProjectImage7 != null)
-                                          const MyTextLabel(textLabel: "Image 8",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 8",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile8 != null ||
                                               webProjectImage8 != null)
                                             MyImagePicker(
                                               projectImage9Provider:
-                                              projectImage9Provider,
+                                                  projectImage9Provider,
                                             ),
                                           if (projectImageFile8 != null ||
                                               webProjectImage8 != null)
-                                          const MyTextLabel(textLabel: "Image 9",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 9",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                           if (projectImageFile9 != null ||
                                               webProjectImage9 != null)
                                             MyImagePicker(
                                               projectImage10Provider:
-                                              projectImage10Provider,
+                                                  projectImage10Provider,
                                             ),
                                           if (projectImageFile9 != null ||
                                               webProjectImage9 != null)
-                                          const MyTextLabel(textLabel: "Image 10",
-                                              color: null,
-                                              textStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
-                                                fontSize: 16.0,)),
+                                            const MyTextLabel(
+                                                textLabel: "Image 10",
+                                                color: null,
+                                                textStyle: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.0,
+                                                )),
                                         ],
                                       ),
                                     )
@@ -1096,7 +1369,4 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
       ),
     );
   }
-
-
-
 }

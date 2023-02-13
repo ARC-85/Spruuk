@@ -24,7 +24,7 @@ class MyTextLabel extends ConsumerWidget {
       height: height,
         width: width,
 
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         decoration:
             BoxDecoration(color: color, borderRadius: BorderRadius.circular(25)),

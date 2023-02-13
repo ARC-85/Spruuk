@@ -42,13 +42,13 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
     super.didChangeDependencies();
   }
 
-  LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
+  //LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
   GoogleMapController? _controller;
-  Location _location = Location();
+  //Location _location = Location();
   double? lat;
   double? lng;
 
-  Location location = new Location();
+  Location location = Location();
 
   bool? _serviceEnabled;
   PermissionStatus? _permissionGranted;
@@ -57,18 +57,12 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
   // Setting up the map, taken from https://levelup.gitconnected.com/how-to-add-google-maps-in-a-flutter-app-and-get-the-current-location-of-the-user-dynamically-2172f0be53f6
   void _onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
-    _location.onLocationChanged.listen((l) {
-      //lat = l.latitude;
-      //lng = l.longitude;
-      _controller?.animateCamera(
-        CameraUpdate.newCameraPosition(
-          lat == null
-              ? CameraPosition(
-                  target: LatLng(l.latitude!, l.longitude!), zoom: 15)
-              : CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
-        ),
-      );
-    });
+    print("on map is called");
+    _controller?.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+      ),
+    );
   }
 
   Future<void> getPermissions() async {
@@ -94,6 +88,7 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
     getPermissions();
     lat = ref.watch(projectLatLngProvider)?.latitude;
     lng = ref.watch(projectLatLngProvider)?.longitude;
+    print("this is lat $lat");
     final screenDimensions = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -113,7 +108,7 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
           children: [
             GoogleMap(
               initialCameraPosition:
-                  CameraPosition(target: _initialcameraposition),
+                  CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               myLocationEnabled: true,
@@ -134,6 +129,9 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
                           newPosition;
                       print(newPosition.latitude);
                       print(newPosition.longitude);
+                      setState(() {
+                        _onMapCreated(_controller!);
+                      });
                     }))
               },
             ),
@@ -143,13 +141,4 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
     );
   }
 
-  Future<void> moveMapCamera(double lat, double lng) async {
-    CameraPosition nepPos = CameraPosition(
-      target: LatLng(lat, lng),
-      zoom: 5,
-    );
-
-    final GoogleMapController? controller = await _controller;
-    controller?.animateCamera(CameraUpdate.newCameraPosition(nepPos));
-  }
 }
