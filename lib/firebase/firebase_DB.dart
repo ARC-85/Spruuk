@@ -35,4 +35,8 @@ class FirebaseDB {
   Future<QuerySnapshot> getProjects() async {
     return projectCollection.get();
   }
+
+  void deleteProject(String projectId) async {
+    await projectCollection.doc(projectId).delete();
+  }
 }

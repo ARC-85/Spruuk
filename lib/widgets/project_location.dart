@@ -13,6 +13,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
+import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/widgets/text_label.dart';
 
 class MyProjectLocation extends ConsumerStatefulWidget {
@@ -30,6 +31,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
   @override
   void didChangeDependencies() {
     getPermissions();
+    ref.watch(userProvider).getPermissions();
 
     super.didChangeDependencies();
   }
@@ -45,10 +47,12 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
 
   Location location = new Location();
 
-  bool? showMapButton = false;
+  bool? showMapButton = true;
 
   double? lat;
   double? lng;
+
+  LatLng? currentUserLocation;
 
   // Setting up the map, taken from https://levelup.gitconnected.com/how-to-add-google-maps-in-a-flutter-app-and-get-the-current-location-of-the-user-dynamically-2172f0be53f6
   void _onMapCreated(GoogleMapController _cntlr) {
@@ -85,6 +89,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
   Widget build(BuildContext context) {
     lat = ref.watch(projectLatLngProvider)?.latitude;
     lng = ref.watch(projectLatLngProvider)?.longitude;
+    currentUserLocation = ref.watch(userProvider).currentUserLocation;
 
     return Container(
       height: 300,
@@ -92,19 +97,21 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
       child: Stack(
         children: [
           GoogleMap(
-            zoomGesturesEnabled: true,
-            initialCameraPosition: CameraPosition(
+            /*initialCameraPosition: CameraPosition(
                 target: _locationData != null
                     ? LatLng(
                         _locationData!.latitude!, _locationData!.longitude!)
                     : _initialCameraPosition,
-                zoom: 17),
+                zoom: 17),*/
+            initialCameraPosition:
+                CameraPosition(target: currentUserLocation!, zoom: 17),
             mapType: MapType.normal,
             // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
             onMapCreated: (controller) {
               setState(() {
                 _controller = controller;
               });
+
             },
             myLocationEnabled: true,
             markers: <Marker>{
@@ -115,7 +122,8 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
                 },
                 //draggable: true,
                 markerId: MarkerId('Marker'),
-                position: lat != null ? LatLng(lat!, lng!) : const LatLng(0, 0),
+                position:
+                    lat != null ? LatLng(lat!, lng!) : currentUserLocation!,
               )
             },
           ),
@@ -123,10 +131,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
             // Needed to introduce a floating button to take user to current location due to troubles with null values.
             FloatingActionButton(
               onPressed: () {
-                LatLng newLatLng = _locationData != null
-                    ? LatLng(
-                        _locationData!.latitude!, _locationData!.longitude!)
-                    : const LatLng(53.37466222698207, -9.1528495028615);
+                LatLng newLatLng = currentUserLocation!;
                 print(newLatLng);
                 _controller?.animateCamera(CameraUpdate.newCameraPosition(
                     CameraPosition(
@@ -147,10 +152,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
             FloatingActionButton(
               onPressed: () {
                 // Provider is initialised to prevent no marker appearing on location screen, i.e. if lat/lng are still null.
-                LatLng _latLng = _locationData != null
-                    ? LatLng(
-                        _locationData!.latitude!, _locationData!.longitude!)
-                    : const LatLng(53.37466222698207, -9.1528495028615);
+                LatLng _latLng = currentUserLocation!;
                 lat == null
                     ? ref.read(projectLatLngProvider.notifier).state = _latLng
                     : ref.read(projectLatLngProvider.notifier).state =

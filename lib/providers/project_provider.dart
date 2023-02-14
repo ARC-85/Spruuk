@@ -15,9 +15,14 @@ class ProjectProvider {
   var firebaseDB = FirebaseDB();
 
   List<ProjectModel>? _allProjects;
+  List<ProjectModel>? _allVendorProjects;
 
   List<ProjectModel>? get allProjects {
     return [...?_allProjects];
+  }
+
+  List<ProjectModel>? get allVendorProjects {
+    return [...?_allVendorProjects];
   }
 
   Future<void> addProject(ProjectModel project) async {
@@ -37,6 +42,20 @@ class ProjectProvider {
     });
     _allProjects = downloadedProjects;
     return _allProjects;
+  }
+
+  List<ProjectModel>? getAllVendorProjects(String? uid) {
+    if(_allProjects != null) {
+      _allVendorProjects = [..._allProjects!.where((project) => project.projectUserId == uid)];
+    } else {
+      _allVendorProjects = [];
+    }
+    return _allVendorProjects;
+  }
+
+  void deleteProject(String projectId) {
+    _allProjects?.removeWhere((project) => project.projectId == projectId);
+    firebaseDB.deleteProject(projectId);
   }
 }
 
