@@ -26,7 +26,11 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
     final user = widget.user;
     final listIndex = widget.listIndex;
     return Dismissible( // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
-        key: Key(allProjects[listIndex].toString()),
+        key: UniqueKey(),
+        onDismissed: (direction) {
+          ref.watch(projectProvider).deleteProject(widget.project.projectId);
+
+        },
         child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
           child: ListTile(
