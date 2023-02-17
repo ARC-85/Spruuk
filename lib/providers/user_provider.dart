@@ -55,6 +55,24 @@ class UserProvider {
     }
     return _currentUserLocation;
   }
+
+  Future<void> addProjectFavouriteToClient(String projectId) async {
+    bool? alreadyFavourite = _currentUserData?.userProjectFavourites.any((_projectId) => _projectId == projectId);
+
+    if(alreadyFavourite != null && !alreadyFavourite) {
+      _currentUserData?.userProjectFavourites.add(projectId);
+      await firebaseDB.updateUser(_currentUserData!);
+    }
+  }
+
+  Future<void> removeProjectFavouriteToClient(String projectId) async {
+    bool? alreadyFavourite = _currentUserData?.userProjectFavourites.any((_projectId) => _projectId == projectId);
+
+    if(alreadyFavourite != null && alreadyFavourite) {
+      _currentUserData?.userProjectFavourites.remove(projectId);
+      await firebaseDB.updateUser(_currentUserData!);
+    }
+  }
 }
 
 final userProvider = Provider((ref) => UserProvider());

@@ -10,12 +10,12 @@ import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
 class ProjectProvider {
   var firebaseDB = FirebaseDB();
 
   List<ProjectModel>? _allProjects;
   List<ProjectModel>? _allVendorProjects;
+  ProjectModel? _currentProjectData;
 
   List<ProjectModel>? get allProjects {
     return [...?_allProjects];
@@ -23,6 +23,10 @@ class ProjectProvider {
 
   List<ProjectModel>? get allVendorProjects {
     return [...?_allVendorProjects];
+  }
+
+  ProjectModel? get currentProjectData {
+    return _currentProjectData;
   }
 
   Future<void> addProject(ProjectModel project) async {
@@ -35,27 +39,62 @@ class ProjectProvider {
     List<ProjectModel> downloadedProjects = [];
     var snapshot = await firebaseDB.getProjects();
 
-    final downloadedDocuments = snapshot.docs.map((docs) => docs.data()).toList();
+    final downloadedDocuments =
+        snapshot.docs.map((docs) => docs.data()).toList();
     downloadedDocuments.forEach((project) {
-      ProjectModel projectItem = ProjectModel.fromJson(project as Map<String, dynamic>);
+      ProjectModel projectItem =
+          ProjectModel.fromJson(project as Map<String, dynamic>);
       downloadedProjects.add(projectItem);
     });
     _allProjects = downloadedProjects;
     return _allProjects;
   }
 
-  List<ProjectModel>? getAllVendorProjects(String? uid) {
-    if(_allProjects != null) {
-      _allVendorProjects = [..._allProjects!.where((project) => project.projectUserId == uid)];
+  Future<List<ProjectModel>?> getAllVendorProjects(String? uid) async {
+    final allProjectsList = await getAllProjects();
+    if (allProjectsList != null) {
+      _allVendorProjects = [
+        ...allProjectsList!.where((project) => project.projectUserId == uid)
+      ];
     } else {
       _allVendorProjects = [];
     }
     return _allVendorProjects;
   }
 
+  Future<ProjectModel?> getProjectById(String? projectId) async {
+    _currentProjectData = await firebaseDB.fbGetProjectData(projectId!);
+    return _currentProjectData;
+  }
+
   void deleteProject(String projectId) {
     _allProjects?.removeWhere((project) => project.projectId == projectId);
     firebaseDB.deleteProject(projectId);
+  }
+
+  Future<void> addClientFavouriteToProject(String uid, String projectId) async {
+    ProjectModel _currentProject =
+        _allProjects!.firstWhere((project) => project.projectId == projectId);
+    bool? alreadyFavourite = _currentProject.projectFavouriteUserIds
+        ?.any((_userId) => _userId == uid);
+
+    if (alreadyFavourite != null && !alreadyFavourite) {
+      _currentProject.projectFavouriteUserIds?.add(uid);
+      await firebaseDB.updateProject(_currentProject);
+    }
+  }
+
+  Future<void> removeClientFavouriteToProject(
+      String uid, String projectId) async {
+    ProjectModel _currentProject =
+        _allProjects!.firstWhere((project) => project.projectId == projectId);
+    bool? alreadyFavourite = _currentProject.projectFavouriteUserIds
+        ?.any((_userId) => _userId == uid);
+
+    if (alreadyFavourite != null && alreadyFavourite) {
+      _currentProject.projectFavouriteUserIds?.remove(uid);
+      await firebaseDB.updateProject(_currentProject);
+    }
   }
 }
 
@@ -73,19 +112,34 @@ final projectImage8Provider = StateProvider.autoDispose<File?>((ref) => null);
 final projectImage9Provider = StateProvider.autoDispose<File?>((ref) => null);
 final projectImage10Provider = StateProvider.autoDispose<File?>((ref) => null);
 
-final webProjectImageProvider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage2Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage3Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage4Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage5Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage6Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage7Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage8Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage9Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
-final webProjectImage10Provider = StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImageProvider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage2Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage3Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage4Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage5Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage6Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage7Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage8Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage9Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
+final webProjectImage10Provider =
+    StateProvider.autoDispose<Uint8List?>((ref) => null);
 
 final projectLatLngProvider = StateProvider.autoDispose<LatLng?>((ref) => null);
 
-final projectDateProvider = StateProvider.autoDispose<List<DateTime?>?>((ref) => null);
+final projectDateProvider =
+    StateProvider.autoDispose<List<DateTime?>?>((ref) => null);
 
-final projectCostProvider = StateProvider.autoDispose<RangeValues?>((ref) => null);
+final projectCostProvider =
+    StateProvider.autoDispose<RangeValues?>((ref) => null);
+
+final projectAreaProvider =
+StateProvider.autoDispose<double?>((ref) => null);

@@ -29,11 +29,11 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
 
   UserType? _userType;
   UserModel? currentUser1;
-  UserProvider? user;
+  User? user;
   FirebaseAuthentication? _auth;
   String? userImage;
-  List<ProjectModel> allProjects = [];
-  List<ProjectModel> allVendorProjects = [];
+  List<ProjectModel>? allProjects;
+  List<ProjectModel>? allVendorProjects;
   // Variable to check if screen has been loaded already for ensuring providers are not constantly run
   bool firstLoad = true;
 
@@ -51,45 +51,65 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
     });
   }
 
-  Future<void> _onPressedSignOutFunction() async {
-    _auth?.signOut();
-    Navigator.pushNamed(context, '/AuthenticationScreen');
-  }
+
 
   @override
   void didChangeDependencies() {
+
+    /*try {
+      final authData = ref.watch(fireBaseAuthProvider);
+      user = authData.currentUser;
+      if (user != null) {
+        currentUser1 = ref.read(userProvider).currentUserData;
+        allProjects = ref.watch(projectProvider).allProjects!;
+        allVendorProjects = ref.watch(projectProvider).allVendorProjects!;
+        print("this is all projects $allProjects");
+        print("this is the person ${currentUser1?.firstName}");
+        print("this is the vendor projects $allVendorProjects");
+      }
+    } catch (e) {
+      print('Error: $e');
+    }*/
+
+
+
     if (firstLoad = true) {
       _isLoading = true;
-      _auth = ref.watch(authenticationProvider);
+
+      print("heya!!");
 
       final authData = ref.watch(fireBaseAuthProvider);
 
-      ref.watch(userProvider).getCurrentUserData(authData.currentUser!.uid);
-
-      ref.watch(projectProvider).getAllProjects();
+      //ref.read(userProvider).getCurrentUserData(authData.currentUser!.uid);
+      //currentUser1 = ref.read(userProvider).currentUserData;
 
       ref
-          .watch(projectProvider)
-          .getAllVendorProjects(authData.currentUser!.uid);
-
-      // Load all projects first time page is entered, then watch for change in projects below in build.
-      /*ref.watch(projectProvider).getAllProjects().then((value) {
-        setState(() {
-          allProjects = value!;
-        });
-      });*/
-      // allProjects = ref.watch(projectProvider).allProjects!;
-      // print("this is all projects $allProjects");
-      /*ref
           .watch(userProvider)
           .getCurrentUserData(authData.currentUser!.uid)
           .then((value) {
         setState(() {
           currentUser1 = value;
-          userImage = currentUser1?.userImage;
-          print("this is userImage $userImage");
         });
-      });*/
+      });
+
+      ref
+          .watch(projectProvider)
+          .getAllProjects()
+          .then((value) {
+        setState(() {
+          allProjects = value;
+        });
+      });
+
+      ref
+          .watch(projectProvider)
+          .getAllVendorProjects(authData.currentUser!.uid)
+          .then((value) {
+        setState(() {
+          allVendorProjects = value;
+        });
+      });
+
       ref.watch(userProvider).getPermissions();
 
       if (authData.currentUser != null) {
@@ -121,18 +141,22 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
   @override
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
+
+    print("this is all projects $allProjects");
+    print("this is the person ${currentUser1?.firstName}");
+    print("this is the vendor projects $allVendorProjects");
+
+
+
     if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
     } else {
       _userType = UserType.vendor;
     }
 
-    currentUser1 = ref.watch(userProvider).currentUserData;
-    allProjects = ref.watch(projectProvider).allProjects!;
-    allVendorProjects = ref.watch(projectProvider).allVendorProjects!;
-    print("this is all projects $allProjects");
-    print("this is the person ${currentUser1?.firstName}");
-    print("this is the vendor projects $allVendorProjects");
+
+
+
 
     //print("this is all project title ${allProjects[0].projectTitle}");
 
@@ -155,14 +179,14 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
                         : RefreshIndicator(
                             onRefresh: () =>
                                 _refreshProjectList(currentUser1!.uid),
-                            child: allProjects.isNotEmpty
+                            child: allProjects != null
                                 ? ListView.builder(
                                     scrollDirection: Axis.vertical,
                                     shrinkWrap:
                                         true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
-                                    itemCount: allProjects.length,
+                                    itemCount: allProjects!.length,
                                     itemBuilder: (ctx, index) => MyProjectCard(
-                                          project: allProjects[index],
+                                          project: allProjects![index],
                                           user: currentUser1!,
                                           listIndex: index,
                                         ))

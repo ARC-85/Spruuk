@@ -32,11 +32,26 @@ class FirebaseDB {
     return projectCollection.doc(project.projectId).set(project.toJson());
   }
 
+  // Get project data from Firestore and convert to ProjectModel class object
+  Future<ProjectModel> fbGetProjectData(String projectId) async {
+    var snapshot = await projectCollection.doc(projectId).get();
+    ProjectModel projectData = ProjectModel.fromJson(snapshot.data() as Map<String, dynamic>) ;
+    return projectData;
+  }
+
   Future<QuerySnapshot> getProjects() async {
     return projectCollection.get();
   }
 
   void deleteProject(String projectId) async {
     await projectCollection.doc(projectId).delete();
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    await vendorUserCollection.doc(user.uid).update(user.toJson());
+  }
+
+  Future<void> updateProject(ProjectModel project) async {
+    await projectCollection.doc(project.projectId).update(project.toJson());
   }
 }
