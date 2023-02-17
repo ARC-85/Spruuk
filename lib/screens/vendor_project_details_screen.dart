@@ -30,16 +30,16 @@ import 'package:spruuk/widgets/text_label.dart';
 
 enum AdvancedStatus { basic, advanced }
 
-class VendorAddProjectScreen extends ConsumerStatefulWidget {
-  static const routeName = '/VendorAddProjectScreen';
+class VendorProjectDetailsScreen extends ConsumerStatefulWidget {
+  static const routeName = '/VendorProjectDetailsScreen';
 
-  const VendorAddProjectScreen({Key? key}) : super(key: key);
+  const VendorProjectDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  _VendorAddProjectScreen createState() => _VendorAddProjectScreen();
+  _VendorProjectDetailsScreen createState() => _VendorProjectDetailsScreen();
 }
 
-class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
+class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   AdvancedStatus _advancedStatus = AdvancedStatus.basic;
@@ -47,11 +47,28 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
   UserModel? currentUser1;
   UserProvider? user;
   FirebaseAuthentication? _auth;
+  var _projectId;
+  ProjectModel? initialProject;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _auth = ref.watch(authenticationProvider);
+    _projectId = ModalRoute.of(context)?.settings.arguments;
+    ref
+        .watch(projectProvider)
+        .getProjectById(_projectId)
+        .then((value) {
+      setState(() {
+        initialProject = value;
+
+
+      });
+    }).then((value) {
+      // Setting initial inputs
+      _projectTitle.text = initialProject!.projectTitle!;
+      _projectBriefDescription.text = initialProject!.projectBriefDescription!;
+      selectedValue = initialProject!.projectType!;
+    });
 
     final authData = ref.watch(fireBaseAuthProvider);
     ref
@@ -62,14 +79,16 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
         currentUser1 = value;
       });
     });
+
+
   }
 
 // TextEditingControllers for data inputs
   final TextEditingController _projectTitle = TextEditingController(text: '');
   final TextEditingController _projectBriefDescription =
-      TextEditingController(text: '');
+  TextEditingController(text: '');
   final TextEditingController _projectLongDescription =
-      TextEditingController(text: '');
+  TextEditingController(text: '');
 
   // Initial project variable setup
   String? projectId;
@@ -173,7 +192,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
     final _projectProvider = ref.watch(projectProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Vendor Project Add"), actions: [
+      appBar: AppBar(title: const Text("Vendor Project Details"), actions: [
         IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(
@@ -234,6 +253,10 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
             webProjectImage10
           ];
 
+
+
+
+
           // Set up variables for location based on provider
           projectLat = ref.watch(projectLatLngProvider)?.latitude;
           projectLng = ref.watch(projectLatLngProvider)?.longitude;
@@ -265,7 +288,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL);
@@ -290,28 +313,6 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                 ref.read(projectImageProvider.notifier).state = null;
               }
             }
-            /*int count = 0;
-            projectImageFileList?.forEach((projectImg) async {
-              if (projectImg != null && currentUser1?.uid != null) {
-                count++;
-                final fbRef = FirebaseStorage.instance
-                    .ref()
-                    .child('project_images')
-                    .child('${currentUser1?.uid}_$count.jpg');
-                await fbRef.putFile(projectImg);
-                // Getting the URL for the image once uploaded to Firebase storage
-                final imageDownloadURL = await fbRef.getDownloadURL();
-                projectImages?.add(imageDownloadURL);
-                print("this is projectIMages $projectImages");
-                print("this is projectImageFileList $projectImageFileList");
-                print("this is count $count");
-                print("this is projectImageFile $projectImageFile");
-                print("this is projectImageFile2 $projectImageFile2");
-                print("this is imageDownloadURL $imageDownloadURL");
-                ref.read(projectImageProvider.notifier).state = null;
-              }
-
-            });*/
           }
 
           // Special function for uploading image 2 on web and Android apps
@@ -328,7 +329,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage2!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL2 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL2);
@@ -368,7 +369,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage3!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL3 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL3);
@@ -404,7 +405,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage4!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL4 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL4);
@@ -440,7 +441,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage5!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL5 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL5);
@@ -476,7 +477,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage6!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL6 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL6);
@@ -512,7 +513,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage7!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL7 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL7);
@@ -548,7 +549,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage8!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL8 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL8);
@@ -584,7 +585,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage9!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL9 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL9);
@@ -620,7 +621,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                     webProjectImage10!,
                     SettableMetadata(
                         contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                        'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL10 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL10);
@@ -754,13 +755,15 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                       key: _formKey,
                                       child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                         children: [
+
                                           MyImagePicker(
                                             projectImage1Provider:
-                                                projectImageProvider,
+                                            projectImageProvider,
+                                            projectImageUrl: projectImageFile == null ? initialProject?.projectImages![0] : null,
                                           ),
                                           const MyTextLabel(
                                               textLabel: "Image 1",
@@ -773,20 +776,20 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                           Container(
                                               height: 70,
                                               margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 8),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 8),
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 4),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 4),
                                               decoration: BoxDecoration(
                                                   color: const Color.fromRGBO(
-                                                          0, 0, 95, 1)
+                                                      0, 0, 95, 1)
                                                       .withOpacity(0),
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                                  BorderRadius.circular(
+                                                      25)),
                                               child: DropdownButton2(
                                                 isExpanded: true,
                                                 hint: Row(
@@ -805,7 +808,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                         style: TextStyle(
                                                           fontSize: 14,
                                                           fontWeight:
-                                                              FontWeight.bold,
+                                                          FontWeight.bold,
                                                           color: Colors.black45,
                                                         ),
                                                         overflow: TextOverflow
@@ -822,27 +825,27 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                   "Commercial"
                                                 ]
                                                     .map((item) =>
-                                                        DropdownMenuItem<
-                                                            String>(
-                                                          value: item,
-                                                          child: Text(
-                                                            item,
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Colors
-                                                                  .black45,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ))
+                                                    DropdownMenuItem<
+                                                        String>(
+                                                      value: item,
+                                                      child: Text(
+                                                        item,
+                                                        style:
+                                                        const TextStyle(
+                                                          color: Colors
+                                                              .black45,
+                                                        ),
+                                                        overflow:
+                                                        TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ))
                                                     .toList(),
                                                 value: selectedValue,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     selectedValue =
-                                                        value as String;
+                                                    value as String;
                                                   });
                                                 },
                                                 icon: const Icon(
@@ -851,18 +854,18 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                 ),
                                                 iconSize: 14,
                                                 iconEnabledColor:
-                                                    const Color.fromRGBO(
-                                                            0, 0, 95, 1)
-                                                        .withOpacity(1),
+                                                const Color.fromRGBO(
+                                                    0, 0, 95, 1)
+                                                    .withOpacity(1),
                                                 iconDisabledColor: Colors.grey,
                                                 buttonHeight: 50,
                                                 buttonWidth: 160,
                                                 buttonPadding:
-                                                    const EdgeInsets.only(
-                                                        left: 14, right: 14),
+                                                const EdgeInsets.only(
+                                                    left: 14, right: 14),
                                                 buttonDecoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(14),
+                                                  BorderRadius.circular(14),
                                                   border: Border.all(
                                                     color: Colors.black26,
                                                   ),
@@ -871,64 +874,64 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                 buttonElevation: 2,
                                                 itemHeight: 40,
                                                 itemPadding:
-                                                    const EdgeInsets.only(
-                                                        left: 14, right: 14),
+                                                const EdgeInsets.only(
+                                                    left: 14, right: 14),
                                                 dropdownMaxHeight: 200,
                                                 dropdownWidth: 200,
                                                 dropdownPadding: null,
                                                 dropdownDecoration:
-                                                    BoxDecoration(
+                                                BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(14),
+                                                  BorderRadius.circular(14),
                                                   color: Colors.white,
                                                 ),
                                                 dropdownElevation: 8,
                                                 scrollbarRadius:
-                                                    const Radius.circular(40),
+                                                const Radius.circular(40),
                                                 scrollbarThickness: 6,
                                                 scrollbarAlwaysShow: true,
                                                 offset: const Offset(-20, 0),
                                               )),
                                           Container(
                                               margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 16),
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 4),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 4),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                                  BorderRadius.circular(
+                                                      25)),
                                               child: CustomTextInput(
                                                 hintText: 'Project Title',
                                                 textEditingController:
-                                                    _projectTitle,
+                                                _projectTitle,
                                                 isTextObscured: false,
                                                 icon: (Icons.add),
                                                 validator: customTitleValidator,
                                               )),
                                           Container(
                                               margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 16),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 16),
                                               padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 4),
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 4),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                                  BorderRadius.circular(
+                                                      25)),
                                               child: CustomTextInput(
                                                 hintText: 'Brief Description',
                                                 textEditingController:
-                                                    _projectBriefDescription,
+                                                _projectBriefDescription,
                                                 isTextObscured: false,
                                                 icon: (Icons.add),
                                                 validator: customTitleValidator,
@@ -948,13 +951,13 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                             child: RichText(
                                               text: TextSpan(
                                                 text: _advancedStatus ==
-                                                        AdvancedStatus.basic
+                                                    AdvancedStatus.basic
                                                     ? 'Show Advanced Inputs?'
                                                     : 'Show Basic Inputs?',
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontWeight:
-                                                        FontWeight.bold),
+                                                    FontWeight.bold),
                                                 children: [
                                                   TextSpan(
                                                       text: ' Click Here',
@@ -962,12 +965,12 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                           color: Colors
                                                               .blue.shade300,
                                                           fontWeight:
-                                                              FontWeight.bold),
+                                                          FontWeight.bold),
                                                       recognizer:
-                                                          TapGestureRecognizer()
-                                                            ..onTap = () {
-                                                              _switchAdvanced();
-                                                            })
+                                                      TapGestureRecognizer()
+                                                        ..onTap = () {
+                                                          _switchAdvanced();
+                                                        })
                                                 ],
                                               ),
                                             ),
@@ -977,31 +980,31 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                             Container(
                                                 height: 100,
                                                 margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 16),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 16),
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 4),
                                                 decoration: BoxDecoration(
                                                     color: Colors.white,
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
+                                                    BorderRadius.circular(
+                                                        25)),
                                                 child: TextFormField(
                                                   // Need to have a special text input to accommodate long version
                                                   cursorColor: Colors.white,
                                                   obscureText: false,
                                                   controller:
-                                                      _projectLongDescription,
+                                                  _projectLongDescription,
                                                   keyboardType: TextInputType
                                                       .multiline, // From https://stackoverflow.com/questions/45900387/multi-line-textfield-in-flutter
                                                   maxLines: null,
                                                   decoration:
-                                                      const InputDecoration(
+                                                  const InputDecoration(
                                                     hintText:
-                                                        "Long Description",
+                                                    "Long Description",
                                                     hintStyle: TextStyle(
                                                         color: Colors.black45),
                                                     helperStyle: TextStyle(
@@ -1016,7 +1019,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               AdvancedStatus.advanced)
                                             const MyTextLabel(
                                                 textLabel:
-                                                    "Project Completion Date",
+                                                "Project Completion Date",
                                                 color: null,
                                                 textStyle: TextStyle(
                                                   color: Colors.white,
@@ -1041,20 +1044,20 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                             Container(
                                                 height: 70,
                                                 margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 8),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 24,
+                                                    vertical: 8),
                                                 padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 4),
                                                 decoration: BoxDecoration(
                                                     color: const Color.fromRGBO(
-                                                            0, 0, 95, 1)
+                                                        0, 0, 95, 1)
                                                         .withOpacity(0),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
+                                                    BorderRadius.circular(
+                                                        25)),
                                                 child: DropdownButton2(
                                                   isExpanded: true,
                                                   hint: Row(
@@ -1073,9 +1076,9 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                           style: TextStyle(
                                                             fontSize: 14,
                                                             fontWeight:
-                                                                FontWeight.bold,
+                                                            FontWeight.bold,
                                                             color:
-                                                                Colors.black45,
+                                                            Colors.black45,
                                                           ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
@@ -1092,27 +1095,27 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                     "Minimalist"
                                                   ]
                                                       .map((item) =>
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value: item,
-                                                            child: Text(
-                                                              item,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black45,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ))
+                                                      DropdownMenuItem<
+                                                          String>(
+                                                        value: item,
+                                                        child: Text(
+                                                          item,
+                                                          style:
+                                                          const TextStyle(
+                                                            color: Colors
+                                                                .black45,
+                                                          ),
+                                                          overflow:
+                                                          TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ))
                                                       .toList(),
                                                   value: selectedStyleValue,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       selectedStyleValue =
-                                                          value as String;
+                                                      value as String;
                                                     });
                                                   },
                                                   icon: const Icon(
@@ -1121,21 +1124,21 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                   ),
                                                   iconSize: 14,
                                                   iconEnabledColor:
-                                                      const Color.fromRGBO(
-                                                              0, 0, 95, 1)
-                                                          .withOpacity(1),
+                                                  const Color.fromRGBO(
+                                                      0, 0, 95, 1)
+                                                      .withOpacity(1),
                                                   iconDisabledColor:
-                                                      Colors.grey,
+                                                  Colors.grey,
                                                   buttonHeight: 50,
                                                   buttonWidth: 160,
                                                   buttonPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, right: 14),
+                                                  const EdgeInsets.only(
+                                                      left: 14, right: 14),
                                                   buttonDecoration:
-                                                      BoxDecoration(
+                                                  BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            14),
+                                                    BorderRadius.circular(
+                                                        14),
                                                     border: Border.all(
                                                       color: Colors.black26,
                                                     ),
@@ -1144,21 +1147,21 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                   buttonElevation: 2,
                                                   itemHeight: 40,
                                                   itemPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, right: 14),
+                                                  const EdgeInsets.only(
+                                                      left: 14, right: 14),
                                                   dropdownMaxHeight: 200,
                                                   dropdownWidth: 200,
                                                   dropdownPadding: null,
                                                   dropdownDecoration:
-                                                      BoxDecoration(
+                                                  BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            14),
+                                                    BorderRadius.circular(
+                                                        14),
                                                     color: Colors.white,
                                                   ),
                                                   dropdownElevation: 8,
                                                   scrollbarRadius:
-                                                      const Radius.circular(40),
+                                                  const Radius.circular(40),
                                                   scrollbarThickness: 6,
                                                   scrollbarAlwaysShow: true,
                                                   offset: const Offset(-20, 0),
@@ -1193,7 +1196,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage != null)
                                             const MyTextLabel(
                                                 textLabel:
-                                                    "Additional Project Images",
+                                                "Additional Project Images",
                                                 color: null,
                                                 textStyle: TextStyle(
                                                   color: Colors.white,
@@ -1204,7 +1207,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage != null)
                                             MyImagePicker(
                                               projectImage2Provider:
-                                                  projectImage2Provider,
+                                              projectImage2Provider,
                                             ),
                                           if (projectImageFile != null ||
                                               webProjectImage != null)
@@ -1220,7 +1223,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage2 != null)
                                             MyImagePicker(
                                               projectImage3Provider:
-                                                  projectImage3Provider,
+                                              projectImage3Provider,
                                             ),
                                           if (projectImageFile2 != null ||
                                               webProjectImage2 != null)
@@ -1236,7 +1239,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage3 != null)
                                             MyImagePicker(
                                               projectImage4Provider:
-                                                  projectImage4Provider,
+                                              projectImage4Provider,
                                             ),
                                           if (projectImageFile3 != null ||
                                               webProjectImage3 != null)
@@ -1252,7 +1255,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage4 != null)
                                             MyImagePicker(
                                               projectImage5Provider:
-                                                  projectImage5Provider,
+                                              projectImage5Provider,
                                             ),
                                           if (projectImageFile4 != null ||
                                               webProjectImage4 != null)
@@ -1268,7 +1271,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage5 != null)
                                             MyImagePicker(
                                               projectImage6Provider:
-                                                  projectImage6Provider,
+                                              projectImage6Provider,
                                             ),
                                           if (projectImageFile5 != null ||
                                               webProjectImage5 != null)
@@ -1284,7 +1287,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage6 != null)
                                             MyImagePicker(
                                               projectImage7Provider:
-                                                  projectImage7Provider,
+                                              projectImage7Provider,
                                             ),
                                           if (projectImageFile6 != null ||
                                               webProjectImage6 != null)
@@ -1300,7 +1303,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage7 != null)
                                             MyImagePicker(
                                               projectImage8Provider:
-                                                  projectImage8Provider,
+                                              projectImage8Provider,
                                             ),
                                           if (projectImageFile7 != null ||
                                               webProjectImage7 != null)
@@ -1316,7 +1319,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage8 != null)
                                             MyImagePicker(
                                               projectImage9Provider:
-                                                  projectImage9Provider,
+                                              projectImage9Provider,
                                             ),
                                           if (projectImageFile8 != null ||
                                               webProjectImage8 != null)
@@ -1332,7 +1335,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                               webProjectImage9 != null)
                                             MyImagePicker(
                                               projectImage10Provider:
-                                                  projectImage10Provider,
+                                              projectImage10Provider,
                                             ),
                                           if (projectImageFile9 != null ||
                                               webProjectImage9 != null)
@@ -1359,25 +1362,25 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : MaterialButton(
-                        onPressed: _onPressedFunction,
-                        textColor:
-                            const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
-                        textTheme: ButtonTextTheme.primary,
-                        minWidth: 100,
-                        color: const Color.fromRGBO(242, 151, 101, 1)
-                            .withOpacity(1),
-                        padding: const EdgeInsets.all(
-                          18,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: BorderSide(color: Colors.blue.shade700),
-                        ),
-                        child: const Text(
-                          'Add Project',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ),
+                  onPressed: _onPressedFunction,
+                  textColor:
+                  const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
+                  textTheme: ButtonTextTheme.primary,
+                  minWidth: 100,
+                  color: const Color.fromRGBO(242, 151, 101, 1)
+                      .withOpacity(1),
+                  padding: const EdgeInsets.all(
+                    18,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                    side: BorderSide(color: Colors.blue.shade700),
+                  ),
+                  child: const Text(
+                    'Update Project',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
               ),
               const Spacer(),
             ],

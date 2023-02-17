@@ -1,13 +1,22 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/user_model.dart';
+import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
+import 'package:spruuk/providers/user_provider.dart';
 
 class MyProjectCard extends ConsumerStatefulWidget {
-  const MyProjectCard({Key? key, required this.project, required this.user, required this.listIndex}) : super(key: key);
+  const MyProjectCard(
+      {Key? key,
+      required this.project,
+      required this.user,
+      required this.listIndex})
+      : super(key: key);
   final ProjectModel project;
   final UserModel user;
   final int listIndex;
@@ -18,30 +27,221 @@ class MyProjectCard extends ConsumerStatefulWidget {
 
 class _MyProjectCard extends ConsumerState<MyProjectCard> {
   List<ProjectModel> allProjects = [];
+  UserModel? currentUser1;
+  bool favourited = false;
+  bool? firstBuild;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final authData = ref.watch(fireBaseAuthProvider);
+    ref
+        .watch(userProvider)
+        .getCurrentUserData(authData.currentUser!.uid)
+        .then((value) {
+      setState(() {
+        currentUser1 = value;
+      });
+    });
+    //favourited = currentUser1!.userProjectFavourites.any((_projectId) => _projectId == widget.project.projectId);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> _refresh() async {}
+
   @override
   Widget build(BuildContext context) {
-
+    final screenDimensions = MediaQuery.of(context).size;
     allProjects = ref.watch(projectProvider).allProjects!;
     final project = widget.project;
     final user = widget.user;
     final listIndex = widget.listIndex;
-    return Dismissible( // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
+
+    if (currentUser1 != null) {
+      favourited = currentUser1!.userProjectFavourites
+          .any((_projectId) => _projectId == project.projectId);
+    } else {
+      _refresh();
+    }
+
+    print("this is favourited $favourited");
+    print(
+        "this is currentFavouriteUSer ${currentUser1?.userProjectFavourites}");
+
+    return Dismissible(
+        // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
         key: UniqueKey(),
         onDismissed: (direction) {
-          ref.watch(projectProvider).deleteProject(widget.project.projectId);
-
+          ref.watch(projectProvider).deleteProject(project.projectId);
         },
         child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-          child: ListTile(
-
+            child: InkWell(
+              child: Container(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: screenDimensions.width * 0.9,
+                        height: screenDimensions.width * 0.9,
+                        child: project.projectImages != null &&
+                            project.projectImages!.isNotEmpty
+                            ? Image.network(project.projectImages![0]!,
+                            fit: BoxFit.cover)
+                            : const CircleAvatar(
+                            radius: 60,
+                            backgroundImage: AssetImage(
+                                "assets/images/circular_avatar.png"))),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(project.projectTitle,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black45,
+                        )),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      project.projectBriefDescription,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black45,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                              text: "Price Range:",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black45,
+                              ),
+                              children: [
+                                TextSpan(
+                                    text:
+                                    "€${project.projectMinCost} - €${project.projectMaxCost}",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.blue,
+                                    ))
+                              ]),
+                        ),
+                        Stack(
+                          children: [
+                            if (favourited == false)
+                              FloatingActionButton(
+                                onPressed: () {
+                                  ref
+                                      .read(userProvider)
+                                      .addProjectFavouriteToClient(
+                                      project.projectId);
+                                  ref
+                                      .read(projectProvider)
+                                      .addClientFavouriteToProject(
+                                      user.uid, project.projectId);
+                                  // Had to incorporate this user refresh as a work around because it wasn't reading in didChangeDependencies
+                                  final authData =
+                                  ref.watch(fireBaseAuthProvider);
+                                  ref
+                                      .watch(userProvider)
+                                      .getCurrentUserData(
+                                      authData.currentUser!.uid)
+                                      .then((value) {
+                                    setState(() {
+                                      currentUser1 = value;
+                                      print("turning true");
+                                    });
+                                  });
+                                },
+                                materialTapTargetSize:
+                                MaterialTapTargetSize.padded,
+                                backgroundColor:
+                                const Color.fromRGBO(242, 151, 101, 1)
+                                    .withOpacity(1),
+                                child: const Icon(
+                                  Icons.favorite_border_outlined,
+                                ),
+                              ),
+                            if (favourited == true)
+                              FloatingActionButton(
+                                onPressed: () {
+                                  ref
+                                      .read(userProvider)
+                                      .removeProjectFavouriteToClient(
+                                      project.projectId);
+                                  ref
+                                      .read(projectProvider)
+                                      .removeClientFavouriteToProject(
+                                      user.uid, project.projectId);
+                                  final authData =
+                                  ref.watch(fireBaseAuthProvider);
+                                  ref
+                                      .watch(userProvider)
+                                      .getCurrentUserData(
+                                      authData.currentUser!.uid)
+                                      .then((value) {
+                                    setState(() {
+                                      currentUser1 = value;
+                                      print("turning false");
+                                    });
+                                  });
+                                },
+                                materialTapTargetSize:
+                                MaterialTapTargetSize.padded,
+                                backgroundColor:
+                                const Color.fromRGBO(242, 151, 101, 1)
+                                    .withOpacity(1),
+                                child: const Icon(
+                                  Icons.favorite,
+                                ),
+                              )
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/VendorProjectDetailsScreen', arguments: project.projectId);
+              },
+            ),
+            /*ListTile(
+              leading: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: project.projectImages != null && project.projectImages!.isNotEmpty
+                      ? Image.network(project.projectImages![0]!,
+                          fit: BoxFit.cover)
+                      : const CircleAvatar(
+                          radius: 60,
+                          backgroundImage:
+                              AssetImage("assets/images/circular_avatar.png"))),
               title: Text(project.projectTitle),
-            subtitle: Text(project.projectBriefDescription),
-          )
-        )
-    );
+              subtitle: Text(project.projectBriefDescription),
+            )*/
+            ));
   }
 }
-
-
-

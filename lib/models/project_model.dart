@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart';
+import 'dart:io';
+
 class ProjectModel {
   String projectId;
   String projectTitle;
@@ -7,8 +10,8 @@ class ProjectModel {
   String projectUserEmail;
   String? projectUserImage;
   String? projectType;
-  double? projectMinCost;
-  double? projectMaxCost;
+  int? projectMinCost;
+  int? projectMaxCost;
   double? projectLat;
   double? projectLng;
   double? projectZoom;
@@ -32,8 +35,8 @@ class ProjectModel {
     this.projectUserEmail = "",
     this.projectUserImage = "",
     this.projectType = "",
-    this.projectMinCost = 0.0,
-    this.projectMaxCost = 0.0,
+    this.projectMinCost = 0,
+    this.projectMaxCost = 1000000,
     this.projectLat = 0.0,
     this.projectLng = 0.0,
     this.projectZoom = 0.0,

@@ -32,6 +32,7 @@ class MyImagePicker extends ConsumerStatefulWidget {
     this.webProjectImage8Provider,
     this.webProjectImage9Provider,
     this.webProjectImage10Provider,
+    this.projectImageUrl,
   }) : super(key: key);
   final AutoDisposeStateProvider<File?>? projectImage1Provider;
   final AutoDisposeStateProvider<File?>? projectImage2Provider;
@@ -53,6 +54,7 @@ class MyImagePicker extends ConsumerStatefulWidget {
   final AutoDisposeStateProvider<Uint8List?>? webProjectImage8Provider;
   final AutoDisposeStateProvider<Uint8List?>? webProjectImage9Provider;
   final AutoDisposeStateProvider<Uint8List?>? webProjectImage10Provider;
+  final String? projectImageUrl;
   @override
   ConsumerState<MyImagePicker> createState() => _MyImagePicker();
 }
@@ -166,11 +168,11 @@ class _MyImagePicker extends ConsumerState<MyImagePicker> {
         webProjectImage = f;
         if (widget.webProjectImage1Provider != null) {
           ref.read(widget.webProjectImage1Provider!.notifier).state =
-            webProjectImage;
+              webProjectImage;
         }
         if (widget.webProjectImage2Provider != null) {
           ref.read(widget.webProjectImage2Provider!.notifier).state =
-            webProjectImage;
+              webProjectImage;
         }
         if (widget.webProjectImage3Provider != null) {
           ref.read(widget.webProjectImage3Provider!.notifier).state =
@@ -221,11 +223,11 @@ class _MyImagePicker extends ConsumerState<MyImagePicker> {
         projectImageFile = File(croppedImage.path);
         if (widget.projectImage1Provider != null) {
           ref.read(widget.projectImage1Provider!.notifier).state =
-            projectImageFile;
+              projectImageFile;
         }
         if (widget.projectImage2Provider != null) {
           ref.read(widget.projectImage2Provider!.notifier).state =
-            projectImageFile;
+              projectImageFile;
         }
         if (widget.projectImage3Provider != null) {
           ref.read(widget.projectImage3Provider!.notifier).state =
@@ -276,12 +278,16 @@ class _MyImagePicker extends ConsumerState<MyImagePicker> {
           child: CircleAvatar(
             radius: 90,
             backgroundImage: !kIsWeb
-                ? projectImageFile == null
-                    ? const AssetImage("assets/images/circular_avatar.png")
-                    : Image.file(projectImageFile!).image
-                : webProjectImage == null
-                    ? const AssetImage("assets/images/circular_avatar.png")
-                    : Image.memory(webProjectImage!).image,
+                ? widget.projectImageUrl != null
+                    ? Image.network(widget.projectImageUrl!).image
+                    : projectImageFile == null
+                        ? const AssetImage("assets/images/circular_avatar.png")
+                        : Image.file(projectImageFile!).image
+                : widget.projectImageUrl != null
+                    ? Image.network(widget.projectImageUrl!).image
+                    : webProjectImage == null
+                        ? const AssetImage("assets/images/circular_avatar.png")
+                        : Image.memory(webProjectImage!).image,
           ),
         ),
       ],
