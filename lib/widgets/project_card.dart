@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -9,6 +7,8 @@ import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
+
+enum UserType { vendor, client }
 
 class MyProjectCard extends ConsumerStatefulWidget {
   const MyProjectCard(
@@ -30,6 +30,7 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
   UserModel? currentUser1;
   bool favourited = false;
   bool? firstBuild;
+  UserType? _userType;
 
   @override
   void didChangeDependencies() {
@@ -66,6 +67,12 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
           .any((_projectId) => _projectId == project.projectId);
     } else {
       _refresh();
+    }
+
+    if (currentUser1?.userType == "Client") {
+      _userType = UserType.client;
+    } else {
+      _userType = UserType.vendor;
     }
 
     print("this is favourited $favourited");
@@ -145,6 +152,7 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                                     ))
                               ]),
                         ),
+                        if (_userType == UserType.client)
                         Stack(
                           children: [
                             if (favourited == false)
@@ -225,7 +233,11 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                 ),
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/VendorProjectDetailsScreen', arguments: project.projectId);
+                if (_userType == UserType.vendor) {
+                  Navigator.pushNamed(context, '/VendorProjectDetailsScreen', arguments: project.projectId);
+                } else {
+                  Navigator.pushNamed(context, '/ClientProjectDetailsScreen', arguments: project.projectId);
+                }
               },
             ),
             /*ListTile(

@@ -12,7 +12,9 @@ import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/widgets/text_label.dart';
 
 class MyCostRange extends ConsumerStatefulWidget {
-  const MyCostRange({super.key});
+  MyCostRange({Key? key, this.projectMinCost, this.projectMaxCost}) : super(key: key);
+  int? projectMinCost;
+  int? projectMaxCost;
 
   @override
   ConsumerState<MyCostRange> createState() => _MyCostRange();
@@ -20,10 +22,20 @@ class MyCostRange extends ConsumerStatefulWidget {
 
 class _MyCostRange extends ConsumerState<MyCostRange> {
   // Set up variable for cost range, taken from https://api.flutter.dev/flutter/material/RangeSlider-class.html
-  RangeValues _currentRangeValues = const RangeValues(0, 1000000);
+  RangeValues? _currentRangeValues = RangeValues(0, 1000000);
+  RangeValues? _initialRangeValues;
+  bool newCostToggle = false;
+
 
   @override
   Widget build(BuildContext context) {
+    if(widget.projectMinCost !=null && widget.projectMaxCost != null && newCostToggle == false) {
+      _initialRangeValues = RangeValues(widget.projectMinCost!.toDouble(), widget.projectMaxCost!.toDouble());
+      _currentRangeValues = RangeValues(widget.projectMinCost!.toDouble(), widget.projectMaxCost!.toDouble());
+    } else {
+      _initialRangeValues = null;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -64,15 +76,16 @@ class _MyCostRange extends ConsumerState<MyCostRange> {
               ),
             ),
             child: RangeSlider(
-              values: _currentRangeValues,
+              values: _initialRangeValues == null ? _currentRangeValues! : _initialRangeValues!,
               max: 1000000,
               divisions: 40,
               labels: RangeLabels(
-                "€${_currentRangeValues.start.round().toString()}",
-                "€${_currentRangeValues.end.round().toString()}",
+                "€${_currentRangeValues!.start.round().toString()}",
+                "€${_currentRangeValues!.end.round().toString()}",
               ),
               onChanged: (RangeValues values) {
                 setState(() {
+                  newCostToggle = true; // used to shift date if new cost selected.
                   _currentRangeValues = values;
                   ref.read(projectCostProvider.notifier).state =
                       _currentRangeValues;

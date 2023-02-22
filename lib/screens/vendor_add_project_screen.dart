@@ -1175,7 +1175,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                 )),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
-                                            const MyCostRange(),
+                                            MyCostRange(),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
                                             const MyTextLabel(
@@ -1188,7 +1188,7 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                                                 )),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
-                                            const MyProjectArea(),
+                                            MyProjectArea(),
                                           if (projectImageFile != null ||
                                               webProjectImage != null)
                                             const MyTextLabel(

@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/user_model.dart';
@@ -49,45 +50,98 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
   FirebaseAuthentication? _auth;
   var _projectId;
   ProjectModel? initialProject;
+  bool doneOnce = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _projectId = ModalRoute.of(context)?.settings.arguments;
-    ref
-        .watch(projectProvider)
-        .getProjectById(_projectId)
-        .then((value) {
-      setState(() {
-        initialProject = value;
+    if (doneOnce == false) {
+      _projectId = ModalRoute
+          .of(context)
+          ?.settings
+          .arguments;
+      ref
+          .watch(projectProvider)
+          .getProjectById(_projectId)
+          .then((value) {
+        setState(() {
+          initialProject = value;
+        });
+      }).then((value) {
+        // Setting initial inputs
+        final currentUserLocation = ref
+            .watch(userProvider)
+            .currentUserLocation;
+        // _projectTitle.text = initialProject!.projectTitle!;
+        _projectBriefDescription.text =
+        initialProject!.projectBriefDescription!;
+        if (initialProject!.projectLongDescription != null) {
+          _projectLongDescription.text =
+          initialProject!.projectLongDescription!;
+        }
+        selectedValue = initialProject!.projectType!;
+        selectedStyleValue = initialProject!.projectStyle!;
+        if (initialProject!.projectLat != null) {
+          ref
+              .read(projectLatLngProvider.notifier)
+              .state =
+              LatLng(initialProject!.projectLat!, initialProject!.projectLng!);
+        } else {
+          ref
+              .read(projectLatLngProvider.notifier)
+              .state =
+              currentUserLocation;
+        }
+
+        if (initialProject?.projectMinCost != null &&
+            initialProject?.projectMaxCost != null) {
+          ref
+              .read(projectCostProvider.notifier)
+              .state =
+              RangeValues(initialProject!.projectMinCost!.toDouble(),
+                  initialProject!.projectMaxCost!.toDouble());
+        }
 
 
+        if (initialProject?.projectCompletionDay != null) {
+          final initialDate = DateTime(initialProject!.projectCompletionYear!,
+              initialProject!.projectCompletionMonth!,
+              initialProject!.projectCompletionDay!);
+          ref
+              .read(projectDateProvider.notifier)
+              .state = <DateTime?>[initialDate];
+        }
+
+
+        if (initialProject?.projectArea != null) {
+          ref
+              .read(projectAreaProvider.notifier)
+              .state =
+              initialProject!.projectArea!.toDouble();
+        }
       });
-    }).then((value) {
-      // Setting initial inputs
-      _projectTitle.text = initialProject!.projectTitle!;
-      _projectBriefDescription.text = initialProject!.projectBriefDescription!;
-      selectedValue = initialProject!.projectType!;
-    });
 
-    final authData = ref.watch(fireBaseAuthProvider);
-    ref
-        .watch(userProvider)
-        .getCurrentUserData(authData.currentUser!.uid)
-        .then((value) {
-      setState(() {
-        currentUser1 = value;
+      final authData = ref.watch(fireBaseAuthProvider);
+      ref
+          .watch(userProvider)
+          .getCurrentUserData(authData.currentUser!.uid)
+          .then((value) {
+        setState(() {
+          currentUser1 = value;
+        });
       });
-    });
+
+      doneOnce == true;
+    }
 
 
   }
 
 // TextEditingControllers for data inputs
-  final TextEditingController _projectTitle = TextEditingController(text: '');
-  final TextEditingController _projectBriefDescription =
+  TextEditingController _projectTitle = TextEditingController(text: '');
+  TextEditingController _projectBriefDescription =
   TextEditingController(text: '');
-  final TextEditingController _projectLongDescription =
+  TextEditingController _projectLongDescription =
   TextEditingController(text: '');
 
   // Initial project variable setup
@@ -293,6 +347,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL);
                 ref.read(webProjectImageProvider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.isNotEmpty) {
+                  projectImages?.add(initialProject!.projectImages![0]);
+                }
               }
             } else {
               // If Android...
@@ -311,6 +369,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 print("this is projectImageFile $projectImageFile");
                 print("this is imageDownloadURL $imageDownloadURL");
                 ref.read(projectImageProvider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.isNotEmpty) {
+                  projectImages?.add(initialProject!.projectImages![0]);
+                }
               }
             }
           }
@@ -334,6 +396,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL2 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL2);
                 ref.read(webProjectImage2Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 1) {
+                  projectImages?.add(initialProject!.projectImages![1]);
+                }
               }
             } else {
               // If Android...
@@ -351,6 +417,11 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 print("this is projectImageFile2 $projectImageFile2");
                 print("this is imageDownloadURL2 $imageDownloadURL2");
                 ref.read(projectImage2Provider.notifier).state = null;
+              }
+              else {
+                if (initialProject!.projectImages!.length > 1) {
+                  projectImages?.add(initialProject!.projectImages![1]);
+                }
               }
             }
           }
@@ -374,6 +445,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL3 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL3);
                 ref.read(webProjectImage3Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 2) {
+                  projectImages?.add(initialProject!.projectImages![2]);
+                }
               }
             } else {
               // If Android...
@@ -387,6 +462,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL3 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL3);
                 ref.read(projectImage3Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 2) {
+                  projectImages?.add(initialProject!.projectImages![2]);
+                }
               }
             }
           }
@@ -410,6 +489,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL4 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL4);
                 ref.read(webProjectImage4Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 3) {
+                  projectImages?.add(initialProject!.projectImages![3]);
+                }
               }
             } else {
               // If Android...
@@ -423,6 +506,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL4 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL4);
                 ref.read(projectImage4Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 3) {
+                  projectImages?.add(initialProject!.projectImages![3]);
+                }
               }
             }
           }
@@ -446,6 +533,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL5 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL5);
                 ref.read(webProjectImage5Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 4) {
+                  projectImages?.add(initialProject!.projectImages![4]);
+                }
               }
             } else {
               // If Android...
@@ -459,6 +550,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL5 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL5);
                 ref.read(projectImage5Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 4) {
+                  projectImages?.add(initialProject!.projectImages![4]);
+                }
               }
             }
           }
@@ -482,6 +577,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL6 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL6);
                 ref.read(webProjectImage6Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 5) {
+                  projectImages?.add(initialProject!.projectImages![5]);
+                }
               }
             } else {
               // If Android...
@@ -495,6 +594,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL6 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL6);
                 ref.read(projectImage6Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 5) {
+                  projectImages?.add(initialProject!.projectImages![5]);
+                }
               }
             }
           }
@@ -518,6 +621,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL7 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL7);
                 ref.read(webProjectImage7Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 6) {
+                  projectImages?.add(initialProject!.projectImages![6]);
+                }
               }
             } else {
               // If Android...
@@ -531,6 +638,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL7 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL7);
                 ref.read(projectImage7Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 6) {
+                  projectImages?.add(initialProject!.projectImages![6]);
+                }
               }
             }
           }
@@ -554,6 +665,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL8 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL8);
                 ref.read(webProjectImage8Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 7) {
+                  projectImages?.add(initialProject!.projectImages![7]);
+                }
               }
             } else {
               // If Android...
@@ -567,6 +682,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL8 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL8);
                 ref.read(projectImage8Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 7) {
+                  projectImages?.add(initialProject!.projectImages![7]);
+                }
               }
             }
           }
@@ -590,6 +709,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL9 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL9);
                 ref.read(webProjectImage9Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 8) {
+                  projectImages?.add(initialProject!.projectImages![8]);
+                }
               }
             } else {
               // If Android...
@@ -603,6 +726,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL9 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL9);
                 ref.read(projectImage9Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 8) {
+                  projectImages?.add(initialProject!.projectImages![8]);
+                }
               }
             }
           }
@@ -626,6 +753,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL10 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL10);
                 ref.read(webProjectImage9Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 9) {
+                  projectImages?.add(initialProject!.projectImages![9]);
+                }
               }
             } else {
               // If Android...
@@ -639,6 +770,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                 final imageDownloadURL10 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL10);
                 ref.read(projectImage10Provider.notifier).state = null;
+              } else {
+                if (initialProject!.projectImages!.length > 9) {
+                  projectImages?.add(initialProject!.projectImages![9]);
+                }
               }
             }
           }
@@ -670,7 +805,8 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
               // Using email and password to sign up in Firebase, passing details on user.
-              await _projectProvider.addProject(ProjectModel(
+              await _projectProvider.updateProject(ProjectModel(
+                projectId: initialProject!.projectId,
                 projectTitle: _projectTitle.text,
                 projectBriefDescription: _projectBriefDescription.text,
                 projectLongDescription: _projectLongDescription.text,
@@ -763,7 +899,7 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                           MyImagePicker(
                                             projectImage1Provider:
                                             projectImageProvider,
-                                            projectImageUrl: projectImageFile == null ? initialProject?.projectImages![0] : null,
+                                            projectImageUrl: projectImageFile == null && webProjectImage != null && initialProject!.projectImages!.isNotEmpty ? initialProject?.projectImages![0] : null,
                                           ),
                                           const MyTextLabel(
                                               textLabel: "Image 1",
@@ -913,6 +1049,7 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                 isTextObscured: false,
                                                 icon: (Icons.add),
                                                 validator: customTitleValidator,
+                                                initialText: initialProject!.projectTitle!,
                                               )),
                                           Container(
                                               margin:
@@ -1028,7 +1165,11 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                 )),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
-                                            MyDatePicker(),
+                                            MyDatePicker(
+                                              completionDay: initialProject?.projectCompletionDay,
+                                              completionMonth: initialProject?.projectCompletionMonth,
+                                              completionYear: initialProject?.projectCompletionYear,
+                                            ),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
                                             const MyTextLabel(
@@ -1178,7 +1319,10 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                 )),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
-                                            const MyCostRange(),
+                                            MyCostRange(
+                                              projectMinCost: initialProject?.projectMinCost,
+                                              projectMaxCost: initialProject?.projectMaxCost,
+                                            ),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
                                             const MyTextLabel(
@@ -1191,9 +1335,13 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                 )),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
-                                            const MyProjectArea(),
+                                            MyProjectArea(
+                                              projectArea: initialProject?.projectArea,
+                                            ),
                                           if (projectImageFile != null ||
-                                              webProjectImage != null)
+                                              webProjectImage != null
+                                              ||
+                                              initialProject!.projectImages!.isNotEmpty)
                                             const MyTextLabel(
                                                 textLabel:
                                                 "Additional Project Images",
@@ -1204,13 +1352,17 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 20.0,
                                                 )),
                                           if (projectImageFile != null ||
-                                              webProjectImage != null)
+                                              webProjectImage != null ||
+                                              initialProject!.projectImages!.isNotEmpty)
                                             MyImagePicker(
                                               projectImage2Provider:
                                               projectImage2Provider,
+                                              projectImageUrl: projectImageFile2 == null && initialProject!.projectImages!.length > 1 ? initialProject?.projectImages![1] : null,
                                             ),
                                           if (projectImageFile != null ||
-                                              webProjectImage != null)
+                                              webProjectImage != null
+                                              ||
+                                              initialProject!.projectImages!.isNotEmpty)
                                             const MyTextLabel(
                                                 textLabel: "Image 2",
                                                 color: null,
@@ -1220,13 +1372,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile2 != null ||
-                                              webProjectImage2 != null)
+                                              webProjectImage2 != null ||
+                                              initialProject!.projectImages!.length > 1)
                                             MyImagePicker(
                                               projectImage3Provider:
                                               projectImage3Provider,
+                                              projectImageUrl: projectImageFile3 == null && initialProject!.projectImages!.length > 2 ? initialProject?.projectImages![2] : null,
                                             ),
                                           if (projectImageFile2 != null ||
-                                              webProjectImage2 != null)
+                                              webProjectImage2 != null ||
+                                              initialProject!.projectImages!.length > 1)
                                             const MyTextLabel(
                                                 textLabel: "Image 3",
                                                 color: null,
@@ -1236,13 +1391,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile3 != null ||
-                                              webProjectImage3 != null)
+                                              webProjectImage3 != null ||
+                                              initialProject!.projectImages!.length > 2)
                                             MyImagePicker(
                                               projectImage4Provider:
                                               projectImage4Provider,
+                                              projectImageUrl: projectImageFile4 == null && initialProject!.projectImages!.length > 3 ? initialProject?.projectImages![3] : null,
                                             ),
                                           if (projectImageFile3 != null ||
-                                              webProjectImage3 != null)
+                                              webProjectImage3 != null ||
+                                              initialProject!.projectImages!.length > 2)
                                             const MyTextLabel(
                                                 textLabel: "Image 4",
                                                 color: null,
@@ -1252,13 +1410,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile4 != null ||
-                                              webProjectImage4 != null)
+                                              webProjectImage4 != null ||
+                                              initialProject!.projectImages!.length > 3)
                                             MyImagePicker(
                                               projectImage5Provider:
                                               projectImage5Provider,
+                                              projectImageUrl: projectImageFile5 == null && initialProject!.projectImages!.length > 4 ? initialProject?.projectImages![4] : null,
                                             ),
                                           if (projectImageFile4 != null ||
-                                              webProjectImage4 != null)
+                                              webProjectImage4 != null ||
+                                              initialProject!.projectImages!.length > 3)
                                             const MyTextLabel(
                                                 textLabel: "Image 5",
                                                 color: null,
@@ -1268,13 +1429,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile5 != null ||
-                                              webProjectImage5 != null)
+                                              webProjectImage5 != null ||
+                                              initialProject!.projectImages!.length > 4)
                                             MyImagePicker(
                                               projectImage6Provider:
                                               projectImage6Provider,
+                                              projectImageUrl: projectImageFile6 == null && initialProject!.projectImages!.length > 5 ? initialProject?.projectImages![5] : null,
                                             ),
                                           if (projectImageFile5 != null ||
-                                              webProjectImage5 != null)
+                                              webProjectImage5 != null ||
+                                              initialProject!.projectImages!.length > 4)
                                             const MyTextLabel(
                                                 textLabel: "Image 6",
                                                 color: null,
@@ -1284,13 +1448,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile6 != null ||
-                                              webProjectImage6 != null)
+                                              webProjectImage6 != null ||
+                                              initialProject!.projectImages!.length > 5)
                                             MyImagePicker(
                                               projectImage7Provider:
                                               projectImage7Provider,
+                                              projectImageUrl: projectImageFile7 == null && initialProject!.projectImages!.length > 6 ? initialProject?.projectImages![6] : null,
                                             ),
                                           if (projectImageFile6 != null ||
-                                              webProjectImage6 != null)
+                                              webProjectImage6 != null ||
+                                              initialProject!.projectImages!.length > 5)
                                             const MyTextLabel(
                                                 textLabel: "Image 7",
                                                 color: null,
@@ -1300,13 +1467,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile7 != null ||
-                                              webProjectImage7 != null)
+                                              webProjectImage7 != null ||
+                                              initialProject!.projectImages!.length > 6)
                                             MyImagePicker(
                                               projectImage8Provider:
                                               projectImage8Provider,
+                                              projectImageUrl: projectImageFile8 == null && initialProject!.projectImages!.length > 7 ? initialProject?.projectImages![7] : null,
                                             ),
                                           if (projectImageFile7 != null ||
-                                              webProjectImage7 != null)
+                                              webProjectImage7 != null ||
+                                              initialProject!.projectImages!.length > 6)
                                             const MyTextLabel(
                                                 textLabel: "Image 8",
                                                 color: null,
@@ -1316,13 +1486,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile8 != null ||
-                                              webProjectImage8 != null)
+                                              webProjectImage8 != null ||
+                                              initialProject!.projectImages!.length > 7)
                                             MyImagePicker(
                                               projectImage9Provider:
                                               projectImage9Provider,
+                                              projectImageUrl: projectImageFile9 == null && initialProject!.projectImages!.length > 8 ? initialProject?.projectImages![8] : null,
                                             ),
                                           if (projectImageFile8 != null ||
-                                              webProjectImage8 != null)
+                                              webProjectImage8 != null ||
+                                              initialProject!.projectImages!.length > 7)
                                             const MyTextLabel(
                                                 textLabel: "Image 9",
                                                 color: null,
@@ -1332,13 +1505,16 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                   fontSize: 16.0,
                                                 )),
                                           if (projectImageFile9 != null ||
-                                              webProjectImage9 != null)
+                                              webProjectImage9 != null ||
+                                              initialProject!.projectImages!.length > 8)
                                             MyImagePicker(
                                               projectImage10Provider:
                                               projectImage10Provider,
+                                              projectImageUrl: projectImageFile10 == null && initialProject!.projectImages!.length > 9 ? initialProject?.projectImages![9] : null,
                                             ),
                                           if (projectImageFile9 != null ||
-                                              webProjectImage9 != null)
+                                              webProjectImage9 != null ||
+                                              initialProject!.projectImages!.length > 8)
                                             const MyTextLabel(
                                                 textLabel: "Image 10",
                                                 color: null,

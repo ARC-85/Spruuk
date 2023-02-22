@@ -12,7 +12,8 @@ import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/widgets/text_label.dart';
 
 class MyProjectArea extends ConsumerStatefulWidget {
-  const MyProjectArea({super.key});
+  MyProjectArea({Key? key, this.projectArea}) : super(key: key);
+  int? projectArea;
 
   @override
   ConsumerState<MyProjectArea> createState() => _MyProjectArea();
@@ -21,9 +22,18 @@ class MyProjectArea extends ConsumerStatefulWidget {
 class _MyProjectArea extends ConsumerState<MyProjectArea> {
   // Set up variable for cost range, taken from https://api.flutter.dev/flutter/material/RangeSlider-class.html
   double _currentAreaValue = 0;
+  int? _initialAreaValue;
+  bool newAreaToggle = false;
 
   @override
   Widget build(BuildContext context) {
+    if(widget.projectArea !=null && newAreaToggle == false) {
+      _initialAreaValue = widget.projectArea;
+      _currentAreaValue = widget.projectArea!.toDouble();
+    } else {
+      _initialAreaValue = null;
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -64,12 +74,13 @@ class _MyProjectArea extends ConsumerState<MyProjectArea> {
               ),
             ),
             child: Slider(
-              value: _currentAreaValue,
+              value: _initialAreaValue == null ? _currentAreaValue : _initialAreaValue!.toDouble(),
               max: 500,
               divisions: 10,
               label: "${_currentAreaValue.round().toString()} m.sq",
               onChanged: (value) {
                 setState(() {
+                  newAreaToggle = true;
                   _currentAreaValue = value;
                   ref.read(projectAreaProvider.notifier).state =
                       _currentAreaValue;
