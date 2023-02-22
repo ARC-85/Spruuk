@@ -35,6 +35,13 @@ class ProjectProvider {
     await firebaseDB.fbAddProject(project);
   }
 
+  Future<void> updateProject(ProjectModel updatedProject) async {
+    final projectIndex =
+    _allProjects!.indexWhere((project) => project.projectId == updatedProject.projectId);
+    _allProjects![projectIndex] = updatedProject;
+    await firebaseDB.updateProject(updatedProject);
+  }
+
   Future<List<ProjectModel>?> getAllProjects() async {
     List<ProjectModel> downloadedProjects = [];
     var snapshot = await firebaseDB.getProjects();
@@ -54,7 +61,7 @@ class ProjectProvider {
     final allProjectsList = await getAllProjects();
     if (allProjectsList != null) {
       _allVendorProjects = [
-        ...allProjectsList!.where((project) => project.projectUserId == uid)
+        ...allProjectsList.where((project) => project.projectUserId == uid)
       ];
     } else {
       _allVendorProjects = [];

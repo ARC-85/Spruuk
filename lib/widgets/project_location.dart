@@ -30,8 +30,13 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
 
   @override
   void didChangeDependencies() {
-    getPermissions();
-    ref.watch(userProvider).getPermissions();
+    //getPermissions();
+    ref.watch(userProvider).getPermissions()
+    .then((value) {
+      setState(() {
+        currentUserLocation = value;
+      });
+    });
 
     super.didChangeDependencies();
   }
@@ -66,7 +71,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
     });
   }
 
-  Future<void> getPermissions() async {
+  /*Future<void> getPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled!) {
       _serviceEnabled = await location.requestService();
@@ -83,13 +88,13 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
       }
     }
     _locationData = await location.getLocation();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
     lat = ref.watch(projectLatLngProvider)?.latitude;
     lng = ref.watch(projectLatLngProvider)?.longitude;
-    currentUserLocation = ref.watch(userProvider).currentUserLocation;
+    //currentUserLocation = ref.watch(userProvider).currentUserLocation;
 
     return Container(
       height: 300,

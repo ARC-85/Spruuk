@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,11 +49,8 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
     });
   }
 
-
-
   @override
   void didChangeDependencies() {
-
     /*try {
       final authData = ref.watch(fireBaseAuthProvider);
       user = authData.currentUser;
@@ -70,8 +65,6 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
     } catch (e) {
       print('Error: $e');
     }*/
-
-
 
     if (firstLoad = true) {
       _isLoading = true;
@@ -89,15 +82,14 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
           .then((value) {
         setState(() {
           currentUser1 = value;
+          _isLoading = false;
         });
       });
 
-      ref
-          .watch(projectProvider)
-          .getAllProjects()
-          .then((value) {
+      ref.watch(projectProvider).getAllProjects().then((value) {
         setState(() {
           allProjects = value;
+          _isLoading = false;
         });
       });
 
@@ -107,6 +99,7 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
           .then((value) {
         setState(() {
           allVendorProjects = value;
+          _isLoading = false;
         });
       });
 
@@ -134,7 +127,6 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
     setState(() {
       print("refreshed!!");
     });
-
   }
 
   ScrollController _scrollController = ScrollController();
@@ -142,21 +134,16 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
 
-    print("this is all projects $allProjects");
-    print("this is the person ${currentUser1?.firstName}");
-    print("this is the vendor projects $allVendorProjects");
-
-
-
     if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
     } else {
       _userType = UserType.vendor;
     }
 
-
-
-
+    print("this is all projects $allProjects");
+    print("this is the person ${currentUser1?.firstName}");
+    print("this is the vendor projects $allVendorProjects");
+    print("this is the userType $_userType");
 
     //print("this is all project title ${allProjects[0].projectTitle}");
 
@@ -179,36 +166,57 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
                         : RefreshIndicator(
                             onRefresh: () =>
                                 _refreshProjectList(currentUser1!.uid),
-                            child: allProjects != null
-                                ? ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap:
-                                        true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
-                                    itemCount: allProjects!.length,
-                                    itemBuilder: (ctx, index) => MyProjectCard(
-                                          project: allProjects![index],
-                                          user: currentUser1!,
-                                          listIndex: index,
-                                        ))
-                                : const Center(
-                                    child: Text('No projects'),
-                                  ))),
+                            child: _userType == UserType.client
+                                ? allProjects != null
+                                    ? ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        shrinkWrap:
+                                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
+                                        itemCount: allProjects!.length,
+                                        itemBuilder: (ctx, index) =>
+                                            MyProjectCard(
+                                              project: allProjects![index],
+                                              user: currentUser1!,
+                                              listIndex: index,
+                                            ))
+                                    : const Center(
+                                        child: Text('No projects'),
+                                      )
+                                : allVendorProjects != null
+                                    ? ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        shrinkWrap:
+                                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
+                                        itemCount: allVendorProjects!.length,
+                                        itemBuilder: (ctx, index) =>
+                                            MyProjectCard(
+                                              project:
+                                                  allVendorProjects![index],
+                                              user: currentUser1!,
+                                              listIndex: index,
+                                            ))
+                                    : const Center(
+                                        child: Text('No projects'),
+                                      ))),
               ),
-              Positioned(
-                top: screenDimensions.height * 0.8,
-                width: screenDimensions.width * 1.7,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/VendorAddProjectScreen');
-                  },
-                  materialTapTargetSize: MaterialTapTargetSize.padded,
-                  backgroundColor:
-                      const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
-                  child: const Icon(
-                    Icons.add_circle,
+              if (_userType == UserType.vendor)
+                Positioned(
+                  top: screenDimensions.height * 0.8,
+                  width: screenDimensions.width * 1.7,
+                  child: FloatingActionButton(
+                    onPressed: () {
+
+                        Navigator.pushNamed(context, '/VendorAddProjectScreen');
+
+                    },
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor:
+                        const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                    child: const Icon(
+                      Icons.add_circle,
+                    ),
                   ),
-                ),
-              )
+                )
             ],
           );
         })));

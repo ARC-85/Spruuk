@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
+import 'package:spruuk/screens/client_project_details.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/signup_screen.dart';
 import 'package:spruuk/screens/splash_screen.dart';
@@ -16,7 +17,7 @@ import 'package:spruuk/screens/location_selection_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterConfig.loadEnvVariables();
+  //await FlutterConfig.loadEnvVariables();
   runApp(const ProviderScope(child: SpruukApp()));
 }
 
@@ -69,6 +70,9 @@ class SpruukApp extends ConsumerWidget {
         // Route for Vendor Project Details Screen
         VendorProjectDetailsScreen.routeName: (context) =>
         const VendorProjectDetailsScreen(),
+        // Route for Client Project Details Screen
+        ClientProjectDetailsScreen.routeName: (context) =>
+        const ClientProjectDetailsScreen(),
       },
     );
   }

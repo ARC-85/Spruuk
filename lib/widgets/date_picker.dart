@@ -11,7 +11,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
 
 class MyDatePicker extends ConsumerStatefulWidget {
-  const MyDatePicker({super.key});
+  MyDatePicker({Key? key, this.completionDay, this.completionMonth, this.completionYear}) : super(key: key);
+  int? completionDay;
+  int? completionMonth;
+  int? completionYear;
 
 
   @override
@@ -19,6 +22,9 @@ class MyDatePicker extends ConsumerStatefulWidget {
 }
 
 class _MyDatePicker extends ConsumerState<MyDatePicker> {
+  DateTime? initialDate;
+  bool newDateToggle = false;
+
 
   // Set up variable for completion date, taken from https://github.com/theideasaler/calendar_date_picker2/blob/main/example/lib/main.dart
   List<DateTime?> _singleDatePickerValueWithDefaultValue = [
@@ -57,6 +63,11 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
 
   // Date picker widget, taken from https://pub.dev/packages/calendar_date_picker2
   Widget _buildDefaultSingleDatePickerWithValue() {
+    if (widget.completionDay != null && widget.completionMonth != null && widget.completionYear != null && newDateToggle == false) {
+      initialDate = DateTime(widget.completionYear!, widget.completionMonth!, widget.completionDay!);
+    } else {
+      initialDate = null;
+    }
     final config = CalendarDatePicker2Config(
       selectedDayHighlightColor: Colors.amber[900],
       weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -89,9 +100,10 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
         //const Text('Single Date Picker (With default value)'),
         CalendarDatePicker2(
           config: config,
-          initialValue: _singleDatePickerValueWithDefaultValue,
+          initialValue: initialDate != null ? <DateTime?> [initialDate] : _singleDatePickerValueWithDefaultValue,
           onValueChanged: (values) =>
               setState(() {
+                newDateToggle = true; // used to shift date if new date marker selected.
                 _singleDatePickerValueWithDefaultValue = values;
                 ref.read(projectDateProvider.notifier).state = _singleDatePickerValueWithDefaultValue;}),
         ),
@@ -116,6 +128,7 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
 
   @override
   Widget build(BuildContext context) {
+
     final screenDimensions = MediaQuery.of(context).size;
     return Center(
       child: SizedBox(
