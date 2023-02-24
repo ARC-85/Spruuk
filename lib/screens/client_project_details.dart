@@ -26,6 +26,7 @@ import 'package:spruuk/widgets/project_area.dart';
 import 'package:spruuk/widgets/project_location.dart';
 import 'package:spruuk/widgets/text_input.dart';
 import 'dart:io';
+import 'package:date_format/date_format.dart';
 
 import 'package:spruuk/widgets/text_label.dart';
 
@@ -52,6 +53,9 @@ class _ClientProjectDetailsScreen
   var _projectId;
   ProjectModel? initialProject;
   bool doneOnce = false;
+  bool vendorFavourited = false;
+  DateTime? formattedDate;
+  String? _formattedDate;
 
   @override
   void didChangeDependencies() {
@@ -182,11 +186,29 @@ class _ClientProjectDetailsScreen
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
     final _projectProvider = ref.watch(projectProvider);
+
+    if (currentUser1 != null) {
+      vendorFavourited = currentUser1!.userVendorFavourites
+          .any((_userId) => _userId == initialProject?.projectUserId);
+    }
+    print("vendor favourited = $vendorFavourited");
+
+    if (initialProject?.projectCompletionYear != null) {
+      formattedDate = DateTime(
+          initialProject!.projectCompletionYear!,
+          initialProject!.projectCompletionMonth!,
+          initialProject!.projectCompletionDay!);
+    }
+
+    if (formattedDate != null) {
+      _formattedDate = formatDate(formattedDate!, [d, ' ', M, ' ', yyyy]);
+    } else {
+      _formattedDate = "Not provided";
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text("Client Project Details"), actions: [
@@ -207,7 +229,7 @@ class _ClientProjectDetailsScreen
                 children: [
                   Container(
                     width: screenDimensions.width,
-                    height: screenDimensions.height *0.897,
+                    height: screenDimensions.height * 0.75,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -231,9 +253,9 @@ class _ClientProjectDetailsScreen
                         ),
                       )),
                   Positioned(
-                    top: screenDimensions.height * 0.10,
+                    top: screenDimensions.height * 0.1,
                     child: SizedBox(
-                        height: screenDimensions.height * 0.85,
+                        height: screenDimensions.height * 0.65,
                         width: screenDimensions.width,
                         child: Scrollbar(
                             controller: _scrollController,
@@ -244,61 +266,57 @@ class _ClientProjectDetailsScreen
                             child: SingleChildScrollView(
                                 controller: _scrollController,
                                 child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
-                                        margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 20, horizontal: 16),
                                         height: 200,
                                         child: ListView.separated(
                                           scrollDirection: Axis.horizontal,
-                                          separatorBuilder: (context, index) => SizedBox(width:8),
-                                          itemCount: initialProject!.projectImages!.length,
+                                          separatorBuilder: (context, index) =>
+                                              SizedBox(width: 8),
+                                          itemCount: initialProject!
+                                              .projectImages!.length,
                                           itemBuilder: (context, index) => ClipRRect(
-                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(10)),
                                               child: Container(
-                                                  width: screenDimensions.width / 2,
+                                                  width: screenDimensions.width /
+                                                      1.2,
                                                   height: 160,
                                                   decoration: BoxDecoration(
-                                                      image: DecorationImage(image: NetworkImage(initialProject!.projectImages![index]!),
-                                                          fit: BoxFit.cover)
-                                                  )
-                                              )
-                                          ),
-
-                                        )
-                                    ),
-
+                                                      image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              initialProject!
+                                                                      .projectImages![
+                                                                  index]!),
+                                                          fit: BoxFit.cover)))),
+                                        )),
                                     Row(
                                       mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                       children: [
                                         Container(
                                           height: 40,
                                           width: 200,
                                           alignment: Alignment.center,
-                                          margin:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 2,
-                                              vertical: 6),
-                                          padding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 1,
-                                              vertical: 4),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 2, vertical: 6),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 1, vertical: 4),
                                           decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
-                                              BorderRadius.circular(
-                                                  25)),
+                                                  BorderRadius.circular(25)),
                                           child: Text(
                                             initialProject!.projectType!,
                                             textAlign: TextAlign.center,
                                             style: const TextStyle(
                                               color: Colors.black45,
-                                              fontWeight:
-                                              FontWeight.normal,
+                                              fontWeight: FontWeight.normal,
                                               fontSize: 20.0,
                                             ),
                                           ),
@@ -327,7 +345,7 @@ class _ClientProjectDetailsScreen
                                       decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(25)),
+                                              BorderRadius.circular(25)),
                                       child: Text(
                                         initialProject!.projectTitle!,
                                         textAlign: TextAlign.center,
@@ -341,8 +359,7 @@ class _ClientProjectDetailsScreen
                                     const Align(
                                       alignment: Alignment.centerLeft,
                                       child: MyTextLabel(
-                                          textLabel:
-                                          "Brief Description: ",
+                                          textLabel: "Brief Description: ",
                                           color: null,
                                           textStyle: TextStyle(
                                             color: Colors.white,
@@ -361,7 +378,7 @@ class _ClientProjectDetailsScreen
                                       decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius:
-                                          BorderRadius.circular(25)),
+                                              BorderRadius.circular(25)),
                                       child: Text(
                                         initialProject!
                                             .projectBriefDescription!,
@@ -389,11 +406,21 @@ class _ClientProjectDetailsScreen
                                         children: [
                                           GoogleMap(
                                             initialCameraPosition:
-                                            CameraPosition(
-                                                target: initialProject?.projectLat != null ?
-                                                LatLng(initialProject!.projectLat!.toDouble(), initialProject!.projectLng!.toDouble())
-                                                    : const LatLng(53.37466222698207, -9.1528495028615),
-                                                zoom: 17),
+                                                CameraPosition(
+                                                    target: initialProject
+                                                                ?.projectLat !=
+                                                            null
+                                                        ? LatLng(
+                                                            initialProject!
+                                                                .projectLat!
+                                                                .toDouble(),
+                                                            initialProject!
+                                                                .projectLng!
+                                                                .toDouble())
+                                                        : const LatLng(
+                                                            53.37466222698207,
+                                                            -9.1528495028615),
+                                                    zoom: 17),
                                             mapType: MapType.normal,
                                             // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
                                             onMapCreated: (controller) {
@@ -402,16 +429,22 @@ class _ClientProjectDetailsScreen
                                               });
                                             },
                                             markers: <Marker>{
-                                              if (initialProject?.projectLat != null)
-                                              // taken from https://stackoverflow.com/questions/55003179/flutter-drag-marker-and-get-new-position
+                                              if (initialProject?.projectLat !=
+                                                  null)
+                                                // taken from https://stackoverflow.com/questions/55003179/flutter-drag-marker-and-get-new-position
                                                 Marker(
                                                   onTap: () {
                                                     //Navigator.pushNamed(context, '/LocationSelectionScreen');
                                                   },
                                                   //draggable: true,
-                                                  markerId:
-                                                  MarkerId('Marker'),
-                                                  position:  LatLng(initialProject!.projectLat!.toDouble(), initialProject!.projectLng!.toDouble()),
+                                                  markerId: MarkerId('Marker'),
+                                                  position: LatLng(
+                                                      initialProject!
+                                                          .projectLat!
+                                                          .toDouble(),
+                                                      initialProject!
+                                                          .projectLng!
+                                                          .toDouble()),
                                                 )
                                             },
                                           ),
@@ -426,266 +459,444 @@ class _ClientProjectDetailsScreen
                                       child: RichText(
                                         text: TextSpan(
                                           text: _advancedStatus ==
-                                              AdvancedStatus.basic
+                                                  AdvancedStatus.basic
                                               ? 'Show Advanced Inputs?'
                                               : 'Show Basic Inputs?',
                                           style: const TextStyle(
                                               color: Colors.white,
-                                              fontWeight:
-                                              FontWeight.bold),
+                                              fontWeight: FontWeight.bold),
                                           children: [
                                             TextSpan(
                                                 text: ' Click Here',
                                                 style: TextStyle(
-                                                    color: Colors
-                                                        .blue.shade300,
+                                                    color: Colors.blue.shade300,
                                                     fontWeight:
-                                                    FontWeight.bold),
+                                                        FontWeight.bold),
                                                 recognizer:
-                                                TapGestureRecognizer()
-                                                  ..onTap = () {
-                                                    _switchAdvanced();
-                                                  })
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        _switchAdvanced();
+                                                      })
                                           ],
                                         ),
                                       ),
                                     ),
                                     if (_advancedStatus ==
                                         AdvancedStatus.advanced)
-                                      Container(
-                                          height: 100,
-                                          margin:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 24,
-                                              vertical: 16),
-                                          padding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 4),
-                                          decoration: BoxDecoration(
+                                      const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyTextLabel(
+                                            textLabel: "Long Description: ",
+                                            color: null,
+                                            textStyle: TextStyle(
                                               color: Colors.white,
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  25)),
-                                          child: TextFormField(
-                                            // Need to have a special text input to accommodate long version
-                                            cursorColor: Colors.white,
-                                            obscureText: false,
-                                            controller:
-                                            _projectLongDescription,
-                                            keyboardType: TextInputType
-                                                .multiline, // From https://stackoverflow.com/questions/45900387/multi-line-textfield-in-flutter
-                                            maxLines: null,
-                                            decoration:
-                                            const InputDecoration(
-                                              hintText:
-                                              "Long Description",
-                                              hintStyle: TextStyle(
-                                                  color: Colors.black45),
-                                              helperStyle: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0,
+                                            )),
+                                      ),
+                                    if (_advancedStatus ==
+                                        AdvancedStatus.advanced)
+                                      Container(
+                                        height: 120,
+                                        width: 400,
+                                        alignment: Alignment.topLeft,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 4),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                        child: Text(
+                                          initialProject!
+                                              .projectLongDescription!,
+                                          textAlign: TextAlign.center,
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                            color: Colors.black45,
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                    if (_advancedStatus ==
+                                        AdvancedStatus.advanced)
+                                      const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyTextLabel(
+                                            textLabel:
+                                                "Project Completion Date: ",
+                                            color: null,
+                                            textStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0,
+                                            )),
+                                      ),
+                                    if (_advancedStatus ==
+                                        AdvancedStatus.advanced)
+                                      Container(
+                                        height: 40,
+                                        width: 400,
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 4),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                        child: Text(
+                                          _formattedDate!,
+                                          textAlign: TextAlign.center,
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                            color: Colors.black45,
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                    if (_advancedStatus ==
+                                        AdvancedStatus.advanced)
+                                      const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyTextLabel(
+                                            textLabel: "Project Style: ",
+                                            color: null,
+                                            textStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0,
+                                            )),
+                                      ),
+                                    if (_advancedStatus ==
+                                        AdvancedStatus.advanced)
+                                      Container(
+                                        height: 40,
+                                        width: 400,
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 4),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                        child: Text(
+                                          initialProject?.projectStyle != null
+                                              ? initialProject!.projectStyle!
+                                              : "Not provided",
+                                          textAlign: TextAlign.center,
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                            color: Colors.black45,
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 20.0,
+                                          ),
+                                        ),
+                                      ),
+                                    if (_advancedStatus ==
+                                        AdvancedStatus.advanced)
+                                      const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyTextLabel(
+                                            textLabel: "Project Cost Range: ",
+                                            color: null,
+                                            textStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0,
+                                            )),
+                                      ),
+                                    if (_advancedStatus ==
+                                        AdvancedStatus.advanced)
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 40,
+                                            width: 90,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 6),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 4),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(25)),
+                                            child: const Text(
+                                              "Min (€):",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15.0,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            height: 40,
+                                            width: 95,
+                                            alignment: Alignment.center,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 6),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 4),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(25)),
+                                            child: Text(
+                                              initialProject?.projectMinCost !=
+                                                      null
+                                                  ? initialProject!
+                                                      .projectMinCost!
+                                                      .toString()
+                                                  : "NA",
+                                              textAlign: TextAlign.center,
+                                              softWrap: true,
+                                              style: const TextStyle(
                                                 color: Colors.black45,
-                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 20.0,
                                               ),
-                                              alignLabelWithHint: true,
-                                              border: InputBorder.none,
                                             ),
-                                          )),
-                                    if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
-                                      const MyTextLabel(
-                                          textLabel:
-                                          "Project Completion Date",
-                                          color: null,
-                                          textStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20.0,
-                                          )),
-                                    if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
-                                      MyDatePicker(
-                                        completionDay: initialProject
-                                            ?.projectCompletionDay,
-                                        completionMonth: initialProject
-                                            ?.projectCompletionMonth,
-                                        completionYear: initialProject
-                                            ?.projectCompletionYear,
+                                          ),
+                                          Container(
+                                            height: 40,
+                                            width: 90,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 6),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 4),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(25)),
+                                            child: const Text(
+                                              "Max (€):",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15.0,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            height: 40,
+                                            width: 95,
+                                            alignment: Alignment.center,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 6),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 4),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(25)),
+                                            child: Text(
+                                              initialProject?.projectMaxCost !=
+                                                      null
+                                                  ? initialProject!
+                                                      .projectMaxCost!
+                                                      .toString()
+                                                  : "NA",
+                                              textAlign: TextAlign.center,
+                                              softWrap: true,
+                                              style: const TextStyle(
+                                                color: Colors.black45,
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 20.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     if (_advancedStatus ==
                                         AdvancedStatus.advanced)
-                                      const MyTextLabel(
-                                          textLabel: "Project Style",
-                                          color: null,
-                                          textStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20.0,
-                                          )),
+                                      const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: MyTextLabel(
+                                            textLabel: "Project Area (sq.m): ",
+                                            color: null,
+                                            textStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0,
+                                            )),
+                                      ),
                                     if (_advancedStatus ==
                                         AdvancedStatus.advanced)
                                       Container(
-                                          height: 70,
-                                          margin:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 24,
-                                              vertical: 8),
-                                          padding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                              vertical: 4),
-                                          decoration: BoxDecoration(
-                                              color: const Color.fromRGBO(
-                                                  0, 0, 95, 1)
-                                                  .withOpacity(0),
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  25)),
-                                          child: DropdownButton2(
-                                            isExpanded: true,
-                                            hint: Row(
-                                              children: const [
-                                                Icon(
-                                                  Icons.list,
-                                                  size: 16,
-                                                  color: Colors.black45,
-                                                ),
-                                                SizedBox(
-                                                  width: 4,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Project Style',
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color:
-                                                      Colors.black45,
-                                                    ),
-                                                    overflow: TextOverflow
-                                                        .ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: [
-                                              "None",
-                                              "Traditional",
-                                              "Contemporary",
-                                              "Modern",
-                                              "Retro",
-                                              "Minimalist"
-                                            ]
-                                                .map((item) =>
-                                                DropdownMenuItem<
-                                                    String>(
-                                                  value: item,
-                                                  child: Text(
-                                                    item,
-                                                    style:
-                                                    const TextStyle(
-                                                      color: Colors
-                                                          .black45,
-                                                    ),
-                                                    overflow:
-                                                    TextOverflow
-                                                        .ellipsis,
-                                                  ),
-                                                ))
-                                                .toList(),
-                                            value: selectedStyleValue,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedStyleValue =
-                                                value as String;
-                                              });
-                                            },
-                                            icon: const Icon(
-                                              Icons
-                                                  .arrow_forward_ios_outlined,
-                                            ),
-                                            iconSize: 14,
-                                            iconEnabledColor:
-                                            const Color.fromRGBO(
-                                                0, 0, 95, 1)
-                                                .withOpacity(1),
-                                            iconDisabledColor:
-                                            Colors.grey,
-                                            buttonHeight: 50,
-                                            buttonWidth: 160,
-                                            buttonPadding:
-                                            const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            buttonDecoration:
-                                            BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  14),
-                                              border: Border.all(
-                                                color: Colors.black26,
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            buttonElevation: 2,
-                                            itemHeight: 40,
-                                            itemPadding:
-                                            const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            dropdownMaxHeight: 200,
-                                            dropdownWidth: 200,
-                                            dropdownPadding: null,
-                                            dropdownDecoration:
-                                            BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(
-                                                  14),
-                                              color: Colors.white,
-                                            ),
-                                            dropdownElevation: 8,
-                                            scrollbarRadius:
-                                            const Radius.circular(40),
-                                            scrollbarThickness: 6,
-                                            scrollbarAlwaysShow: true,
-                                            offset: const Offset(-20, 0),
-                                          )),
-                                    if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
-                                      const MyTextLabel(
-                                          textLabel: "Project Cost Range",
-                                          color: null,
-                                          textStyle: TextStyle(
+                                        height: 40,
+                                        width: 200,
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 4),
+                                        decoration: BoxDecoration(
                                             color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                            borderRadius:
+                                            BorderRadius.circular(25)),
+                                        child: Text(
+                                          initialProject?.projectArea != null
+                                              ? initialProject!.projectArea.toString()!
+                                              : "Not provided",
+                                          textAlign: TextAlign.center,
+                                          softWrap: true,
+                                          style: const TextStyle(
+                                            color: Colors.black45,
+                                            fontWeight: FontWeight.normal,
                                             fontSize: 20.0,
-                                          )),
-                                    if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
-                                      MyCostRange(
-                                        projectMinCost: initialProject
-                                            ?.projectMinCost,
-                                        projectMaxCost: initialProject
-                                            ?.projectMaxCost,
-                                      ),
-                                    if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
-                                      const MyTextLabel(
-                                          textLabel: "Project Area",
-                                          color: null,
-                                          textStyle: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20.0,
-                                          )),
-                                    if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
-                                      MyProjectArea(
-                                        projectArea:
-                                        initialProject?.projectArea,
+                                          ),
+                                        ),
                                       ),
                                   ],
                                 )))),
                   ),
                 ],
+              ),
+              InkWell(
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 15,
+                        child: const Divider(
+                          color: Colors.white,
+                          height: 1,
+                          thickness: 1,
+                          indent: 1,
+                          endIndent: 1,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage:
+                                initialProject?.projectUserImage == null
+                                    ? const AssetImage(
+                                        "assets/images/circular_avatar.png")
+                                    : Image.network(
+                                            initialProject!.projectUserImage!)
+                                        .image,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            children: [
+                              const Text(
+                                "Vendor Email: ",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                              Text(
+                                initialProject!.projectUserEmail!,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.lightBlueAccent,
+                                ),
+                              )
+                            ],
+                          ),
+                          Stack(
+                            children: [
+                              if (vendorFavourited == false)
+                                FloatingActionButton(
+                                  onPressed: () {
+                                    ref
+                                        .read(userProvider)
+                                        .addVendorFavouriteToClient(
+                                            initialProject!.projectUserId);
+                                    // Had to incorporate this user refresh as a work around because it wasn't reading in didChangeDependencies
+                                    final authData =
+                                        ref.watch(fireBaseAuthProvider);
+                                    ref
+                                        .watch(userProvider)
+                                        .getCurrentUserData(
+                                            authData.currentUser!.uid)
+                                        .then((value) {
+                                      setState(() {
+                                        currentUser1 = value;
+                                        print("turning true");
+                                      });
+                                    });
+                                  },
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.padded,
+                                  backgroundColor:
+                                      const Color.fromRGBO(242, 151, 101, 1)
+                                          .withOpacity(1),
+                                  child: const Icon(
+                                    Icons.favorite_border_outlined,
+                                  ),
+                                ),
+                              if (vendorFavourited == true)
+                                FloatingActionButton(
+                                  onPressed: () {
+                                    ref
+                                        .read(userProvider)
+                                        .removeVendorFavouriteToClient(
+                                            initialProject!.projectUserId);
+                                    // Had to incorporate this user refresh as a work around because it wasn't reading in didChangeDependencies
+                                    final authData =
+                                        ref.watch(fireBaseAuthProvider);
+                                    ref
+                                        .watch(userProvider)
+                                        .getCurrentUserData(
+                                            authData.currentUser!.uid)
+                                        .then((value) {
+                                      setState(() {
+                                        currentUser1 = value;
+                                        print("turning false");
+                                      });
+                                    });
+                                  },
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.padded,
+                                  backgroundColor:
+                                      const Color.fromRGBO(242, 151, 101, 1)
+                                          .withOpacity(1),
+                                  child: const Icon(
+                                    Icons.favorite,
+                                  ),
+                                )
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/JointProjectListScreen');
+                },
               ),
               const Spacer(),
             ],

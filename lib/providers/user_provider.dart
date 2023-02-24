@@ -73,6 +73,24 @@ class UserProvider {
       await firebaseDB.updateUser(_currentUserData!);
     }
   }
+
+  Future<void> addVendorFavouriteToClient(String userId) async {
+    bool? alreadyFavourite = _currentUserData?.userVendorFavourites.any((_userId) => _userId == userId);
+
+    if(alreadyFavourite != null && !alreadyFavourite) {
+      _currentUserData?.userVendorFavourites.add(userId);
+      await firebaseDB.updateUser(_currentUserData!);
+    }
+  }
+
+  Future<void> removeVendorFavouriteToClient(String userId) async {
+    bool? alreadyFavourite = _currentUserData?.userVendorFavourites.any((_userId) => _userId == userId);
+
+    if(alreadyFavourite != null && alreadyFavourite) {
+      _currentUserData?.userVendorFavourites.remove(userId);
+      await firebaseDB.updateUser(_currentUserData!);
+    }
+  }
 }
 
 final userProvider = Provider((ref) => UserProvider());
