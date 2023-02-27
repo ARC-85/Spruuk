@@ -57,6 +57,7 @@ dependencies:
   flutter_config: ^2.0.0 # Used for accessing Flutter environmental variables
   calendar_date_picker2: ^0.3.7 # Used for inputting dates
   date_format: ^2.0.7 # Used for formatting dates
+  #geolocator: ^9.0.2 # Used for determining distance between two locations
 
 
 

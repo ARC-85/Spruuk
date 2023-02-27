@@ -216,6 +216,24 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
                       Icons.add_circle,
                     ),
                   ),
+                ),
+              if (_userType == UserType.client)
+                Positioned(
+                  top: screenDimensions.height * 0.8,
+                  width: screenDimensions.width * 0.3,
+                  child: FloatingActionButton(
+                    onPressed: () {
+
+                      Navigator.pushNamed(context, '/ClientSearchProjectScreen');
+
+                    },
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor:
+                    const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                    child: const Icon(
+                      Icons.search,
+                    ),
+                  ),
                 )
             ],
           );

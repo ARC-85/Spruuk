@@ -90,6 +90,16 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
     _locationData = await location.getLocation();
   }*/
 
+  LatLng? initialCamera() {
+
+    if(currentUserLocation != null) {
+      return currentUserLocation;
+    } else {
+      return const LatLng(53.37466222698207, -9.1528495028615);
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     lat = ref.watch(projectLatLngProvider)?.latitude;
@@ -101,6 +111,9 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
       width: 300,
       child: Stack(
         children: [
+          if(currentUserLocation ==null)
+          const CircularProgressIndicator(),
+          if(currentUserLocation !=null)
           GoogleMap(
             /*initialCameraPosition: CameraPosition(
                 target: _locationData != null
@@ -109,7 +122,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
                     : _initialCameraPosition,
                 zoom: 17),*/
             initialCameraPosition:
-                CameraPosition(target: currentUserLocation!, zoom: 17),
+                CameraPosition(target: currentUserLocation!, zoom: 17 ),
             mapType: MapType.normal,
             // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
             onMapCreated: (controller) {
