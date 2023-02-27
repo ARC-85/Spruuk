@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:spruuk/models/project_model.dart';
+import 'package:spruuk/models/search_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/firebase/firebase_DB.dart';
@@ -16,6 +17,7 @@ class ProjectProvider {
   List<ProjectModel>? _allProjects;
   List<ProjectModel>? _allVendorProjects;
   ProjectModel? _currentProjectData;
+  List<ProjectModel>? _filteredProjects;
 
   List<ProjectModel>? get allProjects {
     return [...?_allProjects];
@@ -36,8 +38,8 @@ class ProjectProvider {
   }
 
   Future<void> updateProject(ProjectModel updatedProject) async {
-    final projectIndex =
-    _allProjects!.indexWhere((project) => project.projectId == updatedProject.projectId);
+    final projectIndex = _allProjects!
+        .indexWhere((project) => project.projectId == updatedProject.projectId);
     _allProjects![projectIndex] = updatedProject;
     await firebaseDB.updateProject(updatedProject);
   }
@@ -67,6 +69,161 @@ class ProjectProvider {
       _allVendorProjects = [];
     }
     return _allVendorProjects;
+  }
+
+  // Method for filtering projects base on search terms provided. Adapted from https://stackoverflow.com/questions/57270015/how-to-filter-list-in-flutter
+  Future<List<ProjectModel>?> getFilteredProjects(SearchModel? search) async {
+    final allProjectsList = await getAllProjects();
+    _filteredProjects = allProjectsList;
+    print("this is filteredProjects initial $_filteredProjects");
+    List<ProjectModel>? _tempFilteredProjects;
+    if (_filteredProjects != null) {
+      if (search?.searchQuery != null) {
+        _tempFilteredProjects = [
+          ..._filteredProjects!.where((project) =>
+              (project.projectTitle
+                  .toLowerCase()
+                  .contains(search!.searchQuery!.toLowerCase())) ||
+              (project.projectBriefDescription
+                  .toLowerCase()
+                  .contains(search.searchQuery!.toLowerCase())) ||
+              (project.projectLongDescription != null &&
+                  project.projectLongDescription!
+                      .toLowerCase()
+                      .contains(search.searchQuery!.toLowerCase())))
+        ];
+        _filteredProjects = _tempFilteredProjects;
+        print("this is filteredProjects searchQuery $_filteredProjects");
+      }
+
+      if (search?.searchTypes != null && search!.searchTypes!.isNotEmpty) {
+        _tempFilteredProjects = [];
+        List<ProjectModel>? _extraTempFilteredProjects = [];
+        print("this is search types ${search.searchTypes}");
+        for (var type in search.searchTypes!) {
+          _tempFilteredProjects = [
+            ..._filteredProjects!.where((project) =>
+                (project.projectType != null &&
+                    project.projectType!.toLowerCase() == type!.toLowerCase()))
+          ];
+          _extraTempFilteredProjects.addAll(_tempFilteredProjects);
+          print(
+              "this is extraTempFilteredProjects $_extraTempFilteredProjects");
+        }
+        _filteredProjects = _extraTempFilteredProjects;
+        print("this is filteredProjects types $_filteredProjects");
+      }
+
+      if (search?.searchMinCost != null && search!.searchMinCost! > 0) {
+        _tempFilteredProjects = [];
+        _tempFilteredProjects = [
+          ..._filteredProjects!.where((project) =>
+              (project.projectMinCost != null &&
+                  project.projectMinCost! >= search.searchMinCost!))
+        ];
+        _filteredProjects = _tempFilteredProjects;
+        print("this is filteredProjects minCost $_filteredProjects");
+      }
+
+      if (search?.searchMaxCost != null && search!.searchMaxCost! < 1000000) {
+        _tempFilteredProjects = [];
+        _tempFilteredProjects = [
+          ..._filteredProjects!.where((project) =>
+              (project.projectMaxCost != null &&
+                  project.projectMaxCost! <= search.searchMaxCost!))
+        ];
+        _filteredProjects = _tempFilteredProjects;
+        print("this is filteredProjects maxCost $_filteredProjects");
+      }
+
+      if (search?.searchEarliestCompletionYear != null &&
+          search!.searchEarliestCompletionYear! > 1901) {
+        final date = DateTime(
+            search.searchEarliestCompletionYear!,
+            search.searchEarliestCompletionMonth!,
+            search.searchEarliestCompletionDay!);
+        if (date.isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+          _tempFilteredProjects = [];
+
+          print("this is earliest date $date");
+          var testDate = DateTime.now().subtract(const Duration(days: 1));
+          print(testDate);
+          _tempFilteredProjects = [
+            ..._filteredProjects!.where((project) =>
+                (project.projectCompletionYear != null &&
+                    date.isBefore(DateTime(
+                        project.projectCompletionYear!,
+                        project.projectCompletionMonth!,
+                        project.projectCompletionDay!))))
+          ];
+          _filteredProjects = _tempFilteredProjects;
+          print(
+              "this is filteredProjects earliest completion $_filteredProjects");
+        }
+      }
+
+      if (search?.searchLatestCompletionYear != null &&
+          search!.searchLatestCompletionYear! < 2101) {
+        final date = DateTime(
+            search.searchLatestCompletionYear!,
+            search.searchLatestCompletionMonth!,
+            search.searchLatestCompletionDay!);
+        if (date.isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+          _tempFilteredProjects = [];
+          print("this is latest date $date");
+          _tempFilteredProjects = [
+            ..._filteredProjects!.where((project) =>
+                (project.projectCompletionYear != null &&
+                    date.isAfter(DateTime(
+                        project.projectCompletionYear!,
+                        project.projectCompletionMonth!,
+                        project.projectCompletionDay!))))
+          ];
+          _filteredProjects = _tempFilteredProjects;
+          print(
+              "this is filteredProjects latest completion $_filteredProjects");
+        }
+      }
+
+      if (search?.searchStyles != null && search!.searchStyles!.isNotEmpty) {
+        _tempFilteredProjects = [];
+        List<ProjectModel>? _extraTempFilteredProjects = [];
+        for (var style in search!.searchStyles!) {
+          _tempFilteredProjects = [
+            ..._filteredProjects!.where((project) => (project.projectStyle !=
+                    null &&
+                project.projectStyle!.toLowerCase() == style!.toLowerCase()))
+          ];
+          _extraTempFilteredProjects.addAll(_tempFilteredProjects);
+        }
+        _filteredProjects = _extraTempFilteredProjects;
+        print("this is filteredProjects styles $_filteredProjects");
+      }
+
+      if (search?.searchMinArea != null && search!.searchMinArea! > 0) {
+        _tempFilteredProjects = [];
+        _tempFilteredProjects = [
+          ..._filteredProjects!.where((project) =>
+              (project.projectArea != null &&
+                  project.projectArea! >= search.searchMinArea!))
+        ];
+        _filteredProjects = _tempFilteredProjects;
+        print("this is filteredProjects min area $_filteredProjects");
+      }
+
+      if (search?.searchMaxArea != null && search!.searchMaxArea! < 500) {
+        _tempFilteredProjects = [];
+        _tempFilteredProjects = [
+          ..._filteredProjects!.where((project) =>
+              (project.projectArea != null &&
+                  project.projectArea! <= search.searchMaxArea!))
+        ];
+        _filteredProjects = _tempFilteredProjects;
+        print("this is filteredProjects max area $_filteredProjects");
+      }
+    }
+    print("this is filteredProjects final $_filteredProjects");
+    return _filteredProjects;
   }
 
   Future<ProjectModel?> getProjectById(String? projectId) async {
@@ -145,8 +302,22 @@ final projectLatLngProvider = StateProvider.autoDispose<LatLng?>((ref) => null);
 final projectDateProvider =
     StateProvider.autoDispose<List<DateTime?>?>((ref) => null);
 
+final projectLatestDateProvider = StateProvider.autoDispose<List<DateTime?>?>(
+    (ref) => [DateTime.now(), DateTime.now()]);
+
 final projectCostProvider =
     StateProvider.autoDispose<RangeValues?>((ref) => null);
 
-final projectAreaProvider =
-StateProvider.autoDispose<double?>((ref) => null);
+final projectAreaProvider = StateProvider.autoDispose<double?>((ref) => null);
+
+final projectAreaRangeProvider =
+    StateProvider.autoDispose<RangeValues?>((ref) => null);
+
+final projectDistanceFromProvider =
+    StateProvider.autoDispose<double?>((ref) => null);
+
+final projectTypesProvider = StateProvider.autoDispose<List<String?>?>((ref) =>
+    ["New Build", "Renovation", "Commercial", "Landscaping", "Interiors"]);
+
+final projectStylesProvider = StateProvider.autoDispose<List<String?>?>(
+    (ref) => ["Traditional", "Contemporary", "Retro", "Modern", "Minimalist"]);

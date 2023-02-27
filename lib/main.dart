@@ -4,6 +4,7 @@ import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
 import 'package:spruuk/screens/client_project_details.dart';
+import 'package:spruuk/screens/client_search_project_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/signup_screen.dart';
 import 'package:spruuk/screens/splash_screen.dart';
@@ -73,6 +74,9 @@ class SpruukApp extends ConsumerWidget {
         // Route for Client Project Details Screen
         ClientProjectDetailsScreen.routeName: (context) =>
         const ClientProjectDetailsScreen(),
+        // Route for Client Project Search Screen
+        ClientSearchProjectScreen.routeName: (context) =>
+        const ClientSearchProjectScreen(),
       },
     );
   }

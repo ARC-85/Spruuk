@@ -1,6 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'dart:io';
-
 class ProjectModel {
   String projectId;
   String projectTitle;
