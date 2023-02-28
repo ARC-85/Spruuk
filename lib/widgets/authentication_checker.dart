@@ -24,7 +24,7 @@ class AuthenticationChecker extends ConsumerWidget {
 
     return authState.when(
         data: (data) {
-          if (data != null) return const JointProjectsListScreen();
+          if (data != null) return const JointProjectListScreen();
           return const AuthenticationScreen();
         },
         loading: () => const LoadingScreen(),

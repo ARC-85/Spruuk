@@ -14,15 +14,15 @@ import 'package:spruuk/widgets/project_card.dart';
 
 enum UserType { vendor, client }
 
-class JointProjectsListScreen extends ConsumerStatefulWidget {
+class JointProjectListScreen extends ConsumerStatefulWidget {
   static const routeName = '/JointProjectListScreen';
-  const JointProjectsListScreen({Key? key}) : super(key: key);
+  const JointProjectListScreen({Key? key}) : super(key: key);
 
   @override
-  _JointProjectsListScreen createState() => _JointProjectsListScreen();
+  _JointProjectListScreen createState() => _JointProjectListScreen();
 }
 
-class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
+class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   UserType? _userType;
@@ -149,7 +149,14 @@ class _JointProjectsListScreen extends ConsumerState<JointProjectsListScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Home"),
+          title: const Text("Home"), actions: [
+          IconButton(
+              onPressed: () => Navigator.pushNamed(context, '/JointProjectMapScreen'),
+              icon: const Icon(
+                Icons.map_outlined,
+                size: 25,
+              )),
+        ]
         ),
         resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),

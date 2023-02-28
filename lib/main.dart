@@ -6,6 +6,7 @@ import 'package:spruuk/screens/authentication_screen.dart';
 import 'package:spruuk/screens/client_project_details.dart';
 import 'package:spruuk/screens/client_search_project_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
+import 'package:spruuk/screens/joint_project_map_screen.dart';
 import 'package:spruuk/screens/signup_screen.dart';
 import 'package:spruuk/screens/splash_screen.dart';
 import 'package:spruuk/screens/vendor_add_project_screen.dart';
@@ -51,8 +52,8 @@ class SpruukApp extends ConsumerWidget {
           loading: () => const LoadingScreen()),
       routes: {
         // Route for Joint Projects List Screen
-        JointProjectsListScreen.routeName: (context) =>
-            const JointProjectsListScreen(),
+        JointProjectListScreen.routeName: (context) =>
+            const JointProjectListScreen(),
         // Route for Authentication Screen
         AuthenticationScreen.routeName: (context) =>
             const AuthenticationScreen(),
@@ -77,6 +78,9 @@ class SpruukApp extends ConsumerWidget {
         // Route for Client Project Search Screen
         ClientSearchProjectScreen.routeName: (context) =>
         const ClientSearchProjectScreen(),
+        // Route for Joint Project Map Screen
+        JointProjectMapScreen.routeName: (context) =>
+        const JointProjectMapScreen(),
       },
     );
   }
