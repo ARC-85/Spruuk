@@ -28,6 +28,14 @@ class NavDrawer extends ConsumerWidget {
       Navigator.pushNamed(context, '/AuthenticationScreen');
     }
 
+    Future<void> _onPressedFavouriteProjectsFunction() async {
+      Navigator.pushNamed(context, '/ClientFavouriteProjectsListScreen');
+    }
+
+    Future<void> _onPressedFavouriteVendorsFunction() async {
+      Navigator.pushNamed(context, '/ClientFavouriteVendorsListScreen');
+    }
+
     try {
       final authData = ref.watch(fireBaseAuthProvider);
       user = authData.currentUser;
@@ -44,14 +52,14 @@ class NavDrawer extends ConsumerWidget {
       child: Column(
         children: [
           AppBar(
-            title: currentUser1 != null ? Text(currentUser1.firstName) : const Text("nobody")
+            title: currentUser1 != null ? Text(currentUser1.firstName!) : const Text("nobody")
           ),
           const Divider(),
           CircleAvatar(
             radius: 60,
             backgroundImage: currentUser1?.userImage == null
                 ? const AssetImage("assets/images/circular_avatar.png")
-                : Image.network(currentUser1!.userImage).image,
+                : Image.network(currentUser1!.userImage!).image,
           ),
           const Divider(),
           ListTile(
@@ -59,6 +67,20 @@ class NavDrawer extends ConsumerWidget {
             title: const Text('Sign Out'),
             onTap: () =>
                 _onPressedSignOutFunction(),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.favorite),
+            title: const Text('Favourite Projects'),
+            onTap: () =>
+                _onPressedFavouriteProjectsFunction(),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.favorite),
+            title: const Text('Favourite Vendors'),
+            onTap: () =>
+                _onPressedFavouriteVendorsFunction(),
           ),
         ]
       )

@@ -310,7 +310,7 @@ class _ClientSearchProjectScreen
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
               Navigator.pushReplacementNamed(
-                  context, "/JointProjectListScreen");
+                  context, "/ClientFilteredProjectListScreen", arguments: mySearch);
             } catch (error) {
               Fluttertoast.showToast(msg: error.toString());
             }
@@ -672,34 +672,58 @@ class _ClientSearchProjectScreen
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.only(top: 32.0),
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                width: double.infinity,
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : MaterialButton(
-                        onPressed: _onPressedFunction,
-                        textColor:
-                            const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
-                        textTheme: ButtonTextTheme.primary,
-                        minWidth: 100,
-                        color: const Color.fromRGBO(242, 151, 101, 1)
-                            .withOpacity(1),
-                        padding: const EdgeInsets.all(
-                          18,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: BorderSide(color: Colors.blue.shade700),
-                        ),
-                        child: const Text(
-                          'Filter Projects',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
+              Flexible(
+                child: Container(
+                  width: screenDimensions.width,
+                    height: screenDimensions.height * 0.25,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                    ),
+
+                  child: Column(
+                    children: [const SizedBox(
+                      height: 15,
+                      child: Divider(
+                        color: Colors.white,
+                        height: 1,
+                        thickness: 1,
+                        indent: 1,
+                        endIndent: 1,
                       ),
-              ),
-              const Spacer(),
+                    ),
+
+                      Container(
+                        padding: const EdgeInsets.only(top: 20.0, bottom: 15, left: 10, right: 10),
+
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        width: double.infinity,
+                        child: _isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : MaterialButton(
+                          onPressed: _onPressedFunction,
+                          textColor:
+                          const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
+                          textTheme: ButtonTextTheme.primary,
+                          minWidth: 100,
+                          color: const Color.fromRGBO(242, 151, 101, 1)
+                              .withOpacity(1),
+                          padding: const EdgeInsets.all(
+                            18,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            side: BorderSide(color: Colors.blue.shade700),
+                          ),
+                          child: const Text(
+                            'Filter Projects',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ),
+              )
             ],
           );
         }),

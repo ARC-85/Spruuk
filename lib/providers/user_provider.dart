@@ -11,6 +11,9 @@ class UserProvider {
   var firebaseDB = FirebaseDB();
 
   UserModel? _currentUserData;
+  UserModel? _searchedUserData;
+  List<UserModel>? _allUsers;
+  List<UserModel>? _favouriteVendors;
 
   bool? _serviceEnabled;
   PermissionStatus? _permissionGranted;
@@ -22,6 +25,14 @@ class UserProvider {
     return _currentUserData;
   }
 
+  List<UserModel>? get allUsers {
+    return [...?_allUsers];
+  }
+
+  List<UserModel>? get favouriteVendors {
+    return [...?_favouriteVendors];
+  }
+
   LatLng? get currentUserLocation {
     return _currentUserLocation;
   }
@@ -29,6 +40,21 @@ class UserProvider {
   Future<UserModel?> getCurrentUserData(String uid) async {
     _currentUserData = await firebaseDB.fbGetVendorUserData(uid);
     return _currentUserData;
+  }
+
+  Future<List<UserModel>?> getAllUsers() async {
+    List<UserModel> downloadedUsers = [];
+    var snapshot = await firebaseDB.getUsers();
+
+    final downloadedDocuments =
+    snapshot.docs.map((docs) => docs.data()).toList();
+    downloadedDocuments.forEach((user) {
+      UserModel userItem =
+      UserModel.fromJson(user as Map<String, dynamic>);
+      downloadedUsers.add(userItem);
+    });
+    _allUsers = downloadedUsers;
+    return _allUsers;
   }
 
   Future<void> addUser(UserModel user) async {
@@ -57,39 +83,74 @@ class UserProvider {
   }
 
   Future<void> addProjectFavouriteToClient(String projectId) async {
-    bool? alreadyFavourite = _currentUserData?.userProjectFavourites.any((_projectId) => _projectId == projectId);
+    bool? alreadyFavourite = _currentUserData?.userProjectFavourites!.any((_projectId) => _projectId == projectId);
 
-    if(alreadyFavourite != null && !alreadyFavourite) {
-      _currentUserData?.userProjectFavourites.add(projectId);
+    if(alreadyFavourite != null && !alreadyFavourite && _currentUserData?.userProjectFavourites != null) {
+      _currentUserData?.userProjectFavourites!.add(projectId);
       await firebaseDB.updateUser(_currentUserData!);
     }
   }
 
   Future<void> removeProjectFavouriteToClient(String projectId) async {
-    bool? alreadyFavourite = _currentUserData?.userProjectFavourites.any((_projectId) => _projectId == projectId);
+
+    bool? alreadyFavourite = _currentUserData?.userProjectFavourites!.any((_projectId) => _projectId == projectId);
 
     if(alreadyFavourite != null && alreadyFavourite) {
-      _currentUserData?.userProjectFavourites.remove(projectId);
+      _currentUserData?.userProjectFavourites?.remove(projectId);
       await firebaseDB.updateUser(_currentUserData!);
     }
   }
 
   Future<void> addVendorFavouriteToClient(String userId) async {
-    bool? alreadyFavourite = _currentUserData?.userVendorFavourites.any((_userId) => _userId == userId);
+    bool? alreadyFavourite = _currentUserData?.userVendorFavourites!.any((_userId) => _userId == userId);
 
     if(alreadyFavourite != null && !alreadyFavourite) {
-      _currentUserData?.userVendorFavourites.add(userId);
+      _currentUserData?.userVendorFavourites!.add(userId);
       await firebaseDB.updateUser(_currentUserData!);
     }
   }
 
   Future<void> removeVendorFavouriteToClient(String userId) async {
-    bool? alreadyFavourite = _currentUserData?.userVendorFavourites.any((_userId) => _userId == userId);
+    bool? alreadyFavourite = _currentUserData?.userVendorFavourites!.any((_userId) => _userId == userId);
 
     if(alreadyFavourite != null && alreadyFavourite) {
-      _currentUserData?.userVendorFavourites.remove(userId);
+      _currentUserData?.userVendorFavourites!.remove(userId);
       await firebaseDB.updateUser(_currentUserData!);
     }
+  }
+
+  Future<UserModel?> getUserById(String? userId) async {
+    _searchedUserData = await firebaseDB.fbGetUserData(userId!);
+    return _searchedUserData;
+  }
+
+  // Method for filtering projects base on search terms provided. Adapted from https://stackoverflow.com/questions/57270015/how-to-filter-list-in-flutter
+  Future<List<UserModel>?> getFavouriteVendorsForClients(UserModel? user) async {
+    final allUsersList = await getAllUsers();
+    _favouriteVendors = allUsersList;
+    print("this is favouriteVendors initial $_favouriteVendors");
+    List<UserModel>? _tempFavouriteVendors;
+    if (_favouriteVendors != null) {
+
+      if (user != null && user.userVendorFavourites!.isNotEmpty) {
+        _tempFavouriteVendors = [];
+        List<UserModel>? _extraTempFavouriteVendors = [];
+        for (var favourite in user.userVendorFavourites!) {
+          _tempFavouriteVendors = [
+            ..._favouriteVendors!.where((user) =>
+            (user.uid == favourite))
+          ];
+          _extraTempFavouriteVendors.addAll(_tempFavouriteVendors);
+          print(
+              "this is extraTempFavouriteVendors $_extraTempFavouriteVendors");
+        }
+        _favouriteVendors = _extraTempFavouriteVendors;
+        print("this is favouriteVendors favourites $_favouriteVendors");
+      }
+
+    }
+    print("this is favouriteVendors final $_favouriteVendors");
+    return _favouriteVendors;
   }
 }
 

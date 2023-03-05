@@ -3,8 +3,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
-import 'package:spruuk/screens/client_project_details.dart';
+import 'package:spruuk/screens/client_favourite_projects_list_screen.dart';
+import 'package:spruuk/screens/client_favourite_projects_map_screen.dart';
+import 'package:spruuk/screens/client_favourite_vendors_list_screen.dart';
+import 'package:spruuk/screens/client_filtered_project_list_screen.dart';
+import 'package:spruuk/screens/client_project_details_screen.dart';
 import 'package:spruuk/screens/client_search_project_screen.dart';
+import 'package:spruuk/screens/client_vendor_details_screen.dart';
+import 'package:spruuk/screens/client_vendor_projects_list_screen.dart';
+import 'package:spruuk/screens/client_vendor_projects_map_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/joint_project_map_screen.dart';
 import 'package:spruuk/screens/signup_screen.dart';
@@ -81,6 +88,27 @@ class SpruukApp extends ConsumerWidget {
         // Route for Joint Project Map Screen
         JointProjectMapScreen.routeName: (context) =>
         const JointProjectMapScreen(),
+        // Route for Client Filtered Project List Screen
+        ClientFilteredProjectListScreen.routeName: (context) =>
+        const ClientFilteredProjectListScreen(),
+        // Route for Client Vendor Details Screen
+        ClientVendorDetailsScreen.routeName: (context) =>
+        const ClientVendorDetailsScreen(),
+        // Route for Client Favourite Projects List Screen
+        ClientFavouriteProjectsListScreen.routeName: (context) =>
+        const ClientFavouriteProjectsListScreen(),
+        // Route for Client Favourite Projects Map Screen
+        ClientFavouriteProjectsMapScreen.routeName: (context) =>
+        const ClientFavouriteProjectsMapScreen(),
+        // Route for Client Vendor Projects List Screen
+        ClientVendorProjectsListScreen.routeName: (context) =>
+        const ClientVendorProjectsListScreen(),
+        // Route for Client Vendor Projects Map Screen
+        ClientVendorProjectsMapScreen.routeName: (context) =>
+        const ClientVendorProjectsMapScreen(),
+        // Route for Client Favourite Vendors List Screen
+        ClientFavouriteVendorsListScreen.routeName: (context) =>
+        const ClientFavouriteVendorsListScreen(),
       },
     );
   }

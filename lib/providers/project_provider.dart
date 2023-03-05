@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+//import 'package:geolocator/geolocator.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/search_model.dart';
 import 'package:spruuk/models/user_model.dart';
@@ -18,6 +19,7 @@ class ProjectProvider {
   List<ProjectModel>? _allVendorProjects;
   ProjectModel? _currentProjectData;
   List<ProjectModel>? _filteredProjects;
+  List<ProjectModel>? _favouriteProjects;
 
   List<ProjectModel>? get allProjects {
     return [...?_allProjects];
@@ -25,6 +27,14 @@ class ProjectProvider {
 
   List<ProjectModel>? get allVendorProjects {
     return [...?_allVendorProjects];
+  }
+
+  List<ProjectModel>? get filteredProjects {
+    return [...?_filteredProjects];
+  }
+
+  List<ProjectModel>? get favouriteProjects {
+    return [...?_favouriteProjects];
   }
 
   ProjectModel? get currentProjectData {
@@ -221,9 +231,50 @@ class ProjectProvider {
         _filteredProjects = _tempFilteredProjects;
         print("this is filteredProjects max area $_filteredProjects");
       }
+
+      /*if (search?.searchLat != null && search?.searchLng != null && search?.searchLat != 53.37466222698207 && search?.searchDistanceFrom != null) {
+        _tempFilteredProjects = [];
+        _tempFilteredProjects = [
+          ..._filteredProjects!.where((project) =>
+          (Geolocator.distanceBetween(search!.searchLat!, search.searchLng!, project.projectLat!, project.projectLng!) <= search.searchDistanceFrom! * 1000))
+        ];
+        _filteredProjects = _tempFilteredProjects;
+        print("this is filteredProjects distance from $_filteredProjects");
+      }*/
     }
     print("this is filteredProjects final $_filteredProjects");
     return _filteredProjects;
+  }
+
+  // Method for filtering projects base on search terms provided. Adapted from https://stackoverflow.com/questions/57270015/how-to-filter-list-in-flutter
+  Future<List<ProjectModel>?> getFavouriteProjectsForClients(UserModel? user) async {
+    final allProjectsList = await getAllProjects();
+    _favouriteProjects = allProjectsList;
+    print("this is favouriteProjects initial $_favouriteProjects");
+    print("this is user $user");
+    List<ProjectModel>? _tempFavouriteProjects;
+    if (_favouriteProjects != null) {
+
+      if (user != null && user.userProjectFavourites != null && user.userProjectFavourites!.isNotEmpty) {
+        _tempFavouriteProjects = [];
+        List<ProjectModel>? _extraTempFavouriteProjects = [];
+        for (var favourite in user.userProjectFavourites!) {
+          _tempFavouriteProjects = [
+            ..._favouriteProjects!.where((project) =>
+            (project.projectId != null &&
+                project.projectId == favourite))
+          ];
+          _extraTempFavouriteProjects.addAll(_tempFavouriteProjects);
+          print(
+              "this is extraTempFavouriteProjects $_extraTempFavouriteProjects");
+        }
+        _favouriteProjects = _extraTempFavouriteProjects;
+        print("this is favouriteProjects favourites $_favouriteProjects");
+      }
+
+    }
+    print("this is favouriteProjects final $_favouriteProjects");
+    return _favouriteProjects;
   }
 
   Future<ProjectModel?> getProjectById(String? projectId) async {
