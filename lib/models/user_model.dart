@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
   String uid;
-  String firstName;
-  String lastName;
+  String? firstName;
+  String? lastName;
   String password;
   String email;
-  String userImage;
+  String? userImage;
   String userType;
-  List<String> userProjectFavourites;
-  List<String> userVendorFavourites;
+  List<String?>? userProjectFavourites;
+  List<String?>? userVendorFavourites;
 
   // Class constructor
   UserModel(

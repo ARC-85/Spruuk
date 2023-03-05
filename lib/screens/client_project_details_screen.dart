@@ -191,8 +191,8 @@ class _ClientProjectDetailsScreen
     final screenDimensions = MediaQuery.of(context).size;
     final _projectProvider = ref.watch(projectProvider);
 
-    if (currentUser1 != null) {
-      vendorFavourited = currentUser1!.userVendorFavourites
+    if (currentUser1 != null && currentUser1!.userVendorFavourites != null) {
+      vendorFavourited = currentUser1!.userVendorFavourites!
           .any((_userId) => _userId == initialProject?.projectUserId);
     }
     print("vendor favourited = $vendorFavourited");
@@ -269,6 +269,7 @@ class _ClientProjectDetailsScreen
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
+                                    if(initialProject != null)
                                     Container(
                                         margin: const EdgeInsets.symmetric(
                                             vertical: 20, horizontal: 16),
@@ -295,6 +296,7 @@ class _ClientProjectDetailsScreen
                                                                   index]!),
                                                           fit: BoxFit.cover)))),
                                         )),
+                                    if(initialProject != null)
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -323,6 +325,7 @@ class _ClientProjectDetailsScreen
                                         )
                                       ],
                                     ),
+                                    if(initialProject != null)
                                     const Align(
                                       alignment: Alignment.centerLeft,
                                       child: MyTextLabel(
@@ -334,6 +337,7 @@ class _ClientProjectDetailsScreen
                                             fontSize: 16.0,
                                           )),
                                     ),
+                                    if(initialProject != null)
                                     Container(
                                       height: 40,
                                       width: 400,
@@ -367,6 +371,7 @@ class _ClientProjectDetailsScreen
                                             fontSize: 16.0,
                                           )),
                                     ),
+                                    if(initialProject != null)
                                     Container(
                                       height: 80,
                                       width: 400,
@@ -399,6 +404,7 @@ class _ClientProjectDetailsScreen
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20.0,
                                         )),
+                                    if(initialProject != null)
                                     Container(
                                       height: 300,
                                       width: 300,
@@ -495,7 +501,7 @@ class _ClientProjectDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
+                                        AdvancedStatus.advanced && initialProject != null)
                                       Container(
                                         height: 120,
                                         width: 400,
@@ -521,7 +527,7 @@ class _ClientProjectDetailsScreen
                                         ),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
+                                        AdvancedStatus.advanced && initialProject != null)
                                       const Align(
                                         alignment: Alignment.centerLeft,
                                         child: MyTextLabel(
@@ -573,7 +579,7 @@ class _ClientProjectDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
+                                        AdvancedStatus.advanced && initialProject != null)
                                       Container(
                                         height: 40,
                                         width: 400,
@@ -613,7 +619,7 @@ class _ClientProjectDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
+                                        AdvancedStatus.advanced && initialProject != null)
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
@@ -729,7 +735,7 @@ class _ClientProjectDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced)
+                                        AdvancedStatus.advanced && initialProject != null)
                                       Container(
                                         height: 40,
                                         width: 200,
@@ -760,6 +766,7 @@ class _ClientProjectDetailsScreen
                   ),
                 ],
               ),
+              if(initialProject != null)
               InkWell(
                 child: Container(
                   alignment: Alignment.center,
@@ -773,7 +780,7 @@ class _ClientProjectDetailsScreen
                     children: [
                       const SizedBox(
                         height: 15,
-                        child: const Divider(
+                        child: Divider(
                           color: Colors.white,
                           height: 1,
                           thickness: 1,
@@ -808,7 +815,7 @@ class _ClientProjectDetailsScreen
                                   color: Colors.white,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 4,
                               ),
                               Text(
@@ -895,7 +902,7 @@ class _ClientProjectDetailsScreen
                   ),
                 ),
                 onTap: () {
-                  Navigator.pushNamed(context, '/JointProjectListScreen');
+                  Navigator.pushNamed(context, '/ClientVendorDetailsScreen', arguments: initialProject?.projectUserId);
                 },
               ),
               const Spacer(),

@@ -39,6 +39,10 @@ class FirebaseDB {
     return projectData;
   }
 
+  Future<QuerySnapshot> getUsers() async {
+    return vendorUserCollection.get();
+  }
+
   Future<QuerySnapshot> getProjects() async {
     return projectCollection.get();
   }
@@ -54,4 +58,12 @@ class FirebaseDB {
   Future<void> updateProject(ProjectModel project) async {
     await projectCollection.doc(project.projectId).update(project.toJson());
   }
+
+  // Get user data from Firestore and convert to UserModel class object
+  Future<UserModel> fbGetUserData(String userId) async {
+    var snapshot = await vendorUserCollection.doc(userId).get();
+    UserModel userData = UserModel.fromJson(snapshot.data() as Map<String, dynamic>) ;
+    return userData;
+  }
+
 }

@@ -63,7 +63,7 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
     final listIndex = widget.listIndex;
 
     if (currentUser1 != null) {
-      favourited = currentUser1!.userProjectFavourites
+      favourited = currentUser1!.userProjectFavourites!
           .any((_projectId) => _projectId == project.projectId);
     } else {
       _refresh();
@@ -83,7 +83,19 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
         // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
         key: UniqueKey(),
         onDismissed: (direction) {
-          ref.watch(projectProvider).deleteProject(project.projectId);
+          if (_userType == UserType.vendor) {
+            ref.watch(projectProvider).deleteProject(project.projectId);
+          } else {
+            ref
+                .read(userProvider)
+                .removeProjectFavouriteToClient(
+                project.projectId);
+            ref
+                .read(projectProvider)
+                .removeClientFavouriteToProject(
+                user.uid, project.projectId);
+
+          }
         },
         child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
@@ -94,6 +106,9 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
                     SizedBox(
                         width: screenDimensions.width * 0.9,
                         height: screenDimensions.width * 0.9,
@@ -183,7 +198,7 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                                 materialTapTargetSize:
                                 MaterialTapTargetSize.padded,
                                 backgroundColor:
-                                const Color.fromRGBO(242, 151, 101, 1)
+                                const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6)
                                     .withOpacity(1),
                                 child: const Icon(
                                   Icons.favorite_border_outlined,
@@ -216,8 +231,7 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                                 materialTapTargetSize:
                                 MaterialTapTargetSize.padded,
                                 backgroundColor:
-                                const Color.fromRGBO(242, 151, 101, 1)
-                                    .withOpacity(1),
+                                const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
                                 child: const Icon(
                                   Icons.favorite,
                                 ),

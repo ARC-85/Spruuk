@@ -163,10 +163,35 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
         body: SafeArea(child: Consumer(builder: (context, ref, _) {
           return Stack(
             children: [
+              Container(
+                width: screenDimensions.width,
+                height: screenDimensions.height,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                      const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    stops: [0, 1],
+                  ),
+                ),
+              ),
               Positioned(
-                top: screenDimensions.height * 0.15,
+                  top: -screenDimensions.height * 0.10,
+                  child: SizedBox(
+                    height: screenDimensions.height * 0.3,
+                    width: screenDimensions.width,
+                    child: Image.asset(
+                      'assets/images/spruuk_logo_white.png',
+                      fit: BoxFit.fitHeight,
+                    ),
+                  )),
+              Positioned(
+                top: screenDimensions.height * 0.1,
                 child: SizedBox(
-                    height: screenDimensions.height * 0.70,
+                    height: screenDimensions.height * 0.79,
                     width: screenDimensions.width,
                     child: _isLoading
                         ? const Center(child: CircularProgressIndicator())
