@@ -371,4 +371,4 @@ final projectTypesProvider = StateProvider.autoDispose<List<String?>?>((ref) =>
     ["New Build", "Renovation", "Commercial", "Landscaping", "Interiors"]);
 
 final projectStylesProvider = StateProvider.autoDispose<List<String?>?>(
-    (ref) => ["Traditional", "Contemporary", "Retro", "Modern", "Minimalist"]);
+    (ref) => ["Traditional", "Contemporary", "Retro", "Modern", "Minimalist", "None"]);

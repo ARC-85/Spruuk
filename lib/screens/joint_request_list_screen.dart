@@ -4,34 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/project_model.dart';
+import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
+import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
 import 'package:spruuk/widgets/project_card.dart';
+import 'package:spruuk/widgets/request_card.dart';
 
 enum UserType { vendor, client }
 
-class JointProjectListScreen extends ConsumerStatefulWidget {
-  static const routeName = '/JointProjectListScreen';
-  const JointProjectListScreen({Key? key}) : super(key: key);
+class JointRequestListScreen extends ConsumerStatefulWidget {
+  static const routeName = '/JointRequestListScreen';
+  const JointRequestListScreen({Key? key}) : super(key: key);
 
   @override
-  _JointProjectListScreen createState() => _JointProjectListScreen();
+  _JointRequestListScreen createState() => _JointRequestListScreen();
 }
 
-class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
+class _JointRequestListScreen extends ConsumerState<JointRequestListScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   UserType? _userType;
   UserModel? currentUser1;
   User? user;
-  FirebaseAuthentication? _auth;
-  String? userImage;
-  List<ProjectModel>? allProjects;
-  List<ProjectModel>? allVendorProjects;
+  List<RequestModel>? allRequests;
+  List<RequestModel>? allClientRequests;
   // Variable to check if screen has been loaded already for ensuring providers are not constantly run
   bool firstLoad = true;
 
@@ -51,30 +52,11 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
 
   @override
   void didChangeDependencies() {
-    /*try {
-      final authData = ref.watch(fireBaseAuthProvider);
-      user = authData.currentUser;
-      if (user != null) {
-        currentUser1 = ref.read(userProvider).currentUserData;
-        allProjects = ref.watch(projectProvider).allProjects!;
-        allVendorProjects = ref.watch(projectProvider).allVendorProjects!;
-        print("this is all projects $allProjects");
-        print("this is the person ${currentUser1?.firstName}");
-        print("this is the vendor projects $allVendorProjects");
-      }
-    } catch (e) {
-      print('Error: $e');
-    }*/
 
     if (firstLoad = true) {
       _isLoading = true;
 
-      print("heya!!");
-
       final authData = ref.watch(fireBaseAuthProvider);
-
-      //ref.read(userProvider).getCurrentUserData(authData.currentUser!.uid);
-      //currentUser1 = ref.read(userProvider).currentUserData;
 
       ref
           .watch(userProvider)
@@ -86,19 +68,19 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
         });
       });
 
-      ref.watch(projectProvider).getAllProjects().then((value) {
+      ref.watch(requestProvider).getAllRequests().then((value) {
         setState(() {
-          allProjects = value;
+          allRequests = value;
           _isLoading = false;
         });
       });
 
       ref
-          .watch(projectProvider)
-          .getAllVendorProjects(authData.currentUser!.uid)
+          .watch(requestProvider)
+          .getAllClientRequests(authData.currentUser!.uid)
           .then((value) {
         setState(() {
-          allVendorProjects = value;
+          allClientRequests = value;
           _isLoading = false;
         });
       });
@@ -119,11 +101,11 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
     super.didChangeDependencies();
   }
 
-  Future<void> _refreshProjectList(String uid) async {
-    ref.read(projectProvider).getAllVendorProjects(uid);
-    ref.watch(projectProvider).getAllProjects();
-    allProjects = ref.watch(projectProvider).allProjects!;
-    allVendorProjects = ref.watch(projectProvider).allVendorProjects!;
+  Future<void> _refreshRequestList(String uid) async {
+    ref.read(requestProvider).getAllClientRequests(uid);
+    ref.watch(requestProvider).getAllRequests();
+    allRequests = ref.watch(requestProvider).allRequests!;
+    allClientRequests = ref.watch(requestProvider).allClientRequests!;
     setState(() {
       print("refreshed!!");
     });
@@ -140,16 +122,9 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
       _userType = UserType.vendor;
     }
 
-    print("this is all projects $allProjects");
-    print("this is the person ${currentUser1?.firstName}");
-    print("this is the vendor projects $allVendorProjects");
-    print("this is the userType $_userType");
-
-    //print("this is all project title ${allProjects[0].projectTitle}");
-
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Home"), actions: [
+            title: _userType == UserType.client ? const Text("My Requests") : const Text("Client Requests"), actions: [
           IconButton(
               onPressed: () => Navigator.pushNamed(context, '/JointProjectMapScreen'),
               icon: const Icon(
@@ -196,60 +171,60 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
                     child: _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : RefreshIndicator(
-                            onRefresh: () =>
-                                _refreshProjectList(currentUser1!.uid),
-                            child: _userType == UserType.client
-                                ? allProjects != null
-                                    ? ListView.builder(
-                                        scrollDirection: Axis.vertical,
-                                        shrinkWrap:
-                                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
-                                        itemCount: allProjects!.length,
-                                        itemBuilder: (ctx, index) =>
-                                            MyProjectCard(
-                                              project: allProjects![index],
-                                              user: currentUser1!,
-                                              listIndex: index,
-                                            ))
-                                    : const Center(
-                                        child: Text('No projects'),
-                                      )
-                                : allVendorProjects != null
-                                    ? ListView.builder(
-                                        scrollDirection: Axis.vertical,
-                                        shrinkWrap:
-                                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
-                                        itemCount: allVendorProjects!.length,
-                                        itemBuilder: (ctx, index) =>
-                                            MyProjectCard(
-                                              project:
-                                                  allVendorProjects![index],
-                                              user: currentUser1!,
-                                              listIndex: index,
-                                            ))
-                                    : const Center(
-                                        child: Text('No projects'),
-                                      ))),
+                        onRefresh: () =>
+                            _refreshRequestList(currentUser1!.uid),
+                        child: _userType == UserType.vendor
+                            ? allRequests != null
+                            ? ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap:
+                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
+                            itemCount: allRequests!.length,
+                            itemBuilder: (ctx, index) =>
+                                MyRequestCard(
+                                  request: allRequests![index],
+                                  user: currentUser1!,
+                                  listIndex: index,
+                                ))
+                            : const Center(
+                          child: Text('No projects'),
+                        )
+                            : allClientRequests != null
+                            ? ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap:
+                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
+                            itemCount: allClientRequests!.length,
+                            itemBuilder: (ctx, index) =>
+                                MyRequestCard(
+                                  request:
+                                  allClientRequests![index],
+                                  user: currentUser1!,
+                                  listIndex: index,
+                                ))
+                            : const Center(
+                          child: Text('No projects'),
+                        ))),
               ),
-              if (_userType == UserType.vendor)
+              if (_userType == UserType.client)
                 Positioned(
                   top: screenDimensions.height * 0.8,
                   width: screenDimensions.width * 1.7,
                   child: FloatingActionButton(
                     onPressed: () {
 
-                        Navigator.pushNamed(context, '/VendorAddProjectScreen');
+                      Navigator.pushNamed(context, '/ClientAddRequestScreen');
 
                     },
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     backgroundColor:
-                        const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                    const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
                     child: const Icon(
                       Icons.add_circle,
                     ),
                   ),
                 ),
-              if (_userType == UserType.client)
+              if (_userType == UserType.vendor)
                 Positioned(
                   top: screenDimensions.height * 0.8,
                   width: screenDimensions.width * 0.3,

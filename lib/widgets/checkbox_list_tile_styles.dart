@@ -23,7 +23,7 @@ class MyCheckBoxListTileStyles extends ConsumerStatefulWidget {
 
 class _MyCheckBoxListTileStyles extends ConsumerState<MyCheckBoxListTileStyles> {
   bool isBoxChecked = true;
-  List<String?>? stylesList = ["Traditional", "Contemporary", "Retro", "Modern", "Minimalist"];
+  List<String?>? stylesList = ["Traditional", "Contemporary", "Retro", "Modern", "Minimalist", "None"];
 
   @override
   void didChangeDependencies() {
