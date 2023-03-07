@@ -3,21 +3,28 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
+import 'package:spruuk/screens/client_add_request_screen.dart';
 import 'package:spruuk/screens/client_favourite_projects_list_screen.dart';
 import 'package:spruuk/screens/client_favourite_projects_map_screen.dart';
 import 'package:spruuk/screens/client_favourite_vendors_list_screen.dart';
 import 'package:spruuk/screens/client_filtered_project_list_screen.dart';
 import 'package:spruuk/screens/client_project_details_screen.dart';
+import 'package:spruuk/screens/client_request_details_screen.dart';
+import 'package:spruuk/screens/client_request_location_selection_screen.dart';
 import 'package:spruuk/screens/client_search_project_screen.dart';
 import 'package:spruuk/screens/client_vendor_details_screen.dart';
 import 'package:spruuk/screens/client_vendor_projects_list_screen.dart';
 import 'package:spruuk/screens/client_vendor_projects_map_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/joint_project_map_screen.dart';
+import 'package:spruuk/screens/joint_request_list_screen.dart';
+import 'package:spruuk/screens/joint_search_screen.dart';
 import 'package:spruuk/screens/signup_screen.dart';
 import 'package:spruuk/screens/splash_screen.dart';
 import 'package:spruuk/screens/vendor_add_project_screen.dart';
+import 'package:spruuk/screens/vendor_filtered_request_list_screen.dart';
 import 'package:spruuk/screens/vendor_project_details_screen.dart';
+import 'package:spruuk/screens/vendor_request_details_screen.dart';
 import 'firebase_options.dart';
 import 'package:spruuk/widgets/authentication_checker.dart';
 import 'package:spruuk/screens/error_screen.dart';
@@ -85,6 +92,9 @@ class SpruukApp extends ConsumerWidget {
         // Route for Client Project Search Screen
         ClientSearchProjectScreen.routeName: (context) =>
         const ClientSearchProjectScreen(),
+        // Route for Joint Search Screen
+        JointSearchScreen.routeName: (context) =>
+        const JointSearchScreen(),
         // Route for Joint Project Map Screen
         JointProjectMapScreen.routeName: (context) =>
         const JointProjectMapScreen(),
@@ -109,6 +119,24 @@ class SpruukApp extends ConsumerWidget {
         // Route for Client Favourite Vendors List Screen
         ClientFavouriteVendorsListScreen.routeName: (context) =>
         const ClientFavouriteVendorsListScreen(),
+        // Route for Client Add Request Screen
+        ClientAddRequestScreen.routeName: (context) =>
+        const ClientAddRequestScreen(),
+        // Route for Joint Request List Screen
+        JointRequestListScreen.routeName: (context) =>
+        const JointRequestListScreen(),
+        // Route for Client Request Location Selection Screen
+        ClientRequestLocationSelectionScreen.routeName: (context) =>
+        const ClientRequestLocationSelectionScreen(),
+        // Route for Vendor Filtered Request List Screen
+        VendorFilteredRequestListScreen.routeName: (context) =>
+        const VendorFilteredRequestListScreen(),
+        // Route for Client Request Details Screen
+        ClientRequestDetailsScreen.routeName: (context) =>
+        const ClientRequestDetailsScreen(),
+        // Route for Vendor Request Details Screen
+        VendorRequestDetailsScreen.routeName: (context) =>
+        const VendorRequestDetailsScreen(),
       },
     );
   }

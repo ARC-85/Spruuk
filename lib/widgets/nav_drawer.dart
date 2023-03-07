@@ -36,6 +36,14 @@ class NavDrawer extends ConsumerWidget {
       Navigator.pushNamed(context, '/ClientFavouriteVendorsListScreen');
     }
 
+    Future<void> _onPressedAddRequestFunction() async {
+      Navigator.pushNamed(context, '/ClientAddRequestScreen');
+    }
+
+    Future<void> _onPressedRequestListFunction() async {
+      Navigator.pushNamed(context, '/JointRequestListScreen');
+    }
+
     try {
       final authData = ref.watch(fireBaseAuthProvider);
       user = authData.currentUser;
@@ -81,6 +89,20 @@ class NavDrawer extends ConsumerWidget {
             title: const Text('Favourite Vendors'),
             onTap: () =>
                 _onPressedFavouriteVendorsFunction(),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.add_home_work),
+            title: const Text('Add Request'),
+            onTap: () =>
+                _onPressedAddRequestFunction(),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.list_alt_outlined),
+            title: const Text('Requests List'),
+            onTap: () =>
+                _onPressedRequestListFunction(),
           ),
         ]
       )
