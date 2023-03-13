@@ -18,13 +18,17 @@ import 'package:spruuk/screens/client_vendor_projects_map_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/joint_project_map_screen.dart';
 import 'package:spruuk/screens/joint_request_list_screen.dart';
+import 'package:spruuk/screens/joint_response_details_screen.dart';
+import 'package:spruuk/screens/joint_response_list_screen.dart';
 import 'package:spruuk/screens/joint_search_screen.dart';
 import 'package:spruuk/screens/signup_screen.dart';
 import 'package:spruuk/screens/splash_screen.dart';
 import 'package:spruuk/screens/vendor_add_project_screen.dart';
+import 'package:spruuk/screens/vendor_add_response_screen.dart';
 import 'package:spruuk/screens/vendor_filtered_request_list_screen.dart';
 import 'package:spruuk/screens/vendor_project_details_screen.dart';
 import 'package:spruuk/screens/vendor_request_details_screen.dart';
+import 'package:spruuk/screens/vendor_response_details_screen.dart';
 import 'firebase_options.dart';
 import 'package:spruuk/widgets/authentication_checker.dart';
 import 'package:spruuk/screens/error_screen.dart';
@@ -137,6 +141,18 @@ class SpruukApp extends ConsumerWidget {
         // Route for Vendor Request Details Screen
         VendorRequestDetailsScreen.routeName: (context) =>
         const VendorRequestDetailsScreen(),
+        // Route for Vendor Add Response Screen
+        VendorAddResponseScreen.routeName: (context) =>
+        const VendorAddResponseScreen(),
+        // Route for Joint Response List Screen
+        JointResponseListScreen.routeName: (context) =>
+        const JointResponseListScreen(),
+        // Route for Vendor Response Details Screen
+        VendorResponseDetailsScreen.routeName: (context) =>
+        const VendorResponseDetailsScreen(),
+        // Route for Joint Response Details Screen
+        JointResponseDetailsScreen.routeName: (context) =>
+        const JointResponseDetailsScreen(),
       },
     );
   }
