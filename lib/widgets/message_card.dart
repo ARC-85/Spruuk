@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -33,6 +34,8 @@ class _MyMessageCard extends ConsumerState<MyMessageCard> {
   List<MessageModel> allMessages = [];
   UserModel? currentUser1;
   bool? firstBuild;
+  DateTime? messageTime;
+  String? formattedMessageTime;
 
   @override
   void didChangeDependencies() {
@@ -57,6 +60,8 @@ class _MyMessageCard extends ConsumerState<MyMessageCard> {
     final message = widget.message;
     final user = widget.user;
     final listIndex = widget.listIndex;
+    messageTime = DateTime.fromMicrosecondsSinceEpoch(message.messageTimeCreated!.microsecondsSinceEpoch);
+    formattedMessageTime = formatDate(DateTime.fromMicrosecondsSinceEpoch(message.messageTimeCreated!.microsecondsSinceEpoch)!, [d, ' ', M, ' ', yyyy, ' ', h, ':', nn, ':', ss]);
 
     return Dismissible(
       // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
@@ -68,8 +73,11 @@ class _MyMessageCard extends ConsumerState<MyMessageCard> {
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
             child: InkWell(
                 child: Container(
-                  decoration: BoxDecoration(
+                  height: 110,
+                  decoration: currentUser1?.uid == message.messageUserId ? BoxDecoration(
                     color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                  ) : BoxDecoration(
+                    color: const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
                   ),
                   child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,16 +105,41 @@ class _MyMessageCard extends ConsumerState<MyMessageCard> {
                               height: 20,
                             ),
                             Text(
-                              message.messageContent != null ? message.messageContent! : "Message Error",
+                              formattedMessageTime != null ? formattedMessageTime! : "Message Error",
                               textAlign: TextAlign.center,
                               softWrap: true,
-                              style: const TextStyle(
+                              style: currentUser1?.uid == message.messageUserId ? const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16.0,
+                              ) : const TextStyle(
                                 color: Colors.black45,
                                 fontWeight: FontWeight.normal,
-                                fontSize: 20.0,
+                                fontSize: 16.0,
                               ),
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
+                            ),
+                            Container(
+                              width: 250,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                message.messageContent != null ? message.messageContent! : "Message Error",
+                                textAlign: TextAlign.left,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                                style: currentUser1?.uid == message.messageUserId ? const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 16.0,
+                                ) : const TextStyle(
+                                  color: Colors.black45,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 16.0,
+                                ),
+                                maxLines: 3,
+
+                              ),
                             ),
                             const SizedBox(
                               height: 10,

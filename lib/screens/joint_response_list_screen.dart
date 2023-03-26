@@ -87,7 +87,7 @@ class _JointResponseListScreen extends ConsumerState<JointResponseListScreen> {
             .getAllRequestResponses(_requestId)
             .then((value) {
           setState(() {
-            allVendorResponses = value;
+            allRequestResponses = value;
             _isLoading = false;
           });
         });

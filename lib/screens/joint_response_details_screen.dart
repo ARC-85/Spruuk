@@ -1,4 +1,5 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,6 +57,7 @@ class _JointResponseDetailsScreen
   FirebaseAuthentication? _auth;
   var _responseId;
   ResponseModel? initialResponse;
+  RequestModel? initialRequest;
   bool doneOnce = false;
   DateTime? formattedDate;
   String? _formattedDate;
@@ -70,6 +72,14 @@ class _JointResponseDetailsScreen
       ref.watch(responseProvider).getResponseById(_responseId).then((value) {
         setState(() {
           initialResponse = value;
+        });
+      })
+      .then((value) {
+        ref.watch(requestProvider).getRequestById(initialResponse?.responseRequestId)
+            .then((value) {
+          setState(() {
+            initialRequest = value;
+          });
         });
       });
 
@@ -90,6 +100,7 @@ class _JointResponseDetailsScreen
             .then((value) {
           setState(() {
             allResponseMessages = value;
+            print("this is all messages $allResponseMessages");
             _isLoading = false;
           });
         });
@@ -126,6 +137,7 @@ class _JointResponseDetailsScreen
   int? messageCreatedDay;
   int? messageCreatedMonth;
   int? messageCreatedYear;
+  Timestamp? messageTimeCreated;
 
   List<MessageModel>? allResponseMessages;
 
@@ -194,6 +206,7 @@ class _JointResponseDetailsScreen
         messageCreatedDay = dateNow.day;
         messageCreatedMonth = dateNow.month;
         messageCreatedYear = dateNow.year;
+        messageTimeCreated = Timestamp.now();
         loading();
 
         // Checking if widget mounted when using multiple awaits
@@ -211,11 +224,14 @@ class _JointResponseDetailsScreen
           messageCreatedDay: messageCreatedDay,
           messageCreatedMonth: messageCreatedMonth,
           messageCreatedYear: messageCreatedYear,
+          messageTimeCreated: messageTimeCreated,
         ));
+        loading();
         // Checking if widget mounted when using multiple awaits
         if (!mounted) return;
         setState(() {
           print("message added");
+
         });
       } catch (error) {
         Fluttertoast.showToast(msg: error.toString());
@@ -223,6 +239,16 @@ class _JointResponseDetailsScreen
 
       try {} catch (error) {
         Fluttertoast.showToast(msg: error.toString());
+      }
+    }
+
+    Future<void> _onPressedViewRequestFunction() async {
+      if(currentUser1?.userType == "Vendor") {
+        Navigator.pushNamed(
+          context, '/VendorRequestDetailsScreen', arguments: initialRequest!.requestId);
+      } else {
+        Navigator.pushNamed(
+            context, '/ClientRequestDetailsScreen', arguments: initialRequest!.requestId);
       }
     }
 
@@ -245,7 +271,7 @@ class _JointResponseDetailsScreen
                 children: [
                   Container(
                     width: screenDimensions.width,
-                    height: screenDimensions.height * 0.50,
+                    height: screenDimensions.height * 0.6,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -271,7 +297,7 @@ class _JointResponseDetailsScreen
                   Positioned(
                     top: screenDimensions.height * 0.1,
                     child: SizedBox(
-                      height: screenDimensions.height * 0.4,
+                      height: screenDimensions.height * 0.5,
                       width: screenDimensions.width,
                       child: Form(
                           key: _formKey,
@@ -279,6 +305,63 @@ class _JointResponseDetailsScreen
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: MyTextLabel(
+                                    textLabel: "Request: ${initialRequest?.requestTitle}",
+                                    color: null,
+                                    textStyle: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                    )),
+                              ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: MyTextLabel(
+                                    textLabel: "Description: ${initialRequest?.requestBriefDescription}",
+                                    color: null,
+                                    textStyle: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0,
+                                    )),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 10),
+                                margin:
+                                const EdgeInsets.symmetric(horizontal: 16),
+                                width: double.infinity,
+                                child: _isLoading
+                                    ? const Center(
+                                    child: CircularProgressIndicator())
+                                    : MaterialButton(
+                                  onPressed: _onPressedViewRequestFunction,
+                                  textColor:
+                                  const Color.fromRGBO(45, 18, 4, 1)
+                                      .withOpacity(1),
+                                  textTheme: ButtonTextTheme.primary,
+                                  minWidth: 100,
+                                  color: const Color.fromRGBO(
+                                      242, 151, 101, 1)
+                                      .withOpacity(1),
+                                  padding: const EdgeInsets.all(
+                                    18,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(25),
+                                    side: BorderSide(
+                                        color: Colors.blue.shade700),
+                                  ),
+                                  child: const Text(
+                                    'Go To Request',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
                               Container(
                                   height: 100,
                                   margin: const EdgeInsets.symmetric(
@@ -364,6 +447,7 @@ class _JointResponseDetailsScreen
                                     _refreshMessageList(_responseId),
                                 child: allResponseMessages != null
                                     ? ListView.builder(
+                                        reverse: false,
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap:
                                             true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
@@ -371,7 +455,7 @@ class _JointResponseDetailsScreen
                                         itemBuilder: (ctx, index) =>
                                             MyMessageCard(
                                               message:
-                                              allResponseMessages![index],
+                                                  allResponseMessages![index],
                                               user: currentUser1!,
                                               listIndex: index,
                                             ))

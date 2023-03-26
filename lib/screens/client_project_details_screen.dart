@@ -767,7 +767,7 @@ class _ClientProjectDetailsScreen
                 ],
               ),
               if(initialProject != null)
-              InkWell(
+              Expanded(child: InkWell(
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
@@ -779,7 +779,7 @@ class _ClientProjectDetailsScreen
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(
-                        height: 15,
+                        height: 5,
                         child: Divider(
                           color: Colors.white,
                           height: 1,
@@ -794,12 +794,12 @@ class _ClientProjectDetailsScreen
                           CircleAvatar(
                             radius: 40,
                             backgroundImage:
-                                initialProject?.projectUserImage == null
-                                    ? const AssetImage(
-                                        "assets/images/circular_avatar.png")
-                                    : Image.network(
-                                            initialProject!.projectUserImage!)
-                                        .image,
+                            initialProject?.projectUserImage == null
+                                ? const AssetImage(
+                                "assets/images/circular_avatar.png")
+                                : Image.network(
+                                initialProject!.projectUserImage!)
+                                .image,
                           ),
                           const SizedBox(
                             height: 20,
@@ -837,14 +837,14 @@ class _ClientProjectDetailsScreen
                                     ref
                                         .read(userProvider)
                                         .addVendorFavouriteToClient(
-                                            initialProject!.projectUserId);
+                                        initialProject!.projectUserId);
                                     // Had to incorporate this user refresh as a work around because it wasn't reading in didChangeDependencies
                                     final authData =
-                                        ref.watch(fireBaseAuthProvider);
+                                    ref.watch(fireBaseAuthProvider);
                                     ref
                                         .watch(userProvider)
                                         .getCurrentUserData(
-                                            authData.currentUser!.uid)
+                                        authData.currentUser!.uid)
                                         .then((value) {
                                       setState(() {
                                         currentUser1 = value;
@@ -853,10 +853,10 @@ class _ClientProjectDetailsScreen
                                     });
                                   },
                                   materialTapTargetSize:
-                                      MaterialTapTargetSize.padded,
+                                  MaterialTapTargetSize.padded,
                                   backgroundColor:
-                                      const Color.fromRGBO(242, 151, 101, 1)
-                                          .withOpacity(1),
+                                  const Color.fromRGBO(242, 151, 101, 1)
+                                      .withOpacity(1),
                                   child: const Icon(
                                     Icons.favorite_border_outlined,
                                   ),
@@ -867,14 +867,14 @@ class _ClientProjectDetailsScreen
                                     ref
                                         .read(userProvider)
                                         .removeVendorFavouriteToClient(
-                                            initialProject!.projectUserId);
+                                        initialProject!.projectUserId);
                                     // Had to incorporate this user refresh as a work around because it wasn't reading in didChangeDependencies
                                     final authData =
-                                        ref.watch(fireBaseAuthProvider);
+                                    ref.watch(fireBaseAuthProvider);
                                     ref
                                         .watch(userProvider)
                                         .getCurrentUserData(
-                                            authData.currentUser!.uid)
+                                        authData.currentUser!.uid)
                                         .then((value) {
                                       setState(() {
                                         currentUser1 = value;
@@ -883,10 +883,10 @@ class _ClientProjectDetailsScreen
                                     });
                                   },
                                   materialTapTargetSize:
-                                      MaterialTapTargetSize.padded,
+                                  MaterialTapTargetSize.padded,
                                   backgroundColor:
-                                      const Color.fromRGBO(242, 151, 101, 1)
-                                          .withOpacity(1),
+                                  const Color.fromRGBO(242, 151, 101, 1)
+                                      .withOpacity(1),
                                   child: const Icon(
                                     Icons.favorite,
                                   ),
@@ -896,7 +896,7 @@ class _ClientProjectDetailsScreen
                         ],
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: 5,
                       ),
                     ],
                   ),
@@ -904,8 +904,7 @@ class _ClientProjectDetailsScreen
                 onTap: () {
                   Navigator.pushNamed(context, '/ClientVendorDetailsScreen', arguments: initialProject?.projectUserId);
                 },
-              ),
-              const Spacer(),
+              )),
             ],
           );
         }),

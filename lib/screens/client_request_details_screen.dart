@@ -79,8 +79,7 @@ class _ClientRequestDetailsScreen extends ConsumerState<ClientRequestDetailsScre
             .watch(userProvider)
             .currentUserLocation;
         // _requestTitle.text = initialRequest!.requestTitle!;
-        _requestBriefDescription.text =
-        initialRequest!.requestBriefDescription!;
+        //_requestBriefDescription.text = initialRequest!.requestBriefDescription!;
         if (initialRequest!.requestLongDescription != null) {
           _requestLongDescription.text =
           initialRequest!.requestLongDescription!;
@@ -522,6 +521,11 @@ class _ClientRequestDetailsScreen extends ConsumerState<ClientRequestDetailsScre
             }
           }
 
+          Future<void> _onPressedViewResponsesFunction() async {
+            Navigator.pushNamed(
+                context, '/JointResponseListScreen', arguments: initialRequest!.requestId);
+          }
+
           return Column(
             children: [
               Stack(
@@ -577,11 +581,41 @@ class _ClientRequestDetailsScreen extends ConsumerState<ClientRequestDetailsScre
                                         crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                         children: [
+                                          Container(
+                                            padding: const EdgeInsets.only(top: 32.0),
+                                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                                            width: double.infinity,
+                                            child: _isLoading
+                                                ? const Center(child: CircularProgressIndicator())
+                                                : MaterialButton(
+                                              onPressed: _onPressedViewResponsesFunction,
+                                              textColor:
+                                              const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
+                                              textTheme: ButtonTextTheme.primary,
+                                              minWidth: 100,
+                                              color: const Color.fromRGBO(242, 151, 101, 1)
+                                                  .withOpacity(1),
+                                              padding: const EdgeInsets.all(
+                                                18,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(25),
+                                                side: BorderSide(color: Colors.blue.shade700),
+                                              ),
+                                              child: const Text(
+                                                'View Responses',
+                                                style: TextStyle(fontWeight: FontWeight.w600),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
 
                                           MyRequestImagePicker(
                                             requestImage1Provider:
                                             requestImageProvider,
-                                            requestImageUrl: requestImageFile == null && webRequestImage != null && initialRequest!.requestImages!.isNotEmpty ? initialRequest?.requestImages![0] : null,
+                                            requestImageUrl: requestImageFile == null && initialRequest!.requestImages!.isNotEmpty ? initialRequest?.requestImages![0] : null,
                                           ),
                                           const MyTextLabel(
                                               textLabel: "Image 1",
@@ -754,6 +788,7 @@ class _ClientRequestDetailsScreen extends ConsumerState<ClientRequestDetailsScre
                                                 isTextObscured: false,
                                                 icon: (Icons.add),
                                                 validator: customTitleValidator,
+                                                initialText: initialRequest!.requestBriefDescription,
                                               )),
                                           const MyTextLabel(
                                               textLabel: "Request Location",

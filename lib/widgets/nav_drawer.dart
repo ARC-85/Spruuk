@@ -7,14 +7,11 @@ import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
+import 'package:spruuk/widgets/text_label.dart';
 
 class NavDrawer extends ConsumerWidget {
-
-
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     UserType? _userType;
     UserModel? currentUser1;
     User? user;
@@ -44,6 +41,10 @@ class NavDrawer extends ConsumerWidget {
       Navigator.pushNamed(context, '/JointRequestListScreen');
     }
 
+    Future<void> _onPressedResponseListFunction() async {
+      Navigator.pushNamed(context, '/JointResponseListScreen');
+    }
+
     try {
       final authData = ref.watch(fireBaseAuthProvider);
       user = authData.currentUser;
@@ -57,55 +58,76 @@ class NavDrawer extends ConsumerWidget {
     }
 
     return Drawer(
-      child: Column(
-        children: [
-          AppBar(
-            title: currentUser1 != null ? Text(currentUser1.firstName!) : const Text("nobody")
-          ),
-          const Divider(),
-          CircleAvatar(
-            radius: 60,
-            backgroundImage: currentUser1?.userImage == null
-                ? const AssetImage("assets/images/circular_avatar.png")
-                : Image.network(currentUser1!.userImage!).image,
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.exit_to_app_sharp),
-            title: const Text('Sign Out'),
-            onTap: () =>
-                _onPressedSignOutFunction(),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.favorite),
-            title: const Text('Favourite Projects'),
-            onTap: () =>
-                _onPressedFavouriteProjectsFunction(),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.favorite),
-            title: const Text('Favourite Vendors'),
-            onTap: () =>
-                _onPressedFavouriteVendorsFunction(),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.add_home_work),
-            title: const Text('Add Request'),
-            onTap: () =>
-                _onPressedAddRequestFunction(),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.list_alt_outlined),
-            title: const Text('Requests List'),
-            onTap: () =>
-                _onPressedRequestListFunction(),
-          ),
-        ]
-      )
-    );
+        child: Column(children: [
+      AppBar(
+          title: currentUser1 != null
+              ? Text("${currentUser1.firstName!} ${currentUser1.lastName!}")
+              : const Text("nobody")),
+      const Divider(),
+      InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, '/ProfileUpdateScreen');
+        },
+        child: CircleAvatar(
+          radius: 60,
+          backgroundImage: currentUser1?.userImage == null
+              ? const AssetImage("assets/images/circular_avatar.png")
+              : Image.network(currentUser1!.userImage!).image,
+        ),
+      ),
+      if (currentUser1 != null)
+        MyTextLabel(
+            textLabel: currentUser1.userType,
+            color: null,
+            textStyle: const TextStyle(
+              color: Colors.black38,
+              fontWeight: FontWeight.normal,
+              fontSize: 24.0,
+            )),
+      const Divider(),
+      ListTile(
+        leading: const Icon(Icons.exit_to_app_sharp),
+        title: const Text('Sign Out'),
+        onTap: () => _onPressedSignOutFunction(),
+      ),
+      if (currentUser1 != null && currentUser1.userType == "Client")
+        const Divider(),
+      if (currentUser1 != null && currentUser1.userType == "Client")
+        ListTile(
+          leading: const Icon(Icons.favorite),
+          title: const Text('Favourite Projects'),
+          onTap: () => _onPressedFavouriteProjectsFunction(),
+        ),
+      if (currentUser1 != null && currentUser1.userType == "Client")
+        const Divider(),
+      if (currentUser1 != null && currentUser1.userType == "Client")
+        ListTile(
+          leading: const Icon(Icons.favorite),
+          title: const Text('Favourite Vendors'),
+          onTap: () => _onPressedFavouriteVendorsFunction(),
+        ),
+      if (currentUser1 != null && currentUser1.userType == "Client")
+        const Divider(),
+      if (currentUser1 != null && currentUser1.userType == "Client")
+        ListTile(
+          leading: const Icon(Icons.add_home_work),
+          title: const Text('Add Request'),
+          onTap: () => _onPressedAddRequestFunction(),
+        ),
+      const Divider(),
+      ListTile(
+        leading: const Icon(Icons.list_alt_outlined),
+        title: const Text('Requests List'),
+        onTap: () => _onPressedRequestListFunction(),
+      ),
+      if (currentUser1 != null && currentUser1.userType == "Vendor")
+        const Divider(),
+      if (currentUser1 != null && currentUser1.userType == "Vendor")
+        ListTile(
+          leading: const Icon(Icons.edit_note_outlined),
+          title: const Text('My Responses'),
+          onTap: () => _onPressedResponseListFunction(),
+        ),
+    ]));
   }
 }

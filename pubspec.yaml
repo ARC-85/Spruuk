@@ -95,6 +95,9 @@ flutter:
     - assets/images/spruuk_logo_white.png
     - assets/images/spruuk_logo_transparent.png
     - assets/images/circular_avatar.png
+    - assets/images/310-1-3D_View_2.jpg
+    - assets/images/circular_house.png
+    - assets/images/spruuk_logo_white_trimmed.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

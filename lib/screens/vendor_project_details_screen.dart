@@ -72,9 +72,6 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
         final currentUserLocation = ref
             .watch(userProvider)
             .currentUserLocation;
-        // _projectTitle.text = initialProject!.projectTitle!;
-        _projectBriefDescription.text =
-        initialProject!.projectBriefDescription!;
         if (initialProject!.projectLongDescription != null) {
           _projectLongDescription.text =
           initialProject!.projectLongDescription!;
@@ -900,7 +897,7 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                           MyImagePicker(
                                             projectImage1Provider:
                                             projectImageProvider,
-                                            projectImageUrl: projectImageFile == null && webProjectImage != null && initialProject!.projectImages!.isNotEmpty ? initialProject?.projectImages![0] : null,
+                                            projectImageUrl: projectImageFile == null && initialProject!.projectImages!.isNotEmpty ? initialProject?.projectImages![0] : null,
                                           ),
                                           const MyTextLabel(
                                               textLabel: "Image 1",
@@ -1050,7 +1047,7 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                 isTextObscured: false,
                                                 icon: (Icons.add),
                                                 validator: customTitleValidator,
-                                                initialText: initialProject!.projectTitle!,
+                                                initialText: initialProject!.projectTitle,
                                               )),
                                           Container(
                                               margin:
@@ -1073,6 +1070,7 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                                                 isTextObscured: false,
                                                 icon: (Icons.add),
                                                 validator: customTitleValidator,
+                                                initialText: initialProject!.projectBriefDescription,
                                               )),
                                           const MyTextLabel(
                                               textLabel: "Project Location",

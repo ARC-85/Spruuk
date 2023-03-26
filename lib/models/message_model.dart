@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MessageModel {
   String messageId;
   String? messageResponseId;
@@ -11,6 +13,7 @@ class MessageModel {
   int? messageCreatedDay;
   int? messageCreatedMonth;
   int? messageCreatedYear;
+  Timestamp? messageTimeCreated;
 
   // Class constructor
   MessageModel(
@@ -25,7 +28,8 @@ class MessageModel {
         this.messageContent = "",
         this.messageCreatedDay = 0,
         this.messageCreatedMonth = 0,
-        this.messageCreatedYear = 0});
+        this.messageCreatedYear = 0,
+      this.messageTimeCreated});
 
   // A factory constructor to create MessageModel object from JSON
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +47,7 @@ class MessageModel {
       messageCreatedDay: json['messageCreatedDay'],
       messageCreatedMonth: json['messageCreatedMonth'],
       messageCreatedYear: json['messageCreatedYear'],
+      messageTimeCreated: json['messageTimeCreated'],
     );
   }
 
@@ -63,4 +68,5 @@ Map<String, dynamic> _messageToJson(MessageModel instance) => <String, dynamic>{
   'messageCreatedDay': instance.messageCreatedDay,
   'messageCreatedMonth': instance.messageCreatedMonth,
   'messageCreatedYear': instance.messageCreatedYear,
+  'messageTimeCreated': instance.messageTimeCreated,
 };

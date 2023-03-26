@@ -149,7 +149,7 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Home"), actions: [
+          title: _userType == UserType.client ? const Text("All Projects") : const Text("My Projects"), actions: [
           IconButton(
               onPressed: () => Navigator.pushNamed(context, '/JointProjectMapScreen'),
               icon: const Icon(

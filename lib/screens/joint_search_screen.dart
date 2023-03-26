@@ -32,6 +32,7 @@ import 'package:spruuk/widgets/project_area.dart';
 import 'package:spruuk/widgets/project_location.dart';
 import 'package:spruuk/widgets/search_distance.dart';
 import 'package:spruuk/widgets/text_input.dart';
+import 'package:location/location.dart';
 import 'dart:io';
 
 import 'package:spruuk/widgets/text_label.dart';
@@ -58,11 +59,22 @@ class _JointSearchScreen
   UserModel? currentUser1;
   UserProvider? user;
   FirebaseAuthentication? _auth;
+  Location location = Location();
+  LocationData? locationData;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _auth = ref.watch(authenticationProvider);
+
+    ref.watch(userProvider).getPermissions()
+        .then((value) {
+      setState(() {
+        currentUserLocation = value;
+      });
+    });
+
+    getUserLocation();
 
     final authData = ref.watch(fireBaseAuthProvider);
     ref
@@ -71,15 +83,10 @@ class _JointSearchScreen
         .then((value) {
       setState(() {
         currentUser1 = value;
+        print("this is a test");
       });
     });
 
-    ref.watch(userProvider).getPermissions()
-        .then((value) {
-      setState(() {
-        currentUserLocation = value;
-      });
-    });
   }
 
 // TextEditingControllers for data inputs
@@ -127,6 +134,8 @@ class _JointSearchScreen
 
   bool _isLoading = false;
 
+
+
   void loading() {
     // Check mounted property for state class of widget. https://www.stephenwenceslao.com/blog/error-might-indicate-memory-leak-if-setstate-being-called-because-another-object-retaining
     if (!mounted) {
@@ -168,11 +177,16 @@ class _JointSearchScreen
     }
   }
 
+  Future<void> getUserLocation() async {
+    locationData = await location.getLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
     final _projectProvider = ref.watch(projectProvider);
     final _requestProvider = ref.watch(requestProvider);
+
 
     if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
@@ -194,8 +208,9 @@ class _JointSearchScreen
       body: SafeArea(
         child: Consumer(builder: (context, ref, _) {
           // Set up variables for location based on provider
-          searchLat = ref.watch(projectLatLngProvider)?.latitude;
-          searchLng = ref.watch(projectLatLngProvider)?.longitude;
+          searchLat = ref.watch(projectLatLngProvider)?.latitude ?? locationData?.latitude;
+          print("this is searchLat $searchLat");
+          searchLng = ref.watch(projectLatLngProvider)?.longitude ?? locationData?.longitude;
 
           // Set up variables for distance from location based on provider
           searchDistanceFrom = ref.watch(projectDistanceFromProvider);
@@ -236,6 +251,7 @@ class _JointSearchScreen
             try {
               // User type selected by dropdown menu
               loading();
+              await getUserLocation();
               if(_searchQuery.text.isEmpty) {
                 searchQuery = "";
               } else {
@@ -264,8 +280,8 @@ class _JointSearchScreen
                 searchTypes: searchTypes,
                 searchMinCost: searchMinCost,
                 searchMaxCost: searchMaxCost,
-                searchLat: searchLat,
-                searchLng: searchLng,
+                searchLat: searchLat == 53.37466222698207 && locationData != null ? locationData?.latitude : searchLat,
+                searchLng: searchLng == -9.1528495028615 && locationData != null ? locationData?.longitude : searchLng,
                 searchZoom: searchZoom,
                 searchDistanceFrom: searchDistanceFrom,
                 searchEarliestCompletionDay: searchEarliestCompletionDay,
@@ -293,6 +309,10 @@ class _JointSearchScreen
               print("this is minArea ${mySearch.searchMinArea}");
               print("this is maxArea ${mySearch.searchMaxArea}");
               print("this is styles ${mySearch.searchStyles}");
+              print("this is searchLat ${locationData?.latitude}");
+              if(locationData?.latitude != null) {
+                ref.read(projectLatLngProvider.notifier).state = LatLng(locationData!.latitude!, locationData!.longitude!);
+              }
 
 
               // Checking if widget mounted when using multiple awaits
@@ -782,7 +802,7 @@ class _JointSearchScreen
                   ),
                 ],
               ),
-              Flexible(
+              Expanded(
                 child: Container(
                     width: screenDimensions.width,
                     height: screenDimensions.height * 0.25,
@@ -792,7 +812,7 @@ class _JointSearchScreen
 
                     child: Column(
                       children: [const SizedBox(
-                        height: 15,
+                        height: 12,
                         child: Divider(
                           color: Colors.white,
                           height: 1,

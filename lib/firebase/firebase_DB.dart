@@ -125,7 +125,7 @@ class FirebaseDB {
   }
 
   Future<QuerySnapshot> getMessages() async {
-    return messageCollection.get();
+    return messageCollection.orderBy('messageTimeCreated', descending: true).get();
   }
 
   void deleteProject(String projectId) async {

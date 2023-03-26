@@ -184,7 +184,7 @@ class _ClientFavouriteVendorsListScreen
                 width: screenDimensions.width * 0.3,
                 child: FloatingActionButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/ClientSearchProjectScreen');
+                    Navigator.pushNamed(context, '/JointSearchScreen');
                   },
                   materialTapTargetSize: MaterialTapTargetSize.padded,
                   backgroundColor:
