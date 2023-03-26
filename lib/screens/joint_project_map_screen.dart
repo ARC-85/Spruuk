@@ -176,7 +176,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
     print("this is markers $_markers");
 
     return Scaffold(
-      appBar: AppBar(title: const Text("All Projects Map"), actions: [
+      appBar: AppBar(title: _userType == UserType.client ? const Text("All Projects Map") : const Text("My Projects Map"), actions: [
         IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(

@@ -133,6 +133,7 @@ class _ClientFilteredProjectListScreen
                       fit: BoxFit.fitHeight,
                     ),
                   )),
+              if(currentUser1 != null)
               Positioned(
                 top: screenDimensions.height * 0.1,
                 child: SizedBox(
@@ -163,7 +164,7 @@ class _ClientFilteredProjectListScreen
                 width: screenDimensions.width * 0.3,
                 child: FloatingActionButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/ClientSearchProjectScreen');
+                    Navigator.pushNamed(context, '/JointSearchScreen');
                   },
                   materialTapTargetSize: MaterialTapTargetSize.padded,
                   backgroundColor:

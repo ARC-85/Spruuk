@@ -11,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
+import 'package:spruuk/models/response_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
@@ -19,6 +20,7 @@ import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
+import 'package:spruuk/providers/response_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/widgets/cost_range.dart';
 import 'package:spruuk/widgets/date_picker.dart';
@@ -26,6 +28,7 @@ import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
 import 'package:spruuk/widgets/project_area.dart';
 import 'package:spruuk/widgets/project_location.dart';
+import 'package:spruuk/widgets/screen_arguments.dart';
 import 'package:spruuk/widgets/text_input.dart';
 import 'dart:io';
 import 'package:date_format/date_format.dart';
@@ -57,6 +60,10 @@ class _VendorRequestDetailsScreen
   bool doneOnce = false;
   DateTime? formattedDate;
   String? _formattedDate;
+  bool responded = false;
+  List<ResponseModel>? allVendorResponses;
+  bool alreadyResponded = false;
+  String? relevantResponse;
 
   @override
   void didChangeDependencies() {
@@ -76,8 +83,28 @@ class _VendorRequestDetailsScreen
           .then((value) {
         setState(() {
           currentUser1 = value;
+          _isLoading = false;
         });
-      });
+      }).then((value) => ref
+                  .watch(responseProvider)
+                  .getAllVendorResponses(currentUser1?.uid)
+                  .then((value) {
+                setState(() {
+                  allVendorResponses = value;
+                  if (allVendorResponses != null) {
+                    for (var response in allVendorResponses!) {
+                      if (response.responseRequestId ==
+                          initialRequest?.requestId) {
+                        alreadyResponded = true;
+                        relevantResponse = response.responseId;
+                        print("this is relevantResponse $relevantResponse");
+                      }
+                    }
+                  }
+
+                  _isLoading = false;
+                });
+              }));
 
       doneOnce == true;
     }
@@ -86,9 +113,9 @@ class _VendorRequestDetailsScreen
 // TextEditingControllers for data inputs
   TextEditingController _requestTitle = TextEditingController(text: '');
   TextEditingController _requestBriefDescription =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
   TextEditingController _requestLongDescription =
-  TextEditingController(text: '');
+      TextEditingController(text: '');
 
   // Initial request variable setup
   GoogleMapController? _controller;
@@ -124,7 +151,6 @@ class _VendorRequestDetailsScreen
   Uint8List? webRequestImage2;
   Uint8List? webRequestImage3;
   Uint8List? webRequestImage4;
-
 
   // Value of request type drop down menu
   String selectedValue = "New Build";
@@ -251,37 +277,38 @@ class _VendorRequestDetailsScreen
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    if(initialRequest != null)
+                                    if (initialRequest != null)
                                       Container(
                                           margin: const EdgeInsets.symmetric(
                                               vertical: 20, horizontal: 16),
                                           height: 200,
                                           child: ListView.separated(
                                             scrollDirection: Axis.horizontal,
-                                            separatorBuilder: (context, index) =>
-                                                SizedBox(width: 8),
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    SizedBox(width: 8),
                                             itemCount: initialRequest!
                                                 .requestImages!.length,
                                             itemBuilder: (context, index) => ClipRRect(
                                                 borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(10)),
+                                                    const BorderRadius.all(
+                                                        Radius.circular(10)),
                                                 child: Container(
-                                                    width: screenDimensions.width /
-                                                        1.2,
+                                                    width:
+                                                        screenDimensions.width /
+                                                            1.2,
                                                     height: 160,
                                                     decoration: BoxDecoration(
                                                         image: DecorationImage(
                                                             image: NetworkImage(
                                                                 initialRequest!
-                                                                    .requestImages![
-                                                                index]!),
+                                                                    .requestImages![index]!),
                                                             fit: BoxFit.cover)))),
                                           )),
-                                    if(initialRequest != null)
+                                    if (initialRequest != null)
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                            MainAxisAlignment.center,
                                         children: [
                                           Container(
                                             height: 40,
@@ -294,7 +321,7 @@ class _VendorRequestDetailsScreen
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                BorderRadius.circular(25)),
+                                                    BorderRadius.circular(25)),
                                             child: Text(
                                               initialRequest!.requestType!,
                                               textAlign: TextAlign.center,
@@ -307,7 +334,7 @@ class _VendorRequestDetailsScreen
                                           )
                                         ],
                                       ),
-                                    if(initialRequest != null)
+                                    if (initialRequest != null)
                                       const Align(
                                         alignment: Alignment.centerLeft,
                                         child: MyTextLabel(
@@ -319,7 +346,7 @@ class _VendorRequestDetailsScreen
                                               fontSize: 16.0,
                                             )),
                                       ),
-                                    if(initialRequest != null)
+                                    if (initialRequest != null)
                                       Container(
                                         height: 40,
                                         width: 400,
@@ -331,7 +358,7 @@ class _VendorRequestDetailsScreen
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(25)),
+                                                BorderRadius.circular(25)),
                                         child: Text(
                                           initialRequest!.requestTitle!,
                                           textAlign: TextAlign.center,
@@ -353,7 +380,7 @@ class _VendorRequestDetailsScreen
                                             fontSize: 16.0,
                                           )),
                                     ),
-                                    if(initialRequest != null)
+                                    if (initialRequest != null)
                                       Container(
                                         height: 80,
                                         width: 400,
@@ -365,7 +392,7 @@ class _VendorRequestDetailsScreen
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(25)),
+                                                BorderRadius.circular(25)),
                                         child: Text(
                                           initialRequest!
                                               .requestBriefDescription!,
@@ -386,7 +413,7 @@ class _VendorRequestDetailsScreen
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20.0,
                                         )),
-                                    if(initialRequest != null)
+                                    if (initialRequest != null)
                                       Container(
                                         height: 300,
                                         width: 300,
@@ -394,21 +421,21 @@ class _VendorRequestDetailsScreen
                                           children: [
                                             GoogleMap(
                                               initialCameraPosition:
-                                              CameraPosition(
-                                                  target: initialRequest
-                                                      ?.requestLat !=
-                                                      null
-                                                      ? LatLng(
-                                                      initialRequest!
-                                                          .requestLat!
-                                                          .toDouble(),
-                                                      initialRequest!
-                                                          .requestLng!
-                                                          .toDouble())
-                                                      : const LatLng(
-                                                      53.37466222698207,
-                                                      -9.1528495028615),
-                                                  zoom: 17),
+                                                  CameraPosition(
+                                                      target: initialRequest
+                                                                  ?.requestLat !=
+                                                              null
+                                                          ? LatLng(
+                                                              initialRequest!
+                                                                  .requestLat!
+                                                                  .toDouble(),
+                                                              initialRequest!
+                                                                  .requestLng!
+                                                                  .toDouble())
+                                                          : const LatLng(
+                                                              53.37466222698207,
+                                                              -9.1528495028615),
+                                                      zoom: 17),
                                               mapType: MapType.normal,
                                               // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
                                               onMapCreated: (controller) {
@@ -417,15 +444,17 @@ class _VendorRequestDetailsScreen
                                                 });
                                               },
                                               markers: <Marker>{
-                                                if (initialRequest?.requestLat !=
+                                                if (initialRequest
+                                                        ?.requestLat !=
                                                     null)
-                                                // taken from https://stackoverflow.com/questions/55003179/flutter-drag-marker-and-get-new-position
+                                                  // taken from https://stackoverflow.com/questions/55003179/flutter-drag-marker-and-get-new-position
                                                   Marker(
                                                     onTap: () {
                                                       //Navigator.pushNamed(context, '/LocationSelectionScreen');
                                                     },
                                                     //draggable: true,
-                                                    markerId: MarkerId('Marker'),
+                                                    markerId:
+                                                        MarkerId('Marker'),
                                                     position: LatLng(
                                                         initialRequest!
                                                             .requestLat!
@@ -447,7 +476,7 @@ class _VendorRequestDetailsScreen
                                       child: RichText(
                                         text: TextSpan(
                                           text: _advancedStatus ==
-                                              AdvancedStatus.basic
+                                                  AdvancedStatus.basic
                                               ? 'Show Advanced Inputs?'
                                               : 'Show Basic Inputs?',
                                           style: const TextStyle(
@@ -459,12 +488,12 @@ class _VendorRequestDetailsScreen
                                                 style: TextStyle(
                                                     color: Colors.blue.shade300,
                                                     fontWeight:
-                                                    FontWeight.bold),
+                                                        FontWeight.bold),
                                                 recognizer:
-                                                TapGestureRecognizer()
-                                                  ..onTap = () {
-                                                    _switchAdvanced();
-                                                  })
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        _switchAdvanced();
+                                                      })
                                           ],
                                         ),
                                       ),
@@ -483,7 +512,8 @@ class _VendorRequestDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced && initialRequest != null)
+                                            AdvancedStatus.advanced &&
+                                        initialRequest != null)
                                       Container(
                                         height: 120,
                                         width: 400,
@@ -495,7 +525,7 @@ class _VendorRequestDetailsScreen
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(25)),
+                                                BorderRadius.circular(25)),
                                         child: Text(
                                           initialRequest!
                                               .requestLongDescription!,
@@ -509,12 +539,12 @@ class _VendorRequestDetailsScreen
                                         ),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced && initialRequest != null)
+                                            AdvancedStatus.advanced &&
+                                        initialRequest != null)
                                       const Align(
                                         alignment: Alignment.centerLeft,
                                         child: MyTextLabel(
-                                            textLabel:
-                                            "Date of Request: ",
+                                            textLabel: "Date of Request: ",
                                             color: null,
                                             textStyle: TextStyle(
                                               color: Colors.white,
@@ -535,7 +565,7 @@ class _VendorRequestDetailsScreen
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(25)),
+                                                BorderRadius.circular(25)),
                                         child: Text(
                                           _formattedDate!,
                                           textAlign: TextAlign.center,
@@ -561,7 +591,8 @@ class _VendorRequestDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced && initialRequest != null)
+                                            AdvancedStatus.advanced &&
+                                        initialRequest != null)
                                       Container(
                                         height: 40,
                                         width: 400,
@@ -573,7 +604,7 @@ class _VendorRequestDetailsScreen
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(25)),
+                                                BorderRadius.circular(25)),
                                         child: Text(
                                           initialRequest?.requestStyle != null
                                               ? initialRequest!.requestStyle!
@@ -601,9 +632,11 @@ class _VendorRequestDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced && initialRequest != null)
+                                            AdvancedStatus.advanced &&
+                                        initialRequest != null)
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Container(
                                             height: 40,
@@ -614,7 +647,7 @@ class _VendorRequestDetailsScreen
                                                 horizontal: 0, vertical: 4),
                                             decoration: BoxDecoration(
                                                 borderRadius:
-                                                BorderRadius.circular(25)),
+                                                    BorderRadius.circular(25)),
                                             child: const Text(
                                               "Min (€):",
                                               textAlign: TextAlign.center,
@@ -636,13 +669,13 @@ class _VendorRequestDetailsScreen
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                BorderRadius.circular(25)),
+                                                    BorderRadius.circular(25)),
                                             child: Text(
                                               initialRequest?.requestMinCost !=
-                                                  null
+                                                      null
                                                   ? initialRequest!
-                                                  .requestMinCost!
-                                                  .toString()
+                                                      .requestMinCost!
+                                                      .toString()
                                                   : "NA",
                                               textAlign: TextAlign.center,
                                               softWrap: true,
@@ -662,7 +695,7 @@ class _VendorRequestDetailsScreen
                                                 horizontal: 0, vertical: 4),
                                             decoration: BoxDecoration(
                                                 borderRadius:
-                                                BorderRadius.circular(25)),
+                                                    BorderRadius.circular(25)),
                                             child: const Text(
                                               "Max (€):",
                                               textAlign: TextAlign.center,
@@ -684,13 +717,13 @@ class _VendorRequestDetailsScreen
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                BorderRadius.circular(25)),
+                                                    BorderRadius.circular(25)),
                                             child: Text(
                                               initialRequest?.requestMaxCost !=
-                                                  null
+                                                      null
                                                   ? initialRequest!
-                                                  .requestMaxCost!
-                                                  .toString()
+                                                      .requestMaxCost!
+                                                      .toString()
                                                   : "NA",
                                               textAlign: TextAlign.center,
                                               softWrap: true,
@@ -717,7 +750,8 @@ class _VendorRequestDetailsScreen
                                             )),
                                       ),
                                     if (_advancedStatus ==
-                                        AdvancedStatus.advanced && initialRequest != null)
+                                            AdvancedStatus.advanced &&
+                                        initialRequest != null)
                                       Container(
                                         height: 40,
                                         width: 200,
@@ -729,10 +763,11 @@ class _VendorRequestDetailsScreen
                                         decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                            BorderRadius.circular(25)),
+                                                BorderRadius.circular(25)),
                                         child: Text(
                                           initialRequest?.requestArea != null
-                                              ? initialRequest!.requestArea.toString()!
+                                              ? initialRequest!.requestArea
+                                                  .toString()!
                                               : "Not provided",
                                           textAlign: TextAlign.center,
                                           softWrap: true,
@@ -748,80 +783,138 @@ class _VendorRequestDetailsScreen
                   ),
                 ],
               ),
-              if(initialRequest != null)
-                InkWell(
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 15,
-                          child: Divider(
-                            color: Colors.white,
-                            height: 1,
-                            thickness: 1,
-                            indent: 1,
-                            endIndent: 1,
-                          ),
+              if (initialRequest != null)
+                Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 15,
+                        child: Divider(
+                          color: Colors.white,
+                          height: 1,
+                          thickness: 1,
+                          indent: 1,
+                          endIndent: 1,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage:
-                              initialRequest?.requestUserImage == null
-                                  ? const AssetImage(
-                                  "assets/images/circular_avatar.png")
-                                  : Image.network(
-                                  initialRequest!.requestUserImage!)
-                                  .image,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Column(
-                              children: [
-                                const Text(
-                                  "Client Email: ",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage:
+                                initialRequest?.requestUserImage == null
+                                    ? const AssetImage(
+                                        "assets/images/circular_avatar.png")
+                                    : Image.network(
+                                            initialRequest!.requestUserImage!)
+                                        .image,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            children: [
+                              const Text(
+                                "Client Email: ",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 4,
+                              ),
+                              Text(
+                                initialRequest!.requestUserEmail!,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.lightBlueAccent,
+                                ),
+                              )
+                            ],
+                          ),
+                          Stack(
+                            children: [
+                              if (alreadyResponded == false)
+                                FloatingActionButton(
+                                  onPressed: () {
+                                    // Had to incorporate this user refresh as a work around because it wasn't reading in didChangeDependencies
+                                    final authData =
+                                        ref.watch(fireBaseAuthProvider);
+                                    ref
+                                        .watch(userProvider)
+                                        .getCurrentUserData(
+                                            authData.currentUser!.uid)
+                                        .then((value) {
+                                      setState(() {
+                                        currentUser1 = value;
+                                        print("turning true");
+                                      });
+                                    });
+
+                                    Navigator.pushNamed(
+                                        context, '/VendorAddResponseScreen',
+                                        arguments: initialRequest?.requestId);
+                                  },
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.padded,
+                                  backgroundColor:
+                                      const Color.fromRGBO(242, 151, 101, 1)
+                                          .withOpacity(1)
+                                          .withOpacity(1),
+                                  child: const Icon(
+                                    Icons.note_add_outlined,
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                Text(
-                                  initialRequest!.requestUserEmail!,
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.lightBlueAccent,
+                              if (alreadyResponded == true)
+                                FloatingActionButton(
+                                  onPressed: () {
+                                    final authData =
+                                        ref.watch(fireBaseAuthProvider);
+                                    ref
+                                        .watch(userProvider)
+                                        .getCurrentUserData(
+                                            authData.currentUser!.uid)
+                                        .then((value) {
+                                      setState(() {
+                                        currentUser1 = value;
+                                        print("turning false");
+                                      });
+                                    });
+                                    Navigator.pushNamed(
+                                        context, '/VendorResponseDetailsScreen',
+                                        arguments: ScreenArguments(initialRequest!.requestId, relevantResponse!));
+                                  },
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.padded,
+                                  backgroundColor:
+                                      const Color.fromRGBO(242, 151, 101, 1)
+                                          .withOpacity(1),
+                                  child: const Icon(
+                                    Icons.note_alt_outlined,
                                   ),
                                 )
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                      ],
-                    ),
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                    ],
                   ),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/ClientVendorDetailsScreen', arguments: initialRequest?.requestUserId);
-                  },
                 ),
               const Spacer(),
             ],

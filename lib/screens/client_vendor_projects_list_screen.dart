@@ -215,7 +215,7 @@ class _ClientVendorProjectsListScreen
                 child: FloatingActionButton(
                   onPressed: () {
                     Navigator.pushNamed(
-                        context, '/ClientSearchProjectScreen');
+                        context, '/JointSearchScreen');
                   },
                   materialTapTargetSize: MaterialTapTargetSize.padded,
                   backgroundColor:

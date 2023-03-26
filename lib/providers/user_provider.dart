@@ -82,6 +82,13 @@ class UserProvider {
     return _currentUserLocation;
   }
 
+  Future<LatLng?> getUserLocation() async {
+      locationData = await location.getLocation();
+      _currentUserLocation = LatLng(locationData!.latitude!, locationData!.longitude!);
+      print("this is searchlat $_currentUserLocation");
+    return _currentUserLocation;
+  }
+
   Future<void> addProjectFavouriteToClient(String projectId) async {
     bool? alreadyFavourite = _currentUserData?.userProjectFavourites!.any((_projectId) => _projectId == projectId);
 
@@ -151,6 +158,15 @@ class UserProvider {
     }
     print("this is favouriteVendors final $_favouriteVendors");
     return _favouriteVendors;
+  }
+
+  Future<void> updateUser(UserModel updatedUser) async {
+    final allUsersList = await getAllUsers();
+    print("this is allUsers $allUsersList");
+    final userIndex = allUsersList!
+        .indexWhere((user) => user.uid == updatedUser.uid);
+    _allUsers![userIndex] = updatedUser;
+    await firebaseDB.updateUser(updatedUser);
   }
 }
 

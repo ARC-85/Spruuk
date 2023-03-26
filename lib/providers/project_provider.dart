@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/search_model.dart';
 import 'package:spruuk/models/user_model.dart';
