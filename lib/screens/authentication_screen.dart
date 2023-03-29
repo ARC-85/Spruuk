@@ -164,34 +164,41 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
             }
             loading();
             await _auth
-                ?.loginWithEmailAndPassword(_email.text, _password.text, context)
-                .whenComplete(() => _auth?.authStateChange.listen((event) async {
-                      if (event == null) {
-                        loading();
-                        return;
-                      }
-                    }));
+                ?.loginWithEmailAndPassword(
+                    _email.text, _password.text, context)
+                .whenComplete(
+                    () => _auth?.authStateChange.listen((event) async {
+                          if (event == null) {
+                            loading();
+                            return;
+                          }
+                        }));
             if (!mounted) return;
             Navigator.pushNamed(context, '/AuthenticationChecker');
           }
 
           Future<void> _loginWithGoogle() async {
             loadingGoogle();
-            _firstTime = (await _auth
-                ?.loginWithGoogle(context)
-                .whenComplete(() => _auth?.authStateChange.listen((event) async {
+            _firstTime = (await _auth?.loginWithGoogle(context).whenComplete(
+                () => _auth?.authStateChange.listen((event) async {
                       if (event == null) {
                         loadingGoogle();
                         return;
                       }
                     })))!;
             if (_firstTime == true) {
-
               _showUserTypeDialog(_auth?.user);
             } else {
               if (!mounted) return;
               Navigator.pushReplacementNamed(context, "/AuthenticationChecker");
             }
+          }
+
+          Future<void> _resetPasswordFunction() async {
+            loading();
+            await _auth?.resetPassword(_email.text, context);
+            if (!mounted) return;
+            Navigator.pushNamed(context, '/AuthenticationChecker');
           }
 
           return Column(
@@ -294,7 +301,30 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                                               )),
                                         ],
                                       ),
-                                    )
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 24.0),
+                                      child: RichText(
+                                        text: TextSpan(
+                                          text: 'Forgot your password? ',
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                          children: [
+                                            TextSpan(
+                                                text:
+                                                    'Send password reset link.',
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                                recognizer:
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () {
+                                                        _resetPasswordFunction();
+                                                      })
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 )))),
                   ),
@@ -363,7 +393,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: RichText(
                   text: TextSpan(
-                    text: 'Don\'t have an account?',
+                    text: 'Don\'t have an account? ',
                     style: const TextStyle(color: Colors.black),
                     children: [
                       TextSpan(

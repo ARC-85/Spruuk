@@ -97,6 +97,13 @@ class _ClientFilteredProjectListScreen
         appBar: AppBar(title: const Text("Filtered Projects"), actions: [
           IconButton(
               onPressed: () =>
+                  Navigator.pushNamed(context, "/ClientFilteredProjectMapScreen", arguments: searchTerms),
+              icon: const Icon(
+                Icons.map_outlined,
+                size: 25,
+              )),
+          IconButton(
+              onPressed: () =>
                   Navigator.pushNamed(context, '/JointProjectListScreen'),
               icon: const Icon(
                 Icons.home,

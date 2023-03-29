@@ -126,7 +126,7 @@ class _JointRequestListScreen extends ConsumerState<JointRequestListScreen> {
         appBar: AppBar(
             title: _userType == UserType.client ? const Text("My Requests") : const Text("Client Requests"), actions: [
           IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/JointProjectMapScreen'),
+              onPressed: () => Navigator.pushNamed(context, '/JointRequestMapScreen'),
               icon: const Icon(
                 Icons.map_outlined,
                 size: 25,
@@ -174,7 +174,7 @@ class _JointRequestListScreen extends ConsumerState<JointRequestListScreen> {
                         onRefresh: () =>
                             _refreshRequestList(currentUser1!.uid),
                         child: _userType == UserType.vendor
-                            ? allRequests != null
+                            ? allRequests != null && allRequests!.isNotEmpty
                             ? ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap:
@@ -187,9 +187,9 @@ class _JointRequestListScreen extends ConsumerState<JointRequestListScreen> {
                                   listIndex: index,
                                 ))
                             : const Center(
-                          child: Text('No projects'),
+                          child: Text('No requests'),
                         )
-                            : allClientRequests != null
+                            : allClientRequests != null && allClientRequests!.isNotEmpty
                             ? ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap:
@@ -203,7 +203,7 @@ class _JointRequestListScreen extends ConsumerState<JointRequestListScreen> {
                                   listIndex: index,
                                 ))
                             : const Center(
-                          child: Text('No projects'),
+                          child: Text('No requests'),
                         ))),
               ),
               if (_userType == UserType.client)

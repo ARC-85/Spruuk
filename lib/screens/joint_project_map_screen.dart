@@ -50,6 +50,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
   Set<Marker>? _markers = {};
   List<LatLng>? _points = [];
   Marker? _marker;
+  String? cardId = "";
   String? cardTitle = "";
   String? cardSubtitle = "";
   String? cardImage;
@@ -149,6 +150,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
                   title: project.projectTitle, snippet: project.projectType),
               onTap: () {
                 setState(() {
+                  cardId = project.projectId;
                   cardTitle = project.projectTitle;
                   cardSubtitle = project.projectBriefDescription;
                   cardImage = project.projectImages != null &&
@@ -226,86 +228,95 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
                           color: Colors.white,
                         )),
                   ),
-                  if(cardTitle != null && cardTitle!.isNotEmpty)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
-                      ),
+                  if(cardTitle != null && cardTitle!.isNotEmpty && currentUser1 != null)
+                    InkWell(
+                      onTap: () {
+                        if (currentUser1!.userType == "Vendor") {
+                          Navigator.pushNamed(context, '/VendorProjectDetailsScreen', arguments: cardId);
+                        } else {
+                          Navigator.pushNamed(context, '/ClientProjectDetailsScreen', arguments: cardId);
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                        ),
 
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            SizedBox(
-                                width: screenDimensions.width * 0.2,
-                                height: screenDimensions.width * 0.2,
-                                child: cardImage != null
-                                    ? Image.network(cardImage!,
-                                    fit: BoxFit.cover)
-                                    : const CircleAvatar(
-                                    radius: 60,
-                                    backgroundImage: AssetImage(
-                                        "assets/images/circular_avatar.png"))),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                Text(cardTitle!,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    )),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  cardSubtitle!,
-                                  style: const TextStyle(
-                                    fontSize: 19,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white70,
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              SizedBox(
+                                  width: screenDimensions.width * 0.2,
+                                  height: screenDimensions.width * 0.2,
+                                  child: cardImage != null
+                                      ? Image.network(cardImage!,
+                                      fit: BoxFit.cover)
+                                      : const CircleAvatar(
+                                      radius: 60,
+                                      backgroundImage: AssetImage(
+                                          "assets/images/circular_avatar.png"))),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 20,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: [
-                                      RichText(
-                                        text: TextSpan(
-                                            text: "Price Range:",
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.white54,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                  text:
-                                                  "€$cardMinPrice - €$cardMaxPrice",
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.normal,
-                                                    color: Colors.lightBlueAccent,
-                                                  ))
-                                            ]),
-                                      ),
-                                    ])
-                              ],
-                            )
-                          ]),
+                                  Text(cardTitle!,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      )),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    cardSubtitle!,
+                                    style: const TextStyle(
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white70,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        RichText(
+                                          text: TextSpan(
+                                              text: "Price Range:",
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.white54,
+                                              ),
+                                              children: [
+                                                TextSpan(
+                                                    text:
+                                                    "€$cardMinPrice - €$cardMaxPrice",
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.normal,
+                                                      color: Colors.lightBlueAccent,
+                                                    ))
+                                              ]),
+                                        ),
+                                      ])
+                                ],
+                              )
+                            ]),
+                      ),
                     ),
 
 

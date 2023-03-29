@@ -99,6 +99,14 @@ class _VendorFilteredRequestListScreen
     return Scaffold(
         appBar: AppBar(title: const Text("Filtered Requests"), actions: [
           IconButton(
+              onPressed: () => Navigator.pushReplacementNamed(
+                  context, "/VendorFilteredRequestMapScreen",
+                  arguments: searchTerms),
+              icon: const Icon(
+                Icons.map_outlined,
+                size: 25,
+              )),
+          IconButton(
               onPressed: () =>
                   Navigator.pushNamed(context, '/JointProjectListScreen'),
               icon: const Icon(
@@ -144,22 +152,22 @@ class _VendorFilteredRequestListScreen
                     child: _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : RefreshIndicator(
-                        onRefresh: () =>
-                            _refreshFilteredRequestList(currentUser1!.uid),
-                        child: filteredRequests != null
-                            ? ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap:
-                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
-                            itemCount: filteredRequests!.length,
-                            itemBuilder: (ctx, index) => MyRequestCard(
-                              request: filteredRequests![index],
-                              user: currentUser1!,
-                              listIndex: index,
-                            ))
-                            : const Center(
-                          child: Text('No matching requests'),
-                        ))),
+                            onRefresh: () =>
+                                _refreshFilteredRequestList(currentUser1!.uid),
+                            child: filteredRequests != null
+                                ? ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap:
+                                        true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
+                                    itemCount: filteredRequests!.length,
+                                    itemBuilder: (ctx, index) => MyRequestCard(
+                                          request: filteredRequests![index],
+                                          user: currentUser1!,
+                                          listIndex: index,
+                                        ))
+                                : const Center(
+                                    child: Text('No matching requests'),
+                                  ))),
               ),
               Positioned(
                 top: screenDimensions.height * 0.8,
@@ -170,7 +178,7 @@ class _VendorFilteredRequestListScreen
                   },
                   materialTapTargetSize: MaterialTapTargetSize.padded,
                   backgroundColor:
-                  const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                      const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
                   child: const Icon(
                     Icons.search,
                   ),
