@@ -242,4 +242,33 @@ class FirebaseAuthentication {
     });
   }
 
+  //Option to reset Password if forgotten
+  Future<void> resetPassword(
+      String email, BuildContext context) async {
+    try {
+      print("this is reset email $email");
+      await _auth.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+        content: const Text(
+          "Password reset email has been sent!",
+          style: TextStyle(fontSize: 18.0, color: Colors.white),
+        ),
+      ));
+    } on FirebaseAuthException catch (e) {
+      await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+              title: const Text("Error Occurred"),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: const Text("OK"))
+              ]));
+    }
+  }
+
 }

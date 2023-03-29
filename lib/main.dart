@@ -8,6 +8,7 @@ import 'package:spruuk/screens/client_favourite_projects_list_screen.dart';
 import 'package:spruuk/screens/client_favourite_projects_map_screen.dart';
 import 'package:spruuk/screens/client_favourite_vendors_list_screen.dart';
 import 'package:spruuk/screens/client_filtered_project_list_screen.dart';
+import 'package:spruuk/screens/client_filtered_project_map_screen.dart';
 import 'package:spruuk/screens/client_project_details_screen.dart';
 import 'package:spruuk/screens/client_request_details_screen.dart';
 import 'package:spruuk/screens/client_request_location_selection_screen.dart';
@@ -17,6 +18,7 @@ import 'package:spruuk/screens/client_vendor_projects_map_screen.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/screens/joint_project_map_screen.dart';
 import 'package:spruuk/screens/joint_request_list_screen.dart';
+import 'package:spruuk/screens/joint_request_map_screen.dart';
 import 'package:spruuk/screens/joint_response_details_screen.dart';
 import 'package:spruuk/screens/joint_response_list_screen.dart';
 import 'package:spruuk/screens/joint_search_screen.dart';
@@ -26,6 +28,7 @@ import 'package:spruuk/screens/splash_screen.dart';
 import 'package:spruuk/screens/vendor_add_project_screen.dart';
 import 'package:spruuk/screens/vendor_add_response_screen.dart';
 import 'package:spruuk/screens/vendor_filtered_request_list_screen.dart';
+import 'package:spruuk/screens/vendor_filtered_request_map_screen.dart';
 import 'package:spruuk/screens/vendor_project_details_screen.dart';
 import 'package:spruuk/screens/vendor_request_details_screen.dart';
 import 'package:spruuk/screens/vendor_response_details_screen.dart';
@@ -102,6 +105,9 @@ class SpruukApp extends ConsumerWidget {
         // Route for Client Filtered Project List Screen
         ClientFilteredProjectListScreen.routeName: (context) =>
         const ClientFilteredProjectListScreen(),
+        // Route for Client Filtered Project Map Screen
+        ClientFilteredProjectMapScreen.routeName: (context) =>
+        const ClientFilteredProjectMapScreen(),
         // Route for Client Vendor Details Screen
         ClientVendorDetailsScreen.routeName: (context) =>
         const ClientVendorDetailsScreen(),
@@ -126,12 +132,18 @@ class SpruukApp extends ConsumerWidget {
         // Route for Joint Request List Screen
         JointRequestListScreen.routeName: (context) =>
         const JointRequestListScreen(),
+        // Route for Joint Request Map Screen
+        JointRequestMapScreen.routeName: (context) =>
+        const JointRequestMapScreen(),
         // Route for Client Request Location Selection Screen
         ClientRequestLocationSelectionScreen.routeName: (context) =>
         const ClientRequestLocationSelectionScreen(),
         // Route for Vendor Filtered Request List Screen
         VendorFilteredRequestListScreen.routeName: (context) =>
         const VendorFilteredRequestListScreen(),
+        // Route for Vendor Filtered Request Map Screen
+        VendorFilteredRequestMapScreen.routeName: (context) =>
+        const VendorFilteredRequestMapScreen(),
         // Route for Client Request Details Screen
         ClientRequestDetailsScreen.routeName: (context) =>
         const ClientRequestDetailsScreen(),

@@ -1530,34 +1530,46 @@ class _VendorProjectDetailsScreen extends ConsumerState<VendorProjectDetailsScre
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.only(top: 32.0),
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                width: double.infinity,
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : MaterialButton(
-                  onPressed: _onPressedFunction,
-                  textColor:
-                  const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
-                  textTheme: ButtonTextTheme.primary,
-                  minWidth: 100,
-                  color: const Color.fromRGBO(242, 151, 101, 1)
-                      .withOpacity(1),
-                  padding: const EdgeInsets.all(
-                    18,
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                    side: BorderSide(color: Colors.blue.shade700),
-                  ),
-                  child: const Text(
-                    'Update Project',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(top: 32.0),
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        width: double.infinity,
+                        child: _isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : MaterialButton(
+                          onPressed: _onPressedFunction,
+                          textColor:
+                          const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
+                          textTheme: ButtonTextTheme.primary,
+                          minWidth: 100,
+                          color: const Color.fromRGBO(242, 151, 101, 1)
+                              .withOpacity(1),
+                          padding: const EdgeInsets.all(
+                            18,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            side: BorderSide(color: Colors.blue.shade700),
+                          ),
+                          child: const Text(
+                            'Update Project',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
                   ),
                 ),
               ),
-              const Spacer(),
+              
             ],
           );
         }),

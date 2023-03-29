@@ -253,23 +253,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               // User type selected by dropdown menu
               userType = selectedValue;
               loading();
-              // Get firebase storage ref for storing profile images
-              final ref = FirebaseStorage.instance
-                  .ref()
-                  .child('user_images')
-                  .child('${DateTime.now()}.jpg');
-              // Special method for uploading images on web app, i.e. data not a file
-              if (kIsWeb) {
-                await ref.putData(
-                    webImage!,
-                    SettableMetadata(
-                        contentType:
-                            'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
-              } else {
-                await ref.putFile(userImageFile!);
+              if(userImageFile != null || webImage != null) {
+                // Get firebase storage ref for storing profile images
+                final ref = FirebaseStorage.instance
+                    .ref()
+                    .child('user_images')
+                    .child('${DateTime.now()}.jpg');
+                // Special method for uploading images on web app, i.e. data not a file
+                if (kIsWeb) {
+                  await ref.putData(
+                      webImage!,
+                      SettableMetadata(
+                          contentType:
+                          'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                } else {
+                  await ref.putFile(userImageFile!);
+                }
+                // Getting the URL for the image once uploaded to Firebase storage
+                userImage = await ref.getDownloadURL();
               }
-              // Getting the URL for the image once uploaded to Firebase storage
-              userImage = await ref.getDownloadURL();
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
               // Using email and password to sign up in Firebase, passing details on user.
@@ -645,7 +647,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: RichText(
                   text: TextSpan(
-                    text: 'Already have an account?',
+                    text: 'Already have an account? ',
                     style: const TextStyle(color: Colors.black),
                     children: [
                       TextSpan(

@@ -25,6 +25,10 @@ class NavDrawer extends ConsumerWidget {
       Navigator.pushNamed(context, '/AuthenticationScreen');
     }
 
+    Future<void> _onPressedHomeFunction() async {
+      Navigator.pushNamed(context, '/JointProjectListScreen');
+    }
+
     Future<void> _onPressedFavouriteProjectsFunction() async {
       Navigator.pushNamed(context, '/ClientFavouriteProjectsListScreen');
     }
@@ -35,6 +39,10 @@ class NavDrawer extends ConsumerWidget {
 
     Future<void> _onPressedAddRequestFunction() async {
       Navigator.pushNamed(context, '/ClientAddRequestScreen');
+    }
+
+    Future<void> _onPressedAddProjectFunction() async {
+      Navigator.pushNamed(context, '/VendorAddProjectScreen');
     }
 
     Future<void> _onPressedRequestListFunction() async {
@@ -90,6 +98,12 @@ class NavDrawer extends ConsumerWidget {
         title: const Text('Sign Out'),
         onTap: () => _onPressedSignOutFunction(),
       ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: currentUser1 != null && currentUser1.userType == "Client" ? const Text('All Projects') : const Text('My Projects'),
+            onTap: () => _onPressedHomeFunction(),
+          ),
       if (currentUser1 != null && currentUser1.userType == "Client")
         const Divider(),
       if (currentUser1 != null && currentUser1.userType == "Client")
@@ -114,6 +128,14 @@ class NavDrawer extends ConsumerWidget {
           title: const Text('Add Request'),
           onTap: () => _onPressedAddRequestFunction(),
         ),
+          if (currentUser1 != null && currentUser1.userType == "Vendor")
+            const Divider(),
+          if (currentUser1 != null && currentUser1.userType == "Vendor")
+            ListTile(
+              leading: const Icon(Icons.add_home_work),
+              title: const Text('Add Project'),
+              onTap: () => _onPressedAddProjectFunction(),
+            ),
       const Divider(),
       ListTile(
         leading: const Icon(Icons.list_alt_outlined),

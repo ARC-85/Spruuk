@@ -199,7 +199,7 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
                             onRefresh: () =>
                                 _refreshProjectList(currentUser1!.uid),
                             child: _userType == UserType.client
-                                ? allProjects != null
+                                ? allProjects != null && allProjects!.isNotEmpty
                                     ? ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap:
@@ -214,7 +214,7 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
                                     : const Center(
                                         child: Text('No projects'),
                                       )
-                                : allVendorProjects != null
+                                : allVendorProjects != null && allVendorProjects!.isNotEmpty
                                     ? ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap:
