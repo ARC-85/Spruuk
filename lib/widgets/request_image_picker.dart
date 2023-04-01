@@ -210,12 +210,12 @@ class _MyRequestImagePicker extends ConsumerState<MyRequestImagePicker> {
                 ? widget.requestImageUrl != null
                 ? Image.network(widget.requestImageUrl!).image
                 : requestImageFile == null
-                ? const AssetImage("assets/images/circular_avatar.png")
+                ? const AssetImage("assets/images/circular_house.png")
                 : Image.file(requestImageFile!).image
                 : widget.requestImageUrl != null
                 ? Image.network(widget.requestImageUrl!).image
                 : webRequestImage == null
-                ? const AssetImage("assets/images/circular_avatar.png")
+                ? const AssetImage("assets/images/circular_house.png")
                 : Image.memory(webRequestImage!).image,
           ),
         ),

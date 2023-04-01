@@ -236,59 +236,62 @@ class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsM
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Text(cardTitle!,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          )),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        cardSubtitle!,
-                                        style: const TextStyle(
-                                          fontSize: 19,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.white70,
+                                  Container(
+                                    width: screenDimensions.width * 0.7,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(
+                                          height: 20,
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            RichText(
-                                              text: TextSpan(
-                                                  text: "Price Range:",
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.normal,
-                                                    color: Colors.white54,
-                                                  ),
-                                                  children: [
-                                                    TextSpan(
-                                                        text:
-                                                        "€$cardMinPrice - €$cardMaxPrice",
-                                                        style: const TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight: FontWeight.normal,
-                                                          color: Colors.lightBlueAccent,
-                                                        ))
-                                                  ]),
-                                            ),
-                                          ])
-                                    ],
+                                        Text(cardTitle!,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            )),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          cardSubtitle!,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.white70,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                            children: [
+                                              RichText(
+                                                text: TextSpan(
+                                                    text: "Price Range:",
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.normal,
+                                                      color: Colors.white54,
+                                                    ),
+                                                    children: [
+                                                      TextSpan(
+                                                          text:
+                                                          "€$cardMinPrice - €$cardMaxPrice",
+                                                          style: const TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight: FontWeight.normal,
+                                                            color: Colors.lightBlueAccent,
+                                                          ))
+                                                    ]),
+                                              ),
+                                            ])
+                                      ],
+                                    ),
                                   )
                                 ]),
                           ),
