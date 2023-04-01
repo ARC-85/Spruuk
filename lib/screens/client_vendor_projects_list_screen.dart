@@ -118,13 +118,6 @@ class _ClientVendorProjectsListScreen
                 : const Text("Vendor Projects"),
             actions: [
               IconButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/JointProjectListScreen'),
-                  icon: const Icon(
-                    Icons.home,
-                    size: 25,
-                  )),
-              IconButton(
                   onPressed: () => Navigator.pushNamed(
                       context, '/ClientVendorProjectsMapScreen', arguments: vendorUser?.uid),
                   icon: const Icon(

@@ -255,7 +255,7 @@ class _ProfileUpdateScreen extends ConsumerState<ProfileUpdateScreen> {
               // User type selected by dropdown menu
               loading();
               // Get firebase storage ref for storing profile images
-              if(userImageFile != null) {
+              if (userImageFile != null) {
                 final fbRef = FirebaseStorage.instance
                     .ref()
                     .child('user_images')
@@ -266,7 +266,7 @@ class _ProfileUpdateScreen extends ConsumerState<ProfileUpdateScreen> {
                       webImage!,
                       SettableMetadata(
                           contentType:
-                          'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                              'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 } else {
                   await fbRef.putFile(userImageFile!);
                 }
@@ -288,8 +288,7 @@ class _ProfileUpdateScreen extends ConsumerState<ProfileUpdateScreen> {
                   lastName: _lastName.text,
                   userImage: userImage,
                   userProjectFavourites: currentUser1?.userProjectFavourites,
-                  userVendorFavourites: currentUser1?.userVendorFavourites
-                  ));
+                  userVendorFavourites: currentUser1?.userVendorFavourites));
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
               Navigator.pushNamed(context, '/JointProjectListScreen');
@@ -409,7 +408,8 @@ class _ProfileUpdateScreen extends ConsumerState<ProfileUpdateScreen> {
                                                         BorderRadius.circular(
                                                             25)),
                                                 child: CustomTextInput(
-                                                  initialText: currentUser1?.firstName,
+                                                  initialText:
+                                                      currentUser1?.firstName,
                                                   hintText: 'First Name',
                                                   textEditingController:
                                                       _firstName,
@@ -444,7 +444,8 @@ class _ProfileUpdateScreen extends ConsumerState<ProfileUpdateScreen> {
                                                         BorderRadius.circular(
                                                             25)),
                                                 child: CustomTextInput(
-                                                  initialText: currentUser1?.lastName,
+                                                  initialText:
+                                                      currentUser1?.lastName,
                                                   hintText: 'Last Name',
                                                   textEditingController:
                                                       _lastName,
@@ -461,34 +462,48 @@ class _ProfileUpdateScreen extends ConsumerState<ProfileUpdateScreen> {
                     ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.only(top: 32.0),
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                width: double.infinity,
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : MaterialButton(
-                        onPressed: _onPressedFunction,
-                        textColor:
-                            const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
-                        textTheme: ButtonTextTheme.primary,
-                        minWidth: 100,
-                        color: const Color.fromRGBO(242, 151, 101, 1)
-                            .withOpacity(1),
-                        padding: const EdgeInsets.all(
-                          18,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: BorderSide(color: Colors.blue.shade700),
-                        ),
-                        child: const Text(
-                          'Update Profile',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
+              Expanded(
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color:
+                            const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
                       ),
-              ),
-
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.only(top: 32.0),
+                            margin: const EdgeInsets.symmetric(horizontal: 16),
+                            width: double.infinity,
+                            child: _isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : MaterialButton(
+                                    onPressed: _onPressedFunction,
+                                    textColor:
+                                        const Color.fromRGBO(45, 18, 4, 1)
+                                            .withOpacity(1),
+                                    textTheme: ButtonTextTheme.primary,
+                                    minWidth: 100,
+                                    color:
+                                        const Color.fromRGBO(242, 151, 101, 1)
+                                            .withOpacity(1),
+                                    padding: const EdgeInsets.all(
+                                      18,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      side: BorderSide(
+                                          color: Colors.blue.shade700),
+                                    ),
+                                    child: const Text(
+                                      'Update Profile',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      )))
             ],
           );
         }),

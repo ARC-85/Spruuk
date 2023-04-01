@@ -110,13 +110,6 @@ class _ClientFavouriteProjectsListScreen
         appBar: AppBar(title: const Text("Favourite Projects"), actions: [
           IconButton(
               onPressed: () =>
-                  Navigator.pushNamed(context, '/JointProjectListScreen'),
-              icon: const Icon(
-                Icons.home,
-                size: 25,
-              )),
-          IconButton(
-              onPressed: () =>
                   Navigator.pushNamed(context, '/ClientFavouriteProjectsMapScreen'),
               icon: const Icon(
                 Icons.map_outlined,

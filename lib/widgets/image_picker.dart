@@ -281,12 +281,12 @@ class _MyImagePicker extends ConsumerState<MyImagePicker> {
                 ? widget.projectImageUrl != null
                     ? Image.network(widget.projectImageUrl!).image
                     : projectImageFile == null
-                        ? const AssetImage("assets/images/circular_avatar.png")
+                        ? const AssetImage("assets/images/circular_house.png")
                         : Image.file(projectImageFile!).image
                 : widget.projectImageUrl != null
                     ? Image.network(widget.projectImageUrl!).image
                     : webProjectImage == null
-                        ? const AssetImage("assets/images/circular_avatar.png")
+                        ? const AssetImage("assets/images/circular_house.png")
                         : Image.memory(webProjectImage!).image,
           ),
         ),
