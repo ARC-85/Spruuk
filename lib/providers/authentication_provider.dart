@@ -12,14 +12,17 @@ final authStateProvider = StreamProvider<User?>((ref) {
   return ref.read(authenticationProvider).authStateChange;
 });
 
+// Provider for accessing current authenticated user data from FirebaseAuthentication class (see firebase folder).
 final currentUserProvider = Provider((ref) {
   return FirebaseAuthentication.getCurrentUser();
 });
 
+// Provider for accessing current authenticated user ID from FirebaseAuthentication class (see firebase folder).
 final currentUserIdProvider = Provider((ref) {
   return FirebaseAuthentication.getCurrentUserId();
 });
 
+// Provider for accessing current instance from Firebase Authentication.
 final fireBaseAuthProvider = Provider<FirebaseAuth>((ref) {
   return FirebaseAuth.instance;
 });

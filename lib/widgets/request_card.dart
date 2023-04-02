@@ -1,12 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 
@@ -15,9 +12,9 @@ enum UserType { vendor, client }
 class MyRequestCard extends ConsumerStatefulWidget {
   const MyRequestCard(
       {Key? key,
-        required this.request,
-        required this.user,
-        required this.listIndex})
+      required this.request,
+      required this.user,
+      required this.listIndex})
       : super(key: key);
   final RequestModel request;
   final UserModel user;
@@ -57,7 +54,6 @@ class _MyRequestCard extends ConsumerState<MyRequestCard> {
     final user = widget.user;
     final listIndex = widget.listIndex;
 
-
     if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
     } else {
@@ -65,7 +61,7 @@ class _MyRequestCard extends ConsumerState<MyRequestCard> {
     }
 
     return Dismissible(
-      // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
+        // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
         key: UniqueKey(),
         onDismissed: (direction) {
           if (_userType == UserType.client) {
@@ -88,13 +84,13 @@ class _MyRequestCard extends ConsumerState<MyRequestCard> {
                       width: screenDimensions.width * 0.9,
                       height: screenDimensions.width * 0.9,
                       child: request.requestImages != null &&
-                          request.requestImages!.isNotEmpty
+                              request.requestImages!.isNotEmpty
                           ? Image.network(request.requestImages![0]!,
-                          fit: BoxFit.cover)
+                              fit: BoxFit.cover)
                           : const CircleAvatar(
-                          radius: 60,
-                          backgroundImage: AssetImage(
-                              "assets/images/circular_avatar.png"))),
+                              radius: 60,
+                              backgroundImage: AssetImage(
+                                  "assets/images/circular_avatar.png"))),
                   const SizedBox(
                     height: 20,
                   ),
@@ -134,7 +130,7 @@ class _MyRequestCard extends ConsumerState<MyRequestCard> {
                             children: [
                               TextSpan(
                                   text:
-                                  "€${request.requestMinCost} - €${request.requestMaxCost}",
+                                      "€${request.requestMinCost} - €${request.requestMaxCost}",
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.normal,
@@ -142,7 +138,6 @@ class _MyRequestCard extends ConsumerState<MyRequestCard> {
                                   ))
                             ]),
                       ),
-
                     ],
                   ),
                   const SizedBox(
@@ -153,9 +148,11 @@ class _MyRequestCard extends ConsumerState<MyRequestCard> {
             ),
             onTap: () {
               if (_userType == UserType.vendor) {
-                Navigator.pushNamed(context, '/VendorRequestDetailsScreen', arguments: request.requestId);
+                Navigator.pushNamed(context, '/VendorRequestDetailsScreen',
+                    arguments: request.requestId);
               } else {
-                Navigator.pushNamed(context, '/ClientRequestDetailsScreen', arguments: request.requestId);
+                Navigator.pushNamed(context, '/ClientRequestDetailsScreen',
+                    arguments: request.requestId);
               }
             },
           ),

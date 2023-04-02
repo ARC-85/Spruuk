@@ -1,13 +1,10 @@
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:spruuk/providers/project_provider.dart';
 
 class MyImagePicker extends ConsumerStatefulWidget {
   const MyImagePicker({

@@ -1,21 +1,17 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
 
 class MyDatePicker extends ConsumerStatefulWidget {
-  MyDatePicker({Key? key, this.completionDay, this.completionMonth, this.completionYear}) : super(key: key);
+  MyDatePicker(
+      {Key? key, this.completionDay, this.completionMonth, this.completionYear})
+      : super(key: key);
   int? completionDay;
   int? completionMonth;
   int? completionYear;
-
 
   @override
   ConsumerState<MyDatePicker> createState() => _MyDatePicker();
@@ -25,7 +21,6 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
   DateTime? initialDate;
   bool newDateToggle = false;
 
-
   // Set up variable for completion date, taken from https://github.com/theideasaler/calendar_date_picker2/blob/main/example/lib/main.dart
   List<DateTime?> _singleDatePickerValueWithDefaultValue = [
     DateTime.now(),
@@ -33,9 +28,9 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
 
   // Set up for getting completion date text
   String _getValueText(
-      CalendarDatePicker2Type datePickerType,
-      List<DateTime?> values,
-      ) {
+    CalendarDatePicker2Type datePickerType,
+    List<DateTime?> values,
+  ) {
     var valueText = (values.isNotEmpty ? values[0] : null)
         .toString()
         .replaceAll('00:00:00.000', '');
@@ -43,8 +38,8 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
     if (datePickerType == CalendarDatePicker2Type.multi) {
       valueText = values.isNotEmpty
           ? values
-          .map((v) => v.toString().replaceAll('00:00:00.000', ''))
-          .join(', ')
+              .map((v) => v.toString().replaceAll('00:00:00.000', ''))
+              .join(', ')
           : 'null';
     } else if (datePickerType == CalendarDatePicker2Type.range) {
       if (values.isNotEmpty) {
@@ -63,8 +58,12 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
 
   // Date picker widget, taken from https://pub.dev/packages/calendar_date_picker2
   Widget _buildDefaultSingleDatePickerWithValue() {
-    if (widget.completionDay != null && widget.completionMonth != null && widget.completionYear != null && newDateToggle == false) {
-      initialDate = DateTime(widget.completionYear!, widget.completionMonth!, widget.completionDay!);
+    if (widget.completionDay != null &&
+        widget.completionMonth != null &&
+        widget.completionYear != null &&
+        newDateToggle == false) {
+      initialDate = DateTime(widget.completionYear!, widget.completionMonth!,
+          widget.completionDay!);
     } else {
       initialDate = null;
     }
@@ -100,12 +99,16 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
         //const Text('Single Date Picker (With default value)'),
         CalendarDatePicker2(
           config: config,
-          initialValue: initialDate != null ? <DateTime?> [initialDate] : _singleDatePickerValueWithDefaultValue,
-          onValueChanged: (values) =>
-              setState(() {
-                newDateToggle = true; // used to shift date if new date marker selected.
-                _singleDatePickerValueWithDefaultValue = values;
-                ref.read(projectDateProvider.notifier).state = _singleDatePickerValueWithDefaultValue;}),
+          initialValue: initialDate != null
+              ? <DateTime?>[initialDate]
+              : _singleDatePickerValueWithDefaultValue,
+          onValueChanged: (values) => setState(() {
+            newDateToggle =
+                true; // used to shift date if new date marker selected.
+            _singleDatePickerValueWithDefaultValue = values;
+            ref.read(projectDateProvider.notifier).state =
+                _singleDatePickerValueWithDefaultValue;
+          }),
         ),
         const SizedBox(height: 5),
         Row(
@@ -128,7 +131,6 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
 
   @override
   Widget build(BuildContext context) {
-
     final screenDimensions = MediaQuery.of(context).size;
     return Center(
       child: SizedBox(
@@ -136,21 +138,11 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
         child: Container(
             height: 405,
             width: 400,
-            margin:
-            const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 2),
-            padding:
-            const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 2),
+            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                BorderRadius.circular(
-                    25)),
+                color: Colors.white, borderRadius: BorderRadius.circular(25)),
             child: _buildDefaultSingleDatePickerWithValue()),
-
       ),
     );
   }

@@ -3,19 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
-import 'package:spruuk/models/search_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
-import 'package:spruuk/widgets/project_card.dart';
 import 'package:spruuk/widgets/request_card.dart';
 
+// Stateful class for screen showing list of filtered requests to Vendor users
 class VendorFilteredRequestListScreen extends ConsumerStatefulWidget {
   static const routeName = '/VendorFilteredRequestListScreen';
   const VendorFilteredRequestListScreen({Key? key}) : super(key: key);

@@ -13,7 +13,6 @@ class MyDropdownButton extends ConsumerStatefulWidget {
 }
 
 class _MyDropdownButton extends ConsumerState<MyDropdownButton> {
-
   @override
   Widget build(BuildContext context) {
     final items = widget.items;
@@ -46,19 +45,18 @@ class _MyDropdownButton extends ConsumerState<MyDropdownButton> {
               ],
             ),
             items: items
-                .map((item) =>
-                DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ))
+                .map((item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ))
                 .toList(),
             value: selectedValue,
             onChanged: (value) {
@@ -103,6 +101,3 @@ class _MyDropdownButton extends ConsumerState<MyDropdownButton> {
     );
   }
 }
-
-
-

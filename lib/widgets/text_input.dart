@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //Adapted from https://stackoverflow.com/questions/67993074/how-to-pass-a-function-as-a-validator-in-a-textformfield
 class CustomTextInput extends ConsumerStatefulWidget {
-
   CustomTextInput({
     Key? key,
     this.textEditingController,
@@ -14,7 +13,6 @@ class CustomTextInput extends ConsumerStatefulWidget {
     this.validator,
     this.initialText,
   }) : super(key: key);
-
 
   TextEditingController? textEditingController;
   String? hintText;
@@ -28,19 +26,16 @@ class CustomTextInput extends ConsumerStatefulWidget {
 }
 
 class _CustomTextInput extends ConsumerState<CustomTextInput> {
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if(widget.initialText != null) {
+    if (widget.initialText != null) {
       widget.textEditingController?.text = widget.initialText!;
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return TextFormField(
       cursorColor: Colors.white,
       obscureText: widget.isTextObscured,

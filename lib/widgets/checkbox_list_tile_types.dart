@@ -1,15 +1,8 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/widgets/text_label.dart';
 
 class MyCheckBoxListTileTypes extends ConsumerStatefulWidget {
   MyCheckBoxListTileTypes({Key? key, required this.listText, this.textStyle})
@@ -18,16 +11,22 @@ class MyCheckBoxListTileTypes extends ConsumerStatefulWidget {
   TextStyle? textStyle;
 
   @override
-  ConsumerState<MyCheckBoxListTileTypes> createState() => _MyCheckBoxListTileTypes();
+  ConsumerState<MyCheckBoxListTileTypes> createState() =>
+      _MyCheckBoxListTileTypes();
 }
 
 class _MyCheckBoxListTileTypes extends ConsumerState<MyCheckBoxListTileTypes> {
   bool isBoxChecked = true;
-  List<String?>? typesList = ["New Build", "Renovation", "Commercial", "Landscaping", "Interiors"];
+  List<String?>? typesList = [
+    "New Build",
+    "Renovation",
+    "Commercial",
+    "Landscaping",
+    "Interiors"
+  ];
 
   @override
   void didChangeDependencies() {
-    //typesList = ref.watch(projectTypesProvider);
     super.didChangeDependencies();
   }
 
@@ -69,7 +68,7 @@ class _MyCheckBoxListTileTypes extends ConsumerState<MyCheckBoxListTileTypes> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 30,
+        height: 30,
         alignment: Alignment.centerLeft,
         child: CheckboxListTile(
           title: Text(

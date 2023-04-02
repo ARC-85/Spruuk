@@ -1,3 +1,4 @@
+// Class for setting up Request model.
 class RequestModel {
   String requestId;
   String requestTitle;
@@ -78,24 +79,24 @@ class RequestModel {
 }
 
 Map<String, dynamic> _requestToJson(RequestModel instance) => <String, dynamic>{
-  'requestId': instance.requestId,
-  'requestTitle': instance.requestTitle,
-  'requestBriefDescription': instance.requestBriefDescription,
-  'requestLongDescription': instance.requestLongDescription,
-  'requestUserId': instance.requestUserId,
-  'requestUserEmail': instance.requestUserEmail,
-  'requestUserImage': instance.requestUserImage,
-  'requestType': instance.requestType,
-  'requestMinCost': instance.requestMinCost,
-  'requestMaxCost': instance.requestMaxCost,
-  'requestLat': instance.requestLat,
-  'requestLng': instance.requestLng,
-  'requestZoom': instance.requestZoom,
-  'requestCreatedDay': instance.requestCreatedDay,
-  'requestCreatedMonth': instance.requestCreatedMonth,
-  'requestCreatedYear': instance.requestCreatedYear,
-  'requestStyle': instance.requestStyle,
-  'requestArea': instance.requestArea,
-  'requestImages': instance.requestImages,
-  'requestResponseIds': instance.requestResponseIds,
-};
+      'requestId': instance.requestId,
+      'requestTitle': instance.requestTitle,
+      'requestBriefDescription': instance.requestBriefDescription,
+      'requestLongDescription': instance.requestLongDescription,
+      'requestUserId': instance.requestUserId,
+      'requestUserEmail': instance.requestUserEmail,
+      'requestUserImage': instance.requestUserImage,
+      'requestType': instance.requestType,
+      'requestMinCost': instance.requestMinCost,
+      'requestMaxCost': instance.requestMaxCost,
+      'requestLat': instance.requestLat,
+      'requestLng': instance.requestLng,
+      'requestZoom': instance.requestZoom,
+      'requestCreatedDay': instance.requestCreatedDay,
+      'requestCreatedMonth': instance.requestCreatedMonth,
+      'requestCreatedYear': instance.requestCreatedYear,
+      'requestStyle': instance.requestStyle,
+      'requestArea': instance.requestArea,
+      'requestImages': instance.requestImages,
+      'requestResponseIds': instance.requestResponseIds,
+    };

@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,8 +12,8 @@ import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/screens/joint_project_list_screen.dart';
 
+// Stateful class for screen showing map of specific vendor's projects to Client user
 class ClientVendorProjectsMapScreen extends ConsumerStatefulWidget {
   static const routeName = '/ClientVendorProjectsMapScreen';
   const ClientVendorProjectsMapScreen({
@@ -27,7 +25,8 @@ class ClientVendorProjectsMapScreen extends ConsumerStatefulWidget {
       _ClientVendorProjectsMapScreen();
 }
 
-class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsMapScreen> {
+class _ClientVendorProjectsMapScreen
+    extends ConsumerState<ClientVendorProjectsMapScreen> {
   bool firstLoad = true;
   // Bool variables for animation while loading
   bool _isLoading = false;
@@ -58,8 +57,8 @@ class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsM
     if (firstLoad = true) {
       _isLoading = true;
 
+      // Variable to define ID of vendor based on passed argument
       _vendorId = ModalRoute.of(context)?.settings.arguments;
-      print("this is vendorId $_vendorId");
       ref.watch(userProvider).getUserById(_vendorId).then((value) {
         ref
             .watch(projectProvider)
@@ -118,7 +117,6 @@ class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsM
   // Setting up the map, taken from https://levelup.gitconnected.com/how-to-add-google-maps-in-a-flutter-app-and-get-the-current-location-of-the-user-dynamically-2172f0be53f6
   void _onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
-    print("on map is called");
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
@@ -126,6 +124,7 @@ class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsM
     );
   }
 
+  // Function for setting markers and allowing display or project details if marker is tapped
   void _setMarkersVendorProjects(BuildContext context) {
     if (vendorProjects != null) {
       vendorProjects?.forEach((project) {
@@ -141,7 +140,7 @@ class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsM
                   cardTitle = project.projectTitle;
                   cardSubtitle = project.projectBriefDescription;
                   cardImage = project.projectImages != null &&
-                      project.projectImages!.isNotEmpty
+                          project.projectImages!.isNotEmpty
                       ? project.projectImages![0]
                       : null;
                   cardMinPrice = project.projectMinCost;
@@ -158,9 +157,7 @@ class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsM
   @override
   Widget build(BuildContext context) {
     _setMarkersVendorProjects(context);
-    print("this is lat $lat");
     final screenDimensions = MediaQuery.of(context).size;
-    print("this is markers $_markers");
 
     return Scaffold(
       appBar: AppBar(title: const Text("Vendor Projects Map"), actions: [
@@ -173,137 +170,141 @@ class _ClientVendorProjectsMapScreen extends ConsumerState<ClientVendorProjectsM
       ]),
       body: SafeArea(
           child: Column(
-            children: [
-              SizedBox(
-                height: screenDimensions.height * 0.72,
-                width: screenDimensions.width,
-                child: Stack(
-                  children: [
-                    if (lat != null)
-                      GoogleMap(
-                        initialCameraPosition:
+        children: [
+          SizedBox(
+            height: screenDimensions.height * 0.72,
+            width: screenDimensions.width,
+            child: Stack(
+              children: [
+                if (lat != null)
+                  GoogleMap(
+                    initialCameraPosition:
                         CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
-                        mapType: MapType.normal,
-                        onMapCreated: _onMapCreated,
-                        myLocationEnabled: true,
-                        markers: vendorProjects != null &&
+                    mapType: MapType.normal,
+                    onMapCreated: _onMapCreated,
+                    myLocationEnabled: true,
+                    markers: vendorProjects != null &&
                             vendorProjects!.isNotEmpty &&
                             _markers!.isNotEmpty
-                            ? _markers!
-                            : {},
-                      ),
-                  ],
+                        ? _markers!
+                        : {},
+                  ),
+              ],
+            ),
+          ),
+          Flexible(
+              child: Stack(children: [
+            if (cardTitle == null || cardTitle!.isEmpty)
+              Container(
+                alignment: Alignment.center,
+                height: screenDimensions.height * 0.18,
+                width: screenDimensions.width,
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
                 ),
+                child: const Text("Select a project",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
               ),
-              Flexible(
-                  child: Stack(children: [
-                    if (cardTitle == null || cardTitle!.isEmpty)
-                      Container(
-                        alignment: Alignment.center,
-                        height: screenDimensions.height * 0.18,
-                        width: screenDimensions.width,
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
-                        ),
-                        child: const Text("Select a project",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            )),
-                      ),
-                    if (cardTitle != null && cardTitle!.isNotEmpty)
-                      InkWell(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
-                            ),
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  SizedBox(
-                                      width: screenDimensions.width * 0.2,
-                                      height: screenDimensions.width * 0.2,
-                                      child: cardImage != null
-                                          ? Image.network(cardImage!, fit: BoxFit.cover)
-                                          : const CircleAvatar(
-                                          radius: 60,
-                                          backgroundImage: AssetImage(
-                                              "assets/images/circular_avatar.png"))),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: screenDimensions.width * 0.7,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(cardTitle!,
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            )),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          cardSubtitle!,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.white70,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(
-                                          height: 15,
-                                        ),
-                                        Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            children: [
-                                              RichText(
-                                                text: TextSpan(
-                                                    text: "Price Range:",
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.normal,
-                                                      color: Colors.white54,
-                                                    ),
-                                                    children: [
-                                                      TextSpan(
-                                                          text:
-                                                          "€$cardMinPrice - €$cardMaxPrice",
-                                                          style: const TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight: FontWeight.normal,
-                                                            color: Colors.lightBlueAccent,
-                                                          ))
-                                                    ]),
-                                              ),
-                                            ])
-                                      ],
-                                    ),
-                                  )
-                                ]),
+            if (cardTitle != null && cardTitle!.isNotEmpty)
+              InkWell(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                    ),
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 15,
                           ),
-                          onTap: () {
-                            if(cardProjectId != null) {
-                              Navigator.pushNamed(context, '/ClientProjectDetailsScreen', arguments: cardProjectId);
-                            }
-                          }
-                      ),
-                  ])),
-            ],
-          )),
+                          SizedBox(
+                              width: screenDimensions.width * 0.2,
+                              height: screenDimensions.width * 0.2,
+                              child: cardImage != null
+                                  ? Image.network(cardImage!, fit: BoxFit.cover)
+                                  : const CircleAvatar(
+                                      radius: 60,
+                                      backgroundImage: AssetImage(
+                                          "assets/images/circular_avatar.png"))),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            width: screenDimensions.width * 0.7,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Text(cardTitle!,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    )),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  cardSubtitle!,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white70,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                            text: "Price Range:",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.white54,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                  text:
+                                                      "€$cardMinPrice - €$cardMaxPrice",
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color:
+                                                        Colors.lightBlueAccent,
+                                                  ))
+                                            ]),
+                                      ),
+                                    ])
+                              ],
+                            ),
+                          )
+                        ]),
+                  ),
+                  onTap: () {
+                    if (cardProjectId != null) {
+                      Navigator.pushNamed(
+                          context, '/ClientProjectDetailsScreen',
+                          arguments: cardProjectId);
+                    }
+                  }),
+          ])),
+        ],
+      )),
     );
   }
 }

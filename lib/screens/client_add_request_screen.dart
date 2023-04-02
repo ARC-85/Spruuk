@@ -7,28 +7,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
-
 import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-
 import 'package:spruuk/widgets/nav_drawer.dart';
-
 import 'package:spruuk/widgets/request_area.dart';
 import 'package:spruuk/widgets/request_cost_range.dart';
 import 'package:spruuk/widgets/request_image_picker.dart';
 import 'package:spruuk/widgets/request_location.dart';
 import 'package:spruuk/widgets/text_input.dart';
 import 'dart:io';
-
 import 'package:spruuk/widgets/text_label.dart';
 
+// Enum used to show all input options, or just limited range
 enum AdvancedStatus { basic, advanced }
 
+// Stateful class for screen allowing Client to add a requeset
 class ClientAddRequestScreen extends ConsumerStatefulWidget {
+  // Defining route name
   static const routeName = '/ClientAddRequestScreen';
 
   const ClientAddRequestScreen({Key? key}) : super(key: key);
@@ -41,7 +39,6 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   AdvancedStatus _advancedStatus = AdvancedStatus.basic;
-
   UserModel? currentUser1;
   UserProvider? user;
   FirebaseAuthentication? _auth;
@@ -51,6 +48,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
     super.didChangeDependencies();
     _auth = ref.watch(authenticationProvider);
 
+    // Providers used to initially establish current user details
     final authData = ref.watch(fireBaseAuthProvider);
     ref
         .watch(userProvider)
@@ -90,10 +88,14 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
   List<String?>? requestResponseIds = const [""];
   String? requestStyle;
   int? requestArea;
+
+  // Image files for image selection on Android app
   File? requestImageFile;
   File? requestImageFile2;
   File? requestImageFile3;
   File? requestImageFile4;
+
+  // Uint8List files for image selection on Web app
   Uint8List? webRequestImage;
   Uint8List? webRequestImage2;
   Uint8List? webRequestImage3;
@@ -107,6 +109,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
 
   bool _isLoading = false;
 
+  // Loading function
   void loading() {
     // Check mounted property for state class of widget. https://www.stephenwenceslao.com/blog/error-might-indicate-memory-leak-if-setstate-being-called-because-another-object-retaining
     if (!mounted) {
@@ -136,6 +139,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
   // Controller for scrollbars, taken from https://stackoverflow.com/questions/69853729/flutter-the-scrollbars-scrollcontroller-has-no-scrollposition-attached
   ScrollController _scrollController = ScrollController();
 
+  // Function for switching enum depending on basic or advanced inputs shown
   void _switchAdvanced() {
     if (_advancedStatus == AdvancedStatus.basic) {
       setState(() {
@@ -150,7 +154,9 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Setting variable for sizing according to screen dimensions
     final screenDimensions = MediaQuery.of(context).size;
+    // Variable for request provider
     final _requestProvider = ref.watch(requestProvider);
 
     return Scaffold(
@@ -350,6 +356,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
               requestCreatedMonth = dateNow.month;
               requestCreatedYear = dateNow.year;
               loading();
+              // Calling image functions above
               await _image1Upload();
               await _image2Upload();
               await _image3Upload();
@@ -357,7 +364,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
 
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
-              // Using email and password to sign up in Firebase, passing details on user.
+              // Using provider to add request to Firebase.
               await _requestProvider.addRequest(RequestModel(
                 requestTitle: _requestTitle.text,
                 requestBriefDescription: _requestBriefDescription.text,
@@ -381,13 +388,10 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
               ));
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
+              // Navigate to request list when complete
               Navigator.pushReplacementNamed(
                   context, "/JointRequestListScreen");
             } catch (error) {
-              Fluttertoast.showToast(msg: error.toString());
-            }
-
-            try {} catch (error) {
               Fluttertoast.showToast(msg: error.toString());
             }
           }
@@ -416,6 +420,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                       child: SizedBox(
                         height: screenDimensions.height * 0.4,
                         width: screenDimensions.width,
+                        // Show Spruuk logo
                         child: Image.asset(
                           'assets/images/spruuk_logo_white.png',
                           fit: BoxFit.fitHeight,
@@ -446,6 +451,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
+                                          // Special image pickers used along with relevant providers for each image file.
                                           MyRequestImagePicker(
                                             requestImage1Provider:
                                                 requestImageProvider,
@@ -458,6 +464,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16.0,
                                               )),
+                                          // Dropdown menu for selecting request type
                                           Container(
                                               height: 70,
                                               margin:
@@ -526,6 +533,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                                                           ),
                                                         ))
                                                     .toList(),
+                                                // Value of selected dropdown assigned to variable
                                                 value: selectedValue,
                                                 onChanged: (value) {
                                                   setState(() {
@@ -591,6 +599,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           25)),
+                                              // Custom TextController widgets used for text inputs
                                               child: CustomTextInput(
                                                 hintText: 'Request Title',
                                                 textEditingController:
@@ -629,7 +638,9 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20.0,
                                               )),
+                                          // Custom Map widgets used for showing and selecting location of requests
                                           MyRequestLocation(),
+                                          // Switch for showing advanced/basic inputs
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 16, bottom: 4.0),
@@ -712,6 +723,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                                                 )),
                                           if (_advancedStatus ==
                                               AdvancedStatus.advanced)
+                                            // Dropdown menu used for request style
                                             Container(
                                                 height: 70,
                                                 margin:
@@ -875,6 +887,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 20.0,
                                                 )),
+                                          // Options for choosing additional request images only appear sequentially as each previous image is selected.
                                           if (requestImageFile != null ||
                                               webRequestImage != null)
                                             MyRequestImagePicker(
@@ -931,6 +944,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                   ),
                 ],
               ),
+              // Lower segment for submitting request
               Expanded(
                   child: Container(
                       decoration: BoxDecoration(
@@ -942,6 +956,7 @@ class _ClientAddRequestScreen extends ConsumerState<ClientAddRequestScreen> {
                           padding: const EdgeInsets.only(top: 32.0),
                           margin: const EdgeInsets.symmetric(horizontal: 16),
                           width: double.infinity,
+                          // Request button uses function for adding request when pressed. Loading indicator shown while screen loading.
                           child: _isLoading
                               ? const Center(child: CircularProgressIndicator())
                               : MaterialButton(

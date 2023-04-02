@@ -98,12 +98,14 @@ class NavDrawer extends ConsumerWidget {
         title: const Text('Sign Out'),
         onTap: () => _onPressedSignOutFunction(),
       ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: currentUser1 != null && currentUser1.userType == "Client" ? const Text('All Projects') : const Text('My Projects'),
-            onTap: () => _onPressedHomeFunction(),
-          ),
+      const Divider(),
+      ListTile(
+        leading: const Icon(Icons.home),
+        title: currentUser1 != null && currentUser1.userType == "Client"
+            ? const Text('All Projects')
+            : const Text('My Projects'),
+        onTap: () => _onPressedHomeFunction(),
+      ),
       if (currentUser1 != null && currentUser1.userType == "Client")
         const Divider(),
       if (currentUser1 != null && currentUser1.userType == "Client")
@@ -128,14 +130,14 @@ class NavDrawer extends ConsumerWidget {
           title: const Text('Add Request'),
           onTap: () => _onPressedAddRequestFunction(),
         ),
-          if (currentUser1 != null && currentUser1.userType == "Vendor")
-            const Divider(),
-          if (currentUser1 != null && currentUser1.userType == "Vendor")
-            ListTile(
-              leading: const Icon(Icons.add_home_work),
-              title: const Text('Add Project'),
-              onTap: () => _onPressedAddProjectFunction(),
-            ),
+      if (currentUser1 != null && currentUser1.userType == "Vendor")
+        const Divider(),
+      if (currentUser1 != null && currentUser1.userType == "Vendor")
+        ListTile(
+          leading: const Icon(Icons.add_home_work),
+          title: const Text('Add Project'),
+          onTap: () => _onPressedAddProjectFunction(),
+        ),
       const Divider(),
       ListTile(
         leading: const Icon(Icons.list_alt_outlined),

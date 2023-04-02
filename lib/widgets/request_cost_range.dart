@@ -1,18 +1,12 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/request_provider.dart';
-import 'package:spruuk/widgets/text_label.dart';
 
 class MyRequestCostRange extends ConsumerStatefulWidget {
-  MyRequestCostRange({Key? key, this.requestMinCost, this.requestMaxCost}) : super(key: key);
+  MyRequestCostRange({Key? key, this.requestMinCost, this.requestMaxCost})
+      : super(key: key);
   int? requestMinCost;
   int? requestMaxCost;
 
@@ -26,12 +20,15 @@ class _MyRequestCostRange extends ConsumerState<MyRequestCostRange> {
   RangeValues? _initialRangeValues;
   bool newCostToggle = false;
 
-
   @override
   Widget build(BuildContext context) {
-    if(widget.requestMinCost !=null && widget.requestMaxCost != null && newCostToggle == false) {
-      _initialRangeValues = RangeValues(widget.requestMinCost!.toDouble(), widget.requestMaxCost!.toDouble());
-      _currentRangeValues = RangeValues(widget.requestMinCost!.toDouble(), widget.requestMaxCost!.toDouble());
+    if (widget.requestMinCost != null &&
+        widget.requestMaxCost != null &&
+        newCostToggle == false) {
+      _initialRangeValues = RangeValues(
+          widget.requestMinCost!.toDouble(), widget.requestMaxCost!.toDouble());
+      _currentRangeValues = RangeValues(
+          widget.requestMinCost!.toDouble(), widget.requestMaxCost!.toDouble());
     } else {
       _initialRangeValues = null;
     }
@@ -42,8 +39,8 @@ class _MyRequestCostRange extends ConsumerState<MyRequestCostRange> {
         Container(
           height: 20,
           width: 70,
-          margin: const EdgeInsets.only(left:0,right:0,top:6, bottom:6),
-          padding: const EdgeInsets.only(left:0,right:0,top:4, bottom:4),
+          margin: const EdgeInsets.only(left: 0, right: 0, top: 6, bottom: 6),
+          padding: const EdgeInsets.only(left: 0, right: 0, top: 4, bottom: 4),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
           child: const Text(
             "Min (<€25K)",
@@ -76,7 +73,9 @@ class _MyRequestCostRange extends ConsumerState<MyRequestCostRange> {
               ),
             ),
             child: RangeSlider(
-              values: _initialRangeValues == null ? _currentRangeValues! : _initialRangeValues!,
+              values: _initialRangeValues == null
+                  ? _currentRangeValues!
+                  : _initialRangeValues!,
               max: 1000000,
               divisions: 40,
               labels: RangeLabels(
@@ -85,7 +84,8 @@ class _MyRequestCostRange extends ConsumerState<MyRequestCostRange> {
               ),
               onChanged: (RangeValues values) {
                 setState(() {
-                  newCostToggle = true; // used to shift date if new cost selected.
+                  newCostToggle =
+                      true; // used to shift date if new cost selected.
                   _currentRangeValues = values;
                   ref.read(requestCostProvider.notifier).state =
                       _currentRangeValues;
@@ -95,8 +95,8 @@ class _MyRequestCostRange extends ConsumerState<MyRequestCostRange> {
         Container(
           height: 20,
           width: 70,
-          margin: const EdgeInsets.only(left:0,right:0,top:6, bottom:6),
-          padding: const EdgeInsets.only(left:0,right:0,top:4, bottom:4),
+          margin: const EdgeInsets.only(left: 0, right: 0, top: 6, bottom: 6),
+          padding: const EdgeInsets.only(left: 0, right: 0, top: 4, bottom: 4),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
           child: const Text(
             "Max (>€1M)",

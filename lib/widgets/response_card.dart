@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/response_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/response_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
@@ -132,118 +129,114 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
                           width: 10,
                         ),
                         Container(
-                          width: screenDimensions.width * 0.65,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              const Text("Response title: ",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  )),
-                              Text(response.responseTitle,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white70,
-                                  )),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              if (_userType == UserType.client)
-                                const Text(
-                                    "Vendor: ",
+                            width: screenDimensions.width * 0.65,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                const Text("Response title: ",
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     )),
-                              if (_userType == UserType.client)
-                                Text(
-                                    "${response.responseUserFirstName} ${response.responseUserLastName}",
+                                Text(response.responseTitle,
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.normal,
                                       color: Colors.white70,
                                     )),
-                              if (_userType == UserType.vendor &&
-                                  initialRequest?.requestTitle != null)
-                                const Text(
-                                    "Request title: ",
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                if (_userType == UserType.client)
+                                  const Text("Vendor: ",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      )),
+                                if (_userType == UserType.client)
+                                  Text(
+                                      "${response.responseUserFirstName} ${response.responseUserLastName}",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white70,
+                                      )),
+                                if (_userType == UserType.vendor &&
+                                    initialRequest?.requestTitle != null)
+                                  const Text("Request title: ",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      )),
+                                if (_userType == UserType.vendor &&
+                                    initialRequest?.requestTitle != null)
+                                  Text(initialRequest!.requestTitle,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white70,
+                                      )),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                if (_userType == UserType.client)
+                                  const Text(
+                                    "Vendor Email: ",
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
-                                    )),
-                              if (_userType == UserType.vendor &&
-                                  initialRequest?.requestTitle != null)
-                                Text(
-                                    initialRequest!.requestTitle,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                if (_userType == UserType.client)
+                                  Text(
+                                    response.responseUserEmail,
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.normal,
                                       color: Colors.white70,
-                                    )),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              if (_userType == UserType.client)
-                                const Text(
-                                  "Vendor Email: ",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              if (_userType == UserType.client)
-                                Text(
-                                  response.responseUserEmail,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white70,
+                                if (_userType == UserType.vendor &&
+                                    initialRequest?.requestUserEmail != null)
+                                  const Text(
+                                    "Client Email: ",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              if (_userType == UserType.vendor &&
-                                  initialRequest?.requestUserEmail != null)
-                                const Text(
-                                  "Client Email: ",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                if (_userType == UserType.vendor &&
+                                    initialRequest?.requestUserEmail != null)
+                                  Text(
+                                    initialRequest!.requestUserEmail,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white70,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                const SizedBox(
+                                  height: 15,
                                 ),
-                              if (_userType == UserType.vendor &&
-                                  initialRequest?.requestUserEmail != null)
-                                Text(
-                                  initialRequest!.requestUserEmail,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white70,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                            ],
-                          )
-                        )
+                              ],
+                            ))
                       ]),
                 ),
                 onTap: () {

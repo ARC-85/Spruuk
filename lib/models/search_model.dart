@@ -1,3 +1,4 @@
+// Class for setting up Search model.
 class SearchModel {
   String? searchQuery;
   List<String?>? searchTypes;
@@ -16,7 +17,6 @@ class SearchModel {
   List<String?>? searchStyles;
   int? searchMinArea;
   int? searchMaxArea;
-
 
   // Class constructor
   SearchModel({
@@ -70,21 +70,21 @@ class SearchModel {
 }
 
 Map<String, dynamic> _searchToJson(SearchModel instance) => <String, dynamic>{
-  'searchQuery': instance.searchQuery,
-  'searchTypes': instance.searchTypes,
-  'searchMinCost': instance.searchMinCost,
-  'searchMaxCost': instance.searchMaxCost,
-  'searchLat': instance.searchLat,
-  'searchLng': instance.searchLng,
-  'searchZoom': instance.searchZoom,
-  'searchDistanceFrom': instance.searchDistanceFrom,
-  'searchEarliestCompletionDay': instance.searchEarliestCompletionDay,
-  'searchEarliestCompletionMonth': instance.searchEarliestCompletionMonth,
-  'searchEarliestCompletionYear': instance.searchEarliestCompletionYear,
-  'searchLatestCompletionDay': instance.searchLatestCompletionDay,
-  'searchLatestCompletionMonth': instance.searchLatestCompletionMonth,
-  'searchLatestCompletionYear': instance.searchLatestCompletionYear,
-  'searchStyles': instance.searchStyles,
-  'searchMinArea': instance.searchMinArea,
-  'searchMaxArea': instance.searchMaxArea,
-};
+      'searchQuery': instance.searchQuery,
+      'searchTypes': instance.searchTypes,
+      'searchMinCost': instance.searchMinCost,
+      'searchMaxCost': instance.searchMaxCost,
+      'searchLat': instance.searchLat,
+      'searchLng': instance.searchLng,
+      'searchZoom': instance.searchZoom,
+      'searchDistanceFrom': instance.searchDistanceFrom,
+      'searchEarliestCompletionDay': instance.searchEarliestCompletionDay,
+      'searchEarliestCompletionMonth': instance.searchEarliestCompletionMonth,
+      'searchEarliestCompletionYear': instance.searchEarliestCompletionYear,
+      'searchLatestCompletionDay': instance.searchLatestCompletionDay,
+      'searchLatestCompletionMonth': instance.searchLatestCompletionMonth,
+      'searchLatestCompletionYear': instance.searchLatestCompletionYear,
+      'searchStyles': instance.searchStyles,
+      'searchMinArea': instance.searchMinArea,
+      'searchMaxArea': instance.searchMaxArea,
+    };

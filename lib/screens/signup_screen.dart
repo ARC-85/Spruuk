@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -9,15 +7,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/widgets/dropdown_menu.dart';
 import 'package:spruuk/widgets/text_input.dart';
 
+// Stateful class for screen signup inputs for new users
 class SignupScreen extends ConsumerStatefulWidget {
   static const routeName = '/SignupScreen';
   const SignupScreen({Key? key}) : super(key: key);
@@ -241,7 +237,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Consumer(builder: (context, ref, _) {
-
           // Press function used when the user submits form for signup
           Future<void> _onPressedFunction() async {
             // Perform validation of form, if not valid then return/do nothing
@@ -253,7 +248,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               // User type selected by dropdown menu
               userType = selectedValue;
               loading();
-              if(userImageFile != null || webImage != null) {
+              if (userImageFile != null || webImage != null) {
                 // Get firebase storage ref for storing profile images
                 final ref = FirebaseStorage.instance
                     .ref()
@@ -265,7 +260,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       webImage!,
                       SettableMetadata(
                           contentType:
-                          'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
+                              'image/jpeg')); // taken from https://stackoverflow.com/questions/59716944/flutter-web-upload-image-file-to-firebase-storage
                 } else {
                   await ref.putFile(userImageFile!);
                 }
@@ -355,73 +350,70 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                _showImageDialog();
-                                              },
-                                              child: CircleAvatar(
-                                                radius: 90,
-                                                backgroundImage: !kIsWeb
-                                                    ? userImageFile == null
-                                                        ? const AssetImage(
-                                                            "assets/images/circular_avatar.png")
-                                                        : Image.file(
-                                                                userImageFile!)
-                                                            .image
-                                                    : webImage == null
-                                                        ? const AssetImage(
-                                                            "assets/images/circular_avatar.png")
-                                                        : Image.memory(
-                                                                webImage!)
-                                                            .image,
-                                              ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              _showImageDialog();
+                                            },
+                                            child: CircleAvatar(
+                                              radius: 90,
+                                              backgroundImage: !kIsWeb
+                                                  ? userImageFile == null
+                                                      ? const AssetImage(
+                                                          "assets/images/circular_avatar.png")
+                                                      : Image.file(
+                                                              userImageFile!)
+                                                          .image
+                                                  : webImage == null
+                                                      ? const AssetImage(
+                                                          "assets/images/circular_avatar.png")
+                                                      : Image.memory(webImage!)
+                                                          .image,
                                             ),
-                                            Container(
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 16),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                                child: CustomTextInput(
-                                                  hintText: 'First Name',
-                                                  textEditingController:
-                                                      _firstName,
-                                                  isTextObscured: false,
-                                                  icon: (Icons.person),
-                                                  validator:
-                                                      customNameValidator,
-                                                )),
-                                            Container(
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 16),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                                child: CustomTextInput(
-                                                  hintText: 'Last Name',
-                                                  textEditingController:
-                                                      _lastName,
-                                                  isTextObscured: false,
-                                                  icon: (Icons.person),
-                                                  validator:
-                                                      customNameValidator,
-                                                )),
+                                          ),
+                                          Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 24,
+                                                      vertical: 16),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                              child: CustomTextInput(
+                                                hintText: 'First Name',
+                                                textEditingController:
+                                                    _firstName,
+                                                isTextObscured: false,
+                                                icon: (Icons.person),
+                                                validator: customNameValidator,
+                                              )),
+                                          Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 24,
+                                                      vertical: 16),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 4),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                              child: CustomTextInput(
+                                                hintText: 'Last Name',
+                                                textEditingController:
+                                                    _lastName,
+                                                isTextObscured: false,
+                                                icon: (Icons.person),
+                                                validator: customNameValidator,
+                                              )),
                                           Container(
                                               margin:
                                                   const EdgeInsets.symmetric(
@@ -466,148 +458,138 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                                 validator:
                                                     customPasswordValidator,
                                               )),
-                                            AnimatedContainer(
-                                              duration: const Duration(
-                                                  milliseconds: 600),
+                                          AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 600),
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 24, vertical: 16),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 4),
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(25)),
+                                            child: CustomTextInput(
+                                              hintText: 'Confirm password',
+                                              isTextObscured: true,
+                                              icon: (Icons.password_outlined),
+                                              validator:
+                                                  customCheckPasswordValidator,
+                                            ),
+                                          ),
+                                          Container(
+                                              height: 70,
                                               margin:
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 24,
-                                                      vertical: 16),
+                                                      vertical: 8),
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 16,
                                                       vertical: 4),
                                               decoration: BoxDecoration(
-                                                  color: Colors.white,
+                                                  color: const Color.fromRGBO(
+                                                          0, 0, 95, 1)
+                                                      .withOpacity(0),
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           25)),
-                                              child: CustomTextInput(
-                                                hintText: 'Confirm password',
-                                                isTextObscured: true,
-                                                icon: (Icons.password_outlined),
-                                                validator:
-                                                    customCheckPasswordValidator,
-                                              ),
-                                            ),
-                                            Container(
-                                                height: 70,
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 8),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                    color: const Color.fromRGBO(
-                                                            0, 0, 95, 1)
-                                                        .withOpacity(0),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                                child: DropdownButton2(
-                                                  isExpanded: true,
-                                                  hint: Row(
-                                                    children: const [
-                                                      Icon(
-                                                        Icons.list,
-                                                        size: 16,
-                                                        color: Colors.black45,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 4,
-                                                      ),
-                                                      Expanded(
-                                                        child: Text(
-                                                          'User Type',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.black45,
-                                                          ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  items: ["Vendor", "Client"]
-                                                      .map((item) =>
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value: item,
-                                                            child: Text(
-                                                              item,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black45,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ))
-                                                      .toList(),
-                                                  value: selectedValue,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      selectedValue =
-                                                          value as String;
-                                                    });
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons
-                                                        .arrow_forward_ios_outlined,
-                                                  ),
-                                                  iconSize: 14,
-                                                  iconEnabledColor:
-                                                      const Color.fromRGBO(
-                                                              0, 0, 95, 1)
-                                                          .withOpacity(1),
-                                                  iconDisabledColor:
-                                                      Colors.grey,
-                                                  buttonHeight: 50,
-                                                  buttonWidth: 160,
-                                                  buttonPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, right: 14),
-                                                  buttonDecoration:
-                                                      BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            14),
-                                                    border: Border.all(
-                                                      color: Colors.black26,
+                                              child: DropdownButton2(
+                                                isExpanded: true,
+                                                hint: Row(
+                                                  children: const [
+                                                    Icon(
+                                                      Icons.list,
+                                                      size: 16,
+                                                      color: Colors.black45,
                                                     ),
-                                                    color: Colors.white,
+                                                    SizedBox(
+                                                      width: 4,
+                                                    ),
+                                                    Expanded(
+                                                      child: Text(
+                                                        'User Type',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black45,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                items: ["Vendor", "Client"]
+                                                    .map((item) =>
+                                                        DropdownMenuItem<
+                                                            String>(
+                                                          value: item,
+                                                          child: Text(
+                                                            item,
+                                                            style:
+                                                                const TextStyle(
+                                                              color: Colors
+                                                                  .black45,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ))
+                                                    .toList(),
+                                                value: selectedValue,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedValue =
+                                                        value as String;
+                                                  });
+                                                },
+                                                icon: const Icon(
+                                                  Icons
+                                                      .arrow_forward_ios_outlined,
+                                                ),
+                                                iconSize: 14,
+                                                iconEnabledColor:
+                                                    const Color.fromRGBO(
+                                                            0, 0, 95, 1)
+                                                        .withOpacity(1),
+                                                iconDisabledColor: Colors.grey,
+                                                buttonHeight: 50,
+                                                buttonWidth: 160,
+                                                buttonPadding:
+                                                    const EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                buttonDecoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(14),
+                                                  border: Border.all(
+                                                    color: Colors.black26,
                                                   ),
-                                                  buttonElevation: 2,
-                                                  itemHeight: 40,
-                                                  itemPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 14, right: 14),
-                                                  dropdownMaxHeight: 200,
-                                                  dropdownWidth: 200,
-                                                  dropdownPadding: null,
-                                                  dropdownDecoration:
-                                                      BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            14),
-                                                    color: Colors.white,
-                                                  ),
-                                                  dropdownElevation: 8,
-                                                  scrollbarRadius:
-                                                      const Radius.circular(40),
-                                                  scrollbarThickness: 6,
-                                                  scrollbarAlwaysShow: true,
-                                                  offset: const Offset(-20, 0),
-                                                )),
+                                                  color: Colors.white,
+                                                ),
+                                                buttonElevation: 2,
+                                                itemHeight: 40,
+                                                itemPadding:
+                                                    const EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                dropdownMaxHeight: 200,
+                                                dropdownWidth: 200,
+                                                dropdownPadding: null,
+                                                dropdownDecoration:
+                                                    BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(14),
+                                                  color: Colors.white,
+                                                ),
+                                                dropdownElevation: 8,
+                                                scrollbarRadius:
+                                                    const Radius.circular(40),
+                                                scrollbarThickness: 6,
+                                                scrollbarAlwaysShow: true,
+                                                offset: const Offset(-20, 0),
+                                              )),
                                         ],
                                       ),
                                     )
@@ -637,7 +619,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           borderRadius: BorderRadius.circular(25),
                           side: BorderSide(color: Colors.blue.shade700),
                         ),
-                        child: const Text('Sign up',
+                        child: const Text(
+                          'Sign up',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -655,7 +638,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           style: TextStyle(color: Colors.blue.shade700),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Navigator.pushNamed(context, '/AuthenticationScreen');
+                              Navigator.pushNamed(
+                                  context, '/AuthenticationScreen');
                             })
                     ],
                   ),

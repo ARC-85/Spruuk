@@ -1,15 +1,8 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-
 import 'package:spruuk/providers/request_provider.dart';
-import 'package:spruuk/widgets/text_label.dart';
 
 class MyRequestArea extends ConsumerStatefulWidget {
   MyRequestArea({Key? key, this.requestArea}) : super(key: key);
@@ -27,7 +20,7 @@ class _MyRequestArea extends ConsumerState<MyRequestArea> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.requestArea !=null && newAreaToggle == false) {
+    if (widget.requestArea != null && newAreaToggle == false) {
       _initialAreaValue = widget.requestArea;
       _currentAreaValue = widget.requestArea!.toDouble();
     } else {
@@ -74,7 +67,9 @@ class _MyRequestArea extends ConsumerState<MyRequestArea> {
               ),
             ),
             child: Slider(
-              value: _initialAreaValue == null ? _currentAreaValue : _initialAreaValue!.toDouble(),
+              value: _initialAreaValue == null
+                  ? _currentAreaValue
+                  : _initialAreaValue!.toDouble(),
               max: 500,
               divisions: 10,
               label: "${_currentAreaValue.round().toString()} m.sq",

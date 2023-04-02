@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/screens/authentication_screen.dart';
 import 'package:spruuk/screens/client_add_request_screen.dart';
@@ -38,9 +37,9 @@ import 'package:spruuk/screens/error_screen.dart';
 import 'package:spruuk/screens/loading_screen.dart';
 import 'package:spruuk/screens/location_selection_screen.dart';
 
+// Main Flutter function for running app
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await FlutterConfig.loadEnvVariables();
   runApp(const ProviderScope(child: SpruukApp()));
 }
 
@@ -51,6 +50,7 @@ final firebaseInitializerProvider = FutureProvider<FirebaseApp>((ref) async {
   );
 });
 
+// A stateless class for defining MaterialApp setup
 class SpruukApp extends ConsumerWidget {
   const SpruukApp({Key? key}) : super(key: key);
 
@@ -71,6 +71,7 @@ class SpruukApp extends ConsumerWidget {
           },
           error: (e, stackTrace) => ErrorScreen(e, stackTrace),
           loading: () => const LoadingScreen()),
+      // Route table
       routes: {
         // Route for Joint Projects List Screen
         JointProjectListScreen.routeName: (context) =>

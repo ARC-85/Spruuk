@@ -1,4 +1,3 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,10 +10,6 @@ import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/widgets/cost_range.dart';
@@ -30,6 +25,7 @@ import 'package:spruuk/widgets/text_label.dart';
 
 enum AdvancedStatus { basic, advanced }
 
+// Stateful class for screen allowing Vendor users to add new project
 class VendorAddProjectScreen extends ConsumerStatefulWidget {
   static const routeName = '/VendorAddProjectScreen';
 
@@ -283,35 +279,9 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL);
-                print("this is projectIMages $projectImages");
-                print("this is projectImageFileList $projectImageFileList");
-                print("this is projectImageFile $projectImageFile");
-                print("this is imageDownloadURL $imageDownloadURL");
                 ref.read(projectImageProvider.notifier).state = null;
               }
             }
-            /*int count = 0;
-            projectImageFileList?.forEach((projectImg) async {
-              if (projectImg != null && currentUser1?.uid != null) {
-                count++;
-                final fbRef = FirebaseStorage.instance
-                    .ref()
-                    .child('project_images')
-                    .child('${currentUser1?.uid}_$count.jpg');
-                await fbRef.putFile(projectImg);
-                // Getting the URL for the image once uploaded to Firebase storage
-                final imageDownloadURL = await fbRef.getDownloadURL();
-                projectImages?.add(imageDownloadURL);
-                print("this is projectIMages $projectImages");
-                print("this is projectImageFileList $projectImageFileList");
-                print("this is count $count");
-                print("this is projectImageFile $projectImageFile");
-                print("this is projectImageFile2 $projectImageFile2");
-                print("this is imageDownloadURL $imageDownloadURL");
-                ref.read(projectImageProvider.notifier).state = null;
-              }
-
-            });*/
           }
 
           // Special function for uploading image 2 on web and Android apps
@@ -345,10 +315,6 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                 // Getting the URL for the image once uploaded to Firebase storage
                 final imageDownloadURL2 = await fbRef.getDownloadURL();
                 projectImages?.add(imageDownloadURL2);
-                print("this is projectIMages $projectImages");
-                print("this is projectImageFileList $projectImageFileList");
-                print("this is projectImageFile2 $projectImageFile2");
-                print("this is imageDownloadURL2 $imageDownloadURL2");
                 ref.read(projectImage2Provider.notifier).state = null;
               }
             }
@@ -654,7 +620,6 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
               projectType = selectedValue;
               projectStyle = selectedStyleValue;
               loading();
-              print("this is 2nd projectIMages $projectImages");
               await _image1Upload();
               await _image2Upload();
               await _image3Upload();
@@ -1367,8 +1332,8 @@ class _VendorAddProjectScreen extends ConsumerState<VendorAddProjectScreen> {
                             ? const Center(child: CircularProgressIndicator())
                             : MaterialButton(
                                 onPressed: _onPressedFunction,
-                                textColor:
-                                    const Color.fromRGBO(45, 18, 4, 1).withOpacity(1),
+                                textColor: const Color.fromRGBO(45, 18, 4, 1)
+                                    .withOpacity(1),
                                 textTheme: ButtonTextTheme.primary,
                                 minWidth: 100,
                                 color: const Color.fromRGBO(242, 151, 101, 1)

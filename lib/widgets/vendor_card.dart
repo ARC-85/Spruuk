@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 
 class MyVendorCard extends ConsumerStatefulWidget {
@@ -48,8 +45,7 @@ class _MyVendorCard extends ConsumerState<MyVendorCard> {
     super.initState();
   }
 
-  Future<void> _refresh() async {
-  }
+  Future<void> _refresh() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -71,72 +67,70 @@ class _MyVendorCard extends ConsumerState<MyVendorCard> {
         key: UniqueKey(),
         onDismissed: (direction) {
           ref.read(userProvider).removeVendorFavouriteToClient(vendorUser!.uid);
-
         },
         child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-          child: InkWell(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
-                ),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      SizedBox(
-                          width: screenDimensions.width * 0.2,
-                          height: screenDimensions.width * 0.2,
-                          child: vendorUser.userImage != null
-                              ? Image.network(vendorUser.userImage!, fit: BoxFit.cover)
-                              : const CircleAvatar(
-                              radius: 60,
-                              backgroundImage: AssetImage(
-                                  "assets/images/circular_avatar.png"))),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text("${vendorUser.firstName} ${vendorUser.lastName}"!,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              )),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            vendorUser.email,
-                            style: const TextStyle(
-                              fontSize: 19,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white70,
+            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+            child: InkWell(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                  ),
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        SizedBox(
+                            width: screenDimensions.width * 0.2,
+                            height: screenDimensions.width * 0.2,
+                            child: vendorUser.userImage != null
+                                ? Image.network(vendorUser.userImage!,
+                                    fit: BoxFit.cover)
+                                : const CircleAvatar(
+                                    radius: 60,
+                                    backgroundImage: AssetImage(
+                                        "assets/images/circular_avatar.png"))),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 20,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-
-                        ],
-                      )
-                    ]),
-              ),
-              onTap: () {
-                Navigator.pushNamed(context, '/ClientVendorDetailsScreen',
-                    arguments: vendorUser.uid);
-              }
-          )
-        ));
+                            Text(
+                                "${vendorUser.firstName} ${vendorUser.lastName}"!,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                )),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              vendorUser.email,
+                              style: const TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white70,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                          ],
+                        )
+                      ]),
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/ClientVendorDetailsScreen',
+                      arguments: vendorUser.uid);
+                })));
   }
 }

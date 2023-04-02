@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/project_model.dart';
-import 'package:spruuk/models/search_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
 import 'package:spruuk/widgets/project_card.dart';
 
+// Stateful class for screen showing list of favourite projects to Client user
 class ClientFavouriteProjectsListScreen extends ConsumerStatefulWidget {
   static const routeName = '/ClientFavouriteProjectsListScreen';
   const ClientFavouriteProjectsListScreen({Key? key}) : super(key: key);
@@ -56,6 +55,7 @@ class _ClientFavouriteProjectsListScreen
 
       final authData = ref.watch(fireBaseAuthProvider);
 
+      // Providers for sequentially loading data relating to current user, then creating a list from that user's favourite projects
       ref
           .watch(userProvider)
           .getCurrentUserData(authData.currentUser!.uid)
@@ -80,6 +80,7 @@ class _ClientFavouriteProjectsListScreen
     }
   }
 
+  // Function for refreshing list
   Future<void> _refreshFilteredProjectList() async {
     final authData = ref.watch(fireBaseAuthProvider);
     ref
@@ -104,13 +105,14 @@ class _ClientFavouriteProjectsListScreen
 
   @override
   Widget build(BuildContext context) {
+    // Variable for sizing to screen dimensions
     final screenDimensions = MediaQuery.of(context).size;
 
     return Scaffold(
         appBar: AppBar(title: const Text("Favourite Projects"), actions: [
           IconButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/ClientFavouriteProjectsMapScreen'),
+              onPressed: () => Navigator.pushNamed(
+                  context, '/ClientFavouriteProjectsMapScreen'),
               icon: const Icon(
                 Icons.map_outlined,
                 size: 25,
@@ -151,11 +153,14 @@ class _ClientFavouriteProjectsListScreen
                 child: SizedBox(
                     height: screenDimensions.height * 0.79,
                     width: screenDimensions.width,
+                    // Refresh indicator widget used to allow for refreshing screen and list
                     child: _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : RefreshIndicator(
                             onRefresh: () => _refreshFilteredProjectList(),
-                            child: favouriteProjects != null && favouriteProjects!.isNotEmpty
+                            // List shows favourited projects for user
+                            child: favouriteProjects != null &&
+                                    favouriteProjects!.isNotEmpty
                                 ? ListView.builder(
                                     scrollDirection: Axis.vertical,
                                     shrinkWrap:
@@ -168,9 +173,9 @@ class _ClientFavouriteProjectsListScreen
                                         ))
                                 : const Center(
                                     child: Text('No favourite projects'),
-                                  )
-                    )),
+                                  ))),
               ),
+              // Floating action button to allow user to navigate to search screen
               Positioned(
                 top: screenDimensions.height * 0.8,
                 width: screenDimensions.width * 0.3,

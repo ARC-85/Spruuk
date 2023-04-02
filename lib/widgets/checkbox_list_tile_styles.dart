@@ -1,15 +1,8 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/widgets/text_label.dart';
 
 class MyCheckBoxListTileStyles extends ConsumerStatefulWidget {
   MyCheckBoxListTileStyles({Key? key, required this.listText, this.textStyle})
@@ -18,12 +11,21 @@ class MyCheckBoxListTileStyles extends ConsumerStatefulWidget {
   TextStyle? textStyle;
 
   @override
-  ConsumerState<MyCheckBoxListTileStyles> createState() => _MyCheckBoxListTileStyles();
+  ConsumerState<MyCheckBoxListTileStyles> createState() =>
+      _MyCheckBoxListTileStyles();
 }
 
-class _MyCheckBoxListTileStyles extends ConsumerState<MyCheckBoxListTileStyles> {
+class _MyCheckBoxListTileStyles
+    extends ConsumerState<MyCheckBoxListTileStyles> {
   bool isBoxChecked = true;
-  List<String?>? stylesList = ["Traditional", "Contemporary", "Retro", "Modern", "Minimalist", "None"];
+  List<String?>? stylesList = [
+    "Traditional",
+    "Contemporary",
+    "Retro",
+    "Modern",
+    "Minimalist",
+    "None"
+  ];
 
   @override
   void didChangeDependencies() {
@@ -54,7 +56,6 @@ class _MyCheckBoxListTileStyles extends ConsumerState<MyCheckBoxListTileStyles> 
   }
 
   void updateStylesList(String style, bool change) async {
-
     if (change) {
       await addStyleToStyles(style);
       print("this is add stylesList $stylesList");

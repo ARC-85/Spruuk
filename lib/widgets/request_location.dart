@@ -1,21 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/widgets/text_label.dart';
 
 class MyRequestLocation extends ConsumerStatefulWidget {
   const MyRequestLocation({
@@ -32,8 +23,7 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
   @override
   void didChangeDependencies() {
     //getPermissions();
-    ref.watch(userProvider).getPermissions()
-        .then((value) {
+    ref.watch(userProvider).getPermissions().then((value) {
       setState(() {
         currentUserLocation = value;
       });
@@ -43,7 +33,7 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
   }
 
   final LatLng _initialCameraPosition =
-  LatLng(53.37466222698207, -9.1528495028615);
+      LatLng(53.37466222698207, -9.1528495028615);
   GoogleMapController? _controller;
   Location _location = Location();
 
@@ -72,7 +62,6 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     lat = ref.watch(requestLatLngProvider)?.latitude;
@@ -83,19 +72,17 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
       width: 300,
       child: Stack(
         children: [
-          if(currentUserLocation ==null)
-            const CircularProgressIndicator(),
-          if(currentUserLocation !=null)
+          if (currentUserLocation == null) const CircularProgressIndicator(),
+          if (currentUserLocation != null)
             GoogleMap(
               initialCameraPosition:
-              CameraPosition(target: currentUserLocation!, zoom: 17 ),
+                  CameraPosition(target: currentUserLocation!, zoom: 17),
               mapType: MapType.normal,
               // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
               onMapCreated: (controller) {
                 setState(() {
                   _controller = controller;
                 });
-
               },
               myLocationEnabled: true,
               markers: <Marker>{
@@ -103,12 +90,12 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
                 Marker(
                   markerId: MarkerId('Marker'),
                   position:
-                  lat != null ? LatLng(lat!, lng!) : currentUserLocation!,
+                      lat != null ? LatLng(lat!, lng!) : currentUserLocation!,
                 )
               },
             ),
           if (showMapButton != true)
-          // Needed to introduce a floating button to take user to current location due to troubles with null values.
+            // Needed to introduce a floating button to take user to current location due to troubles with null values.
             FloatingActionButton(
               onPressed: () {
                 LatLng newLatLng = currentUserLocation!;
@@ -123,7 +110,7 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
               },
               materialTapTargetSize: MaterialTapTargetSize.padded,
               backgroundColor:
-              const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                  const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
               child: const Icon(
                 Icons.location_on_outlined,
               ),
@@ -136,8 +123,9 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
                 lat == null
                     ? ref.read(requestLatLngProvider.notifier).state = _latLng
                     : ref.read(requestLatLngProvider.notifier).state =
-                    LatLng(lat!, lng!);
-                Navigator.pushNamed(context, '/ClientRequestLocationSelectionScreen');
+                        LatLng(lat!, lng!);
+                Navigator.pushNamed(
+                    context, '/ClientRequestLocationSelectionScreen');
                 print("this is location data $_locationData");
                 setState(() {
                   showMapButton = false;
@@ -145,7 +133,7 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
               },
               materialTapTargetSize: MaterialTapTargetSize.padded,
               backgroundColor:
-              const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                  const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
               child: const Icon(
                 Icons.map_outlined,
               ),

@@ -1,42 +1,26 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/response_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/response_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/widgets/cost_range.dart';
-import 'package:spruuk/widgets/date_picker.dart';
-import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
-import 'package:spruuk/widgets/project_area.dart';
-import 'package:spruuk/widgets/project_location.dart';
 import 'package:spruuk/widgets/screen_arguments.dart';
-import 'package:spruuk/widgets/text_input.dart';
 import 'dart:io';
 import 'package:date_format/date_format.dart';
-
 import 'package:spruuk/widgets/text_label.dart';
 
 enum AdvancedStatus { basic, advanced }
 
+// Stateful class for screen showing individual request details to Vendor users for viewing
 class VendorRequestDetailsScreen extends ConsumerStatefulWidget {
   static const routeName = '/VendorRequestDetailsScreen';
 
@@ -97,7 +81,6 @@ class _VendorRequestDetailsScreen
                           initialRequest?.requestId) {
                         alreadyResponded = true;
                         relevantResponse = response.responseId;
-                        print("this is relevantResponse $relevantResponse");
                       }
                     }
                   }
@@ -105,7 +88,6 @@ class _VendorRequestDetailsScreen
                   _isLoading = false;
                 });
               }));
-
       doneOnce == true;
     }
   }
@@ -638,94 +620,96 @@ class _VendorRequestDetailsScreen
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Column(
-                                            children: [
-                                              Container(
-                                                height: 40,
-                                                width: 90,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius.circular(25)),
-                                                child: const Text(
-                                                  "Min (€):",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15.0,
-                                                  ),
+                                          Column(children: [
+                                            Container(
+                                              height: 40,
+                                              width: 90,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                              child: const Text(
+                                                "Min (€):",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15.0,
                                                 ),
                                               ),
-                                              Container(
-                                                height: 40,
-                                                width: 95,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                    BorderRadius.circular(25)),
-                                                child: Text(
-                                                  initialRequest?.requestMinCost !=
-                                                      null
-                                                      ? initialRequest!
-                                                      .requestMinCost!
-                                                      .toString()
-                                                      : "NA",
-                                                  textAlign: TextAlign.center,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                    color: Colors.black45,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 20.0,
-                                                  ),
+                                            ),
+                                            Container(
+                                              height: 40,
+                                              width: 95,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                              child: Text(
+                                                initialRequest
+                                                            ?.requestMinCost !=
+                                                        null
+                                                    ? initialRequest!
+                                                        .requestMinCost!
+                                                        .toString()
+                                                    : "NA",
+                                                textAlign: TextAlign.center,
+                                                softWrap: true,
+                                                style: const TextStyle(
+                                                  color: Colors.black45,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize: 20.0,
                                                 ),
                                               ),
-                                            ]
-                                          ),
-                                          Column(
-                                            children: [
-                                              Container(
-                                                height: 40,
-                                                width: 90,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                    BorderRadius.circular(25)),
-                                                child: const Text(
-                                                  "Max (€):",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15.0,
-                                                  ),
+                                            ),
+                                          ]),
+                                          Column(children: [
+                                            Container(
+                                              height: 40,
+                                              width: 90,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                              child: const Text(
+                                                "Max (€):",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15.0,
                                                 ),
                                               ),
-                                              Container(
-                                                height: 40,
-                                                width: 95,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                    BorderRadius.circular(25)),
-                                                child: Text(
-                                                  initialRequest?.requestMaxCost !=
-                                                      null
-                                                      ? initialRequest!
-                                                      .requestMaxCost!
-                                                      .toString()
-                                                      : "NA",
-                                                  textAlign: TextAlign.center,
-                                                  softWrap: true,
-                                                  style: const TextStyle(
-                                                    color: Colors.black45,
-                                                    fontWeight: FontWeight.normal,
-                                                    fontSize: 20.0,
-                                                  ),
+                                            ),
+                                            Container(
+                                              height: 40,
+                                              width: 95,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                              child: Text(
+                                                initialRequest
+                                                            ?.requestMaxCost !=
+                                                        null
+                                                    ? initialRequest!
+                                                        .requestMaxCost!
+                                                        .toString()
+                                                    : "NA",
+                                                textAlign: TextAlign.center,
+                                                softWrap: true,
+                                                style: const TextStyle(
+                                                  color: Colors.black45,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontSize: 20.0,
                                                 ),
                                               ),
-                                            ]
-                                          )
+                                            ),
+                                          ])
                                         ],
                                       ),
                                     if (_advancedStatus ==
@@ -852,7 +836,6 @@ class _VendorRequestDetailsScreen
                                         .then((value) {
                                       setState(() {
                                         currentUser1 = value;
-                                        print("turning true");
                                       });
                                     });
 
@@ -882,12 +865,13 @@ class _VendorRequestDetailsScreen
                                         .then((value) {
                                       setState(() {
                                         currentUser1 = value;
-                                        print("turning false");
                                       });
                                     });
                                     Navigator.pushNamed(
                                         context, '/VendorResponseDetailsScreen',
-                                        arguments: ScreenArguments(initialRequest!.requestId, relevantResponse!));
+                                        arguments: ScreenArguments(
+                                            initialRequest!.requestId,
+                                            relevantResponse!));
                                   },
                                   materialTapTargetSize:
                                       MaterialTapTargetSize.padded,
