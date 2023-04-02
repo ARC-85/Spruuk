@@ -73,9 +73,10 @@ class _JointResponseDetailsScreen
         setState(() {
           initialResponse = value;
         });
-      })
-      .then((value) {
-        ref.watch(requestProvider).getRequestById(initialResponse?.responseRequestId)
+      }).then((value) {
+        ref
+            .watch(requestProvider)
+            .getRequestById(initialResponse?.responseRequestId)
             .then((value) {
           setState(() {
             initialRequest = value;
@@ -226,12 +227,14 @@ class _JointResponseDetailsScreen
           messageCreatedYear: messageCreatedYear,
           messageTimeCreated: messageTimeCreated,
         ));
+
         loading();
         // Checking if widget mounted when using multiple awaits
         if (!mounted) return;
         setState(() {
           print("message added");
-
+          // Reset TextEditingController
+          _messageContent = TextEditingController(text: '');
         });
       } catch (error) {
         Fluttertoast.showToast(msg: error.toString());
@@ -243,12 +246,12 @@ class _JointResponseDetailsScreen
     }
 
     Future<void> _onPressedViewRequestFunction() async {
-      if(currentUser1?.userType == "Vendor") {
-        Navigator.pushNamed(
-          context, '/VendorRequestDetailsScreen', arguments: initialRequest!.requestId);
+      if (currentUser1?.userType == "Vendor") {
+        Navigator.pushNamed(context, '/VendorRequestDetailsScreen',
+            arguments: initialRequest!.requestId);
       } else {
-        Navigator.pushNamed(
-            context, '/ClientRequestDetailsScreen', arguments: initialRequest!.requestId);
+        Navigator.pushNamed(context, '/ClientRequestDetailsScreen',
+            arguments: initialRequest!.requestId);
       }
     }
 
@@ -299,138 +302,397 @@ class _JointResponseDetailsScreen
                     child: SizedBox(
                       height: screenDimensions.height * 0.5,
                       width: screenDimensions.width,
-                      child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyTextLabel(
-                                    textLabel: "Request: ${initialRequest?.requestTitle}",
-                                    color: null,
-                                    textStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.0,
-                                    )),
-                              ),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: MyTextLabel(
-                                    textLabel: "Description: ${initialRequest?.requestBriefDescription}",
-                                    color: null,
-                                    textStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0,
-                                    )),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(
-                                    top: 10.0, bottom: 10),
-                                margin:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                                width: double.infinity,
-                                child: _isLoading
-                                    ? const Center(
-                                    child: CircularProgressIndicator())
-                                    : MaterialButton(
-                                  onPressed: _onPressedViewRequestFunction,
-                                  textColor:
-                                  const Color.fromRGBO(45, 18, 4, 1)
-                                      .withOpacity(1),
-                                  textTheme: ButtonTextTheme.primary,
-                                  minWidth: 100,
-                                  color: const Color.fromRGBO(
-                                      242, 151, 101, 1)
-                                      .withOpacity(1),
-                                  padding: const EdgeInsets.all(
-                                    18,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(25),
-                                    side: BorderSide(
-                                        color: Colors.blue.shade700),
-                                  ),
-                                  child: const Text(
-                                    'Go To Request',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                  height: 100,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 16),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 4),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(25)),
-                                  child: TextFormField(
-                                    // Need to have a special text input to accommodate long version
-                                    cursorColor: Colors.white,
-                                    obscureText: false,
-                                    validator: customMessageValidator,
-                                    controller: _messageContent,
-                                    keyboardType: TextInputType
-                                        .multiline, // From https://stackoverflow.com/questions/45900387/multi-line-textfield-in-flutter
-                                    maxLines: null,
-                                    decoration: const InputDecoration(
-                                      hintText: "Message Content",
-                                      hintStyle:
-                                          TextStyle(color: Colors.black45),
-                                      helperStyle: TextStyle(
-                                        color: Colors.black45,
-                                        fontSize: 18.0,
-                                      ),
-                                      alignLabelWithHint: true,
-                                      border: InputBorder.none,
-                                      prefixIcon: Icon(CupertinoIcons.add,
-                                          color: Colors.cyan, size: 24),
-                                    ),
-                                  )),
-                              Container(
-                                padding: const EdgeInsets.only(
-                                    top: 10.0, bottom: 10),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                width: double.infinity,
-                                child: _isLoading
-                                    ? const Center(
-                                        child: CircularProgressIndicator())
-                                    : MaterialButton(
-                                        onPressed: _onPressedFunction,
-                                        textColor:
-                                            const Color.fromRGBO(45, 18, 4, 1)
-                                                .withOpacity(1),
-                                        textTheme: ButtonTextTheme.primary,
-                                        minWidth: 100,
-                                        color: const Color.fromRGBO(
-                                                242, 151, 101, 1)
-                                            .withOpacity(1),
-                                        padding: const EdgeInsets.all(
-                                          18,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(25),
-                                          side: BorderSide(
-                                              color: Colors.blue.shade700),
-                                        ),
-                                        child: const Text(
-                                          'Add Message',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                              ),
-                            ],
-                          )),
+                      child: Scrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          thickness: 10,
+                          radius: Radius.circular(20),
+                          scrollbarOrientation: ScrollbarOrientation.right,
+                          child: SingleChildScrollView(
+                              controller: _scrollController,
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Form(
+                                        key: _formKey,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                                height: 100,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 24,
+                                                        vertical: 16),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 4),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25)),
+                                                child: TextFormField(
+                                                  // Need to have a special text input to accommodate long version
+                                                  cursorColor: Colors.white,
+                                                  obscureText: false,
+                                                  validator:
+                                                      customMessageValidator,
+                                                  controller: _messageContent,
+                                                  keyboardType: TextInputType
+                                                      .multiline, // From https://stackoverflow.com/questions/45900387/multi-line-textfield-in-flutter
+                                                  maxLines: null,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    hintText: "Message Content",
+                                                    hintStyle: TextStyle(
+                                                        color: Colors.black45),
+                                                    helperStyle: TextStyle(
+                                                      color: Colors.black45,
+                                                      fontSize: 18.0,
+                                                    ),
+                                                    alignLabelWithHint: true,
+                                                    border: InputBorder.none,
+                                                    prefixIcon: Icon(
+                                                        CupertinoIcons.add,
+                                                        color: Colors.cyan,
+                                                        size: 24),
+                                                  ),
+                                                )),
+                                            Container(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0, bottom: 10),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16),
+                                              width: double.infinity,
+                                              child: _isLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : MaterialButton(
+                                                      onPressed:
+                                                          _onPressedFunction,
+                                                      textColor:
+                                                          const Color.fromRGBO(
+                                                                  45, 18, 4, 1)
+                                                              .withOpacity(1),
+                                                      textTheme: ButtonTextTheme
+                                                          .primary,
+                                                      minWidth: 100,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                                  242,
+                                                                  151,
+                                                                  101,
+                                                                  1)
+                                                              .withOpacity(1),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                        18,
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
+                                                        side: BorderSide(
+                                                            color: Colors
+                                                                .blue.shade700),
+                                                      ),
+                                                      child: const Text(
+                                                        'Add Message',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                      ),
+                                                    ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: const Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel:
+                                                        "Response Title: ",
+                                                    color: null,
+                                                    textStyle: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18.0,
+                                                    )),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel:
+                                                        "${initialResponse?.responseTitle}",
+                                                    color: null,
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.white70,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 16.0,
+                                                    )),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width: screenDimensions.width,
+                                                child: const Align(
+                                                  alignment:
+                                                  Alignment.centerLeft,
+                                                  child: MyTextLabel(
+                                                      textLabel:
+                                                      "Vendor Name: ",
+                                                      color: null,
+                                                      textStyle: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        fontSize: 18.0,
+                                                      )),
+                                                )),
+                                            SizedBox(
+                                                width: screenDimensions.width,
+                                                child: Align(
+                                                  alignment:
+                                                  Alignment.centerLeft,
+                                                  child: MyTextLabel(
+                                                      textLabel:
+                                                      "${initialResponse?.responseUserFirstName} ${initialResponse?.responseUserLastName}",
+                                                      color: null,
+                                                      textStyle:
+                                                      const TextStyle(
+                                                        color: Colors.white70,
+                                                        fontWeight:
+                                                        FontWeight.normal,
+                                                        fontSize: 16.0,
+                                                      )),
+                                                )),
+                                            SizedBox(
+                                                width: screenDimensions.width,
+                                                child: const Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: MyTextLabel(
+                                                      textLabel:
+                                                          "Response Description: ",
+                                                      color: null,
+                                                      textStyle: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 18.0,
+                                                      )),
+                                                )),
+                                            SizedBox(
+                                                width: screenDimensions.width,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: MyTextLabel(
+                                                      textLabel:
+                                                          "${initialResponse?.responseDescription}",
+                                                      color: null,
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        color: Colors.white70,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: 16.0,
+                                                      )),
+                                                )),
+                                            SizedBox(
+                                                width: screenDimensions.width,
+                                                child: const Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: MyTextLabel(
+                                                      textLabel:
+                                                          "Vendor Email: ",
+                                                      color: null,
+                                                      textStyle: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 18.0,
+                                                      )),
+                                                )),
+                                            SizedBox(
+                                                width: screenDimensions.width,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: MyTextLabel(
+                                                      textLabel:
+                                                          "${initialResponse?.responseUserEmail}",
+                                                      color: null,
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        color: Colors.white70,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: 16.0,
+                                                      )),
+                                                )),
+                                            Container(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0, bottom: 10),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16),
+                                              width: double.infinity,
+                                              child: _isLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : MaterialButton(
+                                                      onPressed:
+                                                          _onPressedViewRequestFunction,
+                                                      textColor:
+                                                          const Color.fromRGBO(
+                                                                  45, 18, 4, 1)
+                                                              .withOpacity(1),
+                                                      textTheme: ButtonTextTheme
+                                                          .primary,
+                                                      minWidth: 100,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                                  242,
+                                                                  151,
+                                                                  101,
+                                                                  1)
+                                                              .withOpacity(1),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                        18,
+                                                      ),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
+                                                        side: BorderSide(
+                                                            color: Colors
+                                                                .blue.shade700),
+                                                      ),
+                                                      child: const Text(
+                                                        'Go To Request',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                      ),
+                                                    ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: const Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel:
+                                                        "Request Title: ",
+                                                    color: null,
+                                                    textStyle: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18.0,
+                                                    )),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel:
+                                                        "${initialRequest?.requestTitle}",
+                                                    color: null,
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.white70,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 16.0,
+                                                    )),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: const Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel:
+                                                        "Request Description: ",
+                                                    color: null,
+                                                    textStyle: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18.0,
+                                                    )),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel:
+                                                        "${initialRequest?.requestBriefDescription}",
+                                                    color: null,
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.white70,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 16.0,
+                                                    )),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: const Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel: "Client Email: ",
+                                                    color: null,
+                                                    textStyle: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18.0,
+                                                    )),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: screenDimensions.width,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: MyTextLabel(
+                                                    textLabel:
+                                                        "${initialRequest?.requestUserEmail}",
+                                                    color: null,
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.white70,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 16.0,
+                                                    )),
+                                              ),
+                                            ),
+                                          ],
+                                        ))
+                                  ]))),
                     ),
                   ),
                 ],

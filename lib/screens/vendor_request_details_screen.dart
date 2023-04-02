@@ -638,102 +638,94 @@ class _VendorRequestDetailsScreen
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Container(
-                                            height: 40,
-                                            width: 90,
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 6),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 4),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
+                                          Column(
+                                            children: [
+                                              Container(
+                                                height: 40,
+                                                width: 90,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
                                                     BorderRadius.circular(25)),
-                                            child: const Text(
-                                              "Min (€):",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15.0,
+                                                child: const Text(
+                                                  "Min (€):",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15.0,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 40,
-                                            width: 95,
-                                            alignment: Alignment.center,
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 6),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 4),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
+                                              Container(
+                                                height: 40,
+                                                width: 95,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
                                                     BorderRadius.circular(25)),
-                                            child: Text(
-                                              initialRequest?.requestMinCost !=
+                                                child: Text(
+                                                  initialRequest?.requestMinCost !=
                                                       null
-                                                  ? initialRequest!
+                                                      ? initialRequest!
                                                       .requestMinCost!
                                                       .toString()
-                                                  : "NA",
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                color: Colors.black45,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 20.0,
+                                                      : "NA",
+                                                  textAlign: TextAlign.center,
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                    color: Colors.black45,
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 20.0,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                            ]
                                           ),
-                                          Container(
-                                            height: 40,
-                                            width: 90,
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 6),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 4),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
+                                          Column(
+                                            children: [
+                                              Container(
+                                                height: 40,
+                                                width: 90,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
                                                     BorderRadius.circular(25)),
-                                            child: const Text(
-                                              "Max (€):",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15.0,
+                                                child: const Text(
+                                                  "Max (€):",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15.0,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 40,
-                                            width: 95,
-                                            alignment: Alignment.center,
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 6),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 0, vertical: 4),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
+                                              Container(
+                                                height: 40,
+                                                width: 95,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
                                                     BorderRadius.circular(25)),
-                                            child: Text(
-                                              initialRequest?.requestMaxCost !=
+                                                child: Text(
+                                                  initialRequest?.requestMaxCost !=
                                                       null
-                                                  ? initialRequest!
+                                                      ? initialRequest!
                                                       .requestMaxCost!
                                                       .toString()
-                                                  : "NA",
-                                              textAlign: TextAlign.center,
-                                              softWrap: true,
-                                              style: const TextStyle(
-                                                color: Colors.black45,
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 20.0,
+                                                      : "NA",
+                                                  textAlign: TextAlign.center,
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                    color: Colors.black45,
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 20.0,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
+                                            ]
+                                          )
                                         ],
                                       ),
                                     if (_advancedStatus ==
