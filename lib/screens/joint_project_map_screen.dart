@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +14,7 @@ import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 
+// Stateful class for screen showing maps of projects to both vendor (user-specific) and client (non-specific) users
 class JointProjectMapScreen extends ConsumerStatefulWidget {
   static const routeName = '/JointProjectMapScreen';
   const JointProjectMapScreen({
@@ -50,6 +49,8 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
   Set<Marker>? _markers = {};
   List<LatLng>? _points = [];
   Marker? _marker;
+
+  // Variables for card at bottom of screen to show individual project info
   String? cardId = "";
   String? cardTitle = "";
   String? cardSubtitle = "";
@@ -64,6 +65,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
 
       final authData = ref.watch(fireBaseAuthProvider);
 
+      // Providers are used to get lists of projects related to different user types
       ref
           .watch(userProvider)
           .getCurrentUserData(authData.currentUser!.uid)
@@ -131,7 +133,6 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
   // Setting up the map, taken from https://levelup.gitconnected.com/how-to-add-google-maps-in-a-flutter-app-and-get-the-current-location-of-the-user-dynamically-2172f0be53f6
   void _onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
-    print("on map is called");
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
@@ -139,6 +140,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
     );
   }
 
+  // Function for setting markers and allowing display or project details if marker is tapped
   void _setMarkersAllProjects(BuildContext context) {
     if (allProjects != null) {
       allProjects?.forEach((project) {
@@ -170,22 +172,22 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //lat = ref.watch(projectLatLngProvider)?.latitude;
-    //lng = ref.watch(projectLatLngProvider)?.longitude;
     _setMarkersAllProjects(context);
-    print("this is lat $lat");
     final screenDimensions = MediaQuery.of(context).size;
-    print("this is markers $_markers");
 
     return Scaffold(
-      appBar: AppBar(title: _userType == UserType.client ? const Text("All Projects Map") : const Text("My Projects Map"), actions: [
-        IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
-              Icons.cancel,
-              size: 25,
-            )),
-      ]),
+      appBar: AppBar(
+          title: _userType == UserType.client
+              ? const Text("All Projects Map")
+              : const Text("My Projects Map"),
+          actions: [
+            IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(
+                  Icons.cancel,
+                  size: 25,
+                )),
+          ]),
       body: SafeArea(
           child: Column(
         children: [
@@ -211,118 +213,116 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
             ),
           ),
           Flexible(
-            child: Stack(
-                children: [
-                  if(cardTitle == null || cardTitle!.isEmpty)
-                  Container(
-                    alignment: Alignment.center,
-                    height: screenDimensions.height * 0.18,
-                    width: screenDimensions.width,
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
-                    ),
-                    child: const Text("Select a project",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        )),
+              child: Stack(children: [
+            if (cardTitle == null || cardTitle!.isEmpty)
+              Container(
+                alignment: Alignment.center,
+                height: screenDimensions.height * 0.18,
+                width: screenDimensions.width,
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                ),
+                child: const Text("Select a project",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
+              ),
+            if (cardTitle != null &&
+                cardTitle!.isNotEmpty &&
+                currentUser1 != null)
+              InkWell(
+                onTap: () {
+                  if (currentUser1!.userType == "Vendor") {
+                    Navigator.pushNamed(context, '/VendorProjectDetailsScreen',
+                        arguments: cardId);
+                  } else {
+                    Navigator.pushNamed(context, '/ClientProjectDetailsScreen',
+                        arguments: cardId);
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
                   ),
-                  if(cardTitle != null && cardTitle!.isNotEmpty && currentUser1 != null)
-                    InkWell(
-                      onTap: () {
-                        if (currentUser1!.userType == "Vendor") {
-                          Navigator.pushNamed(context, '/VendorProjectDetailsScreen', arguments: cardId);
-                        } else {
-                          Navigator.pushNamed(context, '/ClientProjectDetailsScreen', arguments: cardId);
-                        }
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 15,
                         ),
-
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 15,
+                        SizedBox(
+                            width: screenDimensions.width * 0.2,
+                            height: screenDimensions.width * 0.2,
+                            child: cardImage != null
+                                ? Image.network(cardImage!, fit: BoxFit.cover)
+                                : const CircleAvatar(
+                                    radius: 60,
+                                    backgroundImage: AssetImage(
+                                        "assets/images/circular_avatar.png"))),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(cardTitle!,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                )),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              cardSubtitle!,
+                              style: const TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white70,
                               ),
-                              SizedBox(
-                                  width: screenDimensions.width * 0.2,
-                                  height: screenDimensions.width * 0.2,
-                                  child: cardImage != null
-                                      ? Image.network(cardImage!,
-                                      fit: BoxFit.cover)
-                                      : const CircleAvatar(
-                                      radius: 60,
-                                      backgroundImage: AssetImage(
-                                          "assets/images/circular_avatar.png"))),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(cardTitle!,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      )),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    cardSubtitle!,
-                                    style: const TextStyle(
-                                      fontSize: 19,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white70,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      children: [
-                                        RichText(
-                                          text: TextSpan(
-                                              text: "Price Range:",
+                                  RichText(
+                                    text: TextSpan(
+                                        text: "Price Range:",
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white54,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                              text:
+                                                  "€$cardMinPrice - €$cardMaxPrice",
                                               style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.normal,
-                                                color: Colors.white54,
-                                              ),
-                                              children: [
-                                                TextSpan(
-                                                    text:
-                                                    "€$cardMinPrice - €$cardMaxPrice",
-                                                    style: const TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.normal,
-                                                      color: Colors.lightBlueAccent,
-                                                    ))
-                                              ]),
-                                        ),
-                                      ])
-                                ],
-                              )
-                            ]),
-                      ),
-                    ),
-
-
-                ]
-            )
-          ),
+                                                color: Colors.lightBlueAccent,
+                                              ))
+                                        ]),
+                                  ),
+                                ])
+                          ],
+                        )
+                      ]),
+                ),
+              ),
+          ])),
         ],
       )),
     );

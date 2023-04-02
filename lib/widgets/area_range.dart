@@ -1,18 +1,12 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/widgets/text_label.dart';
 
 class MyAreaRange extends ConsumerStatefulWidget {
-  MyAreaRange({Key? key, this.projectMinArea, this.projectMaxArea}) : super(key: key);
+  MyAreaRange({Key? key, this.projectMinArea, this.projectMaxArea})
+      : super(key: key);
   int? projectMinArea;
   int? projectMaxArea;
 
@@ -26,12 +20,15 @@ class _MyAreaRange extends ConsumerState<MyAreaRange> {
   RangeValues? _initialRangeValues;
   bool newAreaToggle = false;
 
-
   @override
   Widget build(BuildContext context) {
-    if(widget.projectMinArea !=null && widget.projectMaxArea != null && newAreaToggle == false) {
-      _initialRangeValues = RangeValues(widget.projectMinArea!.toDouble(), widget.projectMaxArea!.toDouble());
-      _currentRangeValues = RangeValues(widget.projectMinArea!.toDouble(), widget.projectMaxArea!.toDouble());
+    if (widget.projectMinArea != null &&
+        widget.projectMaxArea != null &&
+        newAreaToggle == false) {
+      _initialRangeValues = RangeValues(
+          widget.projectMinArea!.toDouble(), widget.projectMaxArea!.toDouble());
+      _currentRangeValues = RangeValues(
+          widget.projectMinArea!.toDouble(), widget.projectMaxArea!.toDouble());
     } else {
       _initialRangeValues = null;
     }
@@ -42,8 +39,8 @@ class _MyAreaRange extends ConsumerState<MyAreaRange> {
         Container(
           height: 20,
           width: 70,
-          margin: const EdgeInsets.only(left:0,right:0,top:6, bottom:6),
-          padding: const EdgeInsets.only(left:0,right:0,top:4, bottom:4),
+          margin: const EdgeInsets.only(left: 0, right: 0, top: 6, bottom: 6),
+          padding: const EdgeInsets.only(left: 0, right: 0, top: 4, bottom: 4),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
           child: const Text(
             "<10 m.sq",
@@ -76,10 +73,11 @@ class _MyAreaRange extends ConsumerState<MyAreaRange> {
               ),
             ),
             child: RangeSlider(
-              values: _initialRangeValues == null ? _currentRangeValues! : _initialRangeValues!,
+              values: _initialRangeValues == null
+                  ? _currentRangeValues!
+                  : _initialRangeValues!,
               min: 10,
               max: 500,
-
               divisions: 49,
               labels: RangeLabels(
                 "${_currentRangeValues!.start.round().toString()}m.sq",
@@ -87,7 +85,8 @@ class _MyAreaRange extends ConsumerState<MyAreaRange> {
               ),
               onChanged: (RangeValues values) {
                 setState(() {
-                  newAreaToggle = true; // used to shift date if new cost selected.
+                  newAreaToggle =
+                      true; // used to shift date if new cost selected.
                   _currentRangeValues = values;
                   ref.read(projectAreaRangeProvider.notifier).state =
                       _currentRangeValues;
@@ -97,8 +96,8 @@ class _MyAreaRange extends ConsumerState<MyAreaRange> {
         Container(
           height: 20,
           width: 70,
-          margin: const EdgeInsets.only(left:0,right:0,top:6, bottom:6),
-          padding: const EdgeInsets.only(left:0,right:0,top:4, bottom:4),
+          margin: const EdgeInsets.only(left: 0, right: 0, top: 6, bottom: 6),
+          padding: const EdgeInsets.only(left: 0, right: 0, top: 4, bottom: 4),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
           child: const Text(
             ">500 m.sq",

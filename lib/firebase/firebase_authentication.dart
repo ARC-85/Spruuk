@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:spruuk/firebase/firebase_DB.dart';
-import 'package:spruuk/models/user_model.dart';
 
+// Class set-up for functions/methods related to Firebase Authentication.
 class FirebaseAuthentication {
   // Generate an instance of FirebaseAuth
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -88,6 +87,7 @@ class FirebaseAuthentication {
                 ],
               ));
     } catch (e) {
+      // Dedicated message if an email is repeated.
       if (e == 'email-already-in-use') {
         print('Email already in use');
       } else {
@@ -109,28 +109,17 @@ class FirebaseAuthentication {
     final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
+    // Try block for signing in using credential.
     try {
       UserCredential authResult = await _auth.signInWithCredential(credential);
       user = authResult.user;
-      print("this is user in auth $user");
+      // Check to see if the user is already existing in Firebase Authentication system.
       if (authResult.additionalUserInfo?.isNewUser != true) {
-        print("not first time!!");
+        // Signal if this is not first time signing in, allowing for capture of user type status on first sign in.
         _firstTime = false;
       } else {
         _firstTime = true;
       }
-
-
-
-      /*await _auth.signInWithCredential(credential).then((currentUser) =>
-          FirebaseFirestore.instance
-              .collection('vendor_users')
-              .doc(currentUser.user?.uid)
-              .set({
-            "uid": currentUser.user?.uid,
-            "email": currentUser.user?.email,
-            "password": "Google User",
-          })); */
     } on FirebaseAuthException catch (e) {
       await showDialog(
           context: context,
@@ -164,70 +153,24 @@ class FirebaseAuthentication {
     return _auth.currentUser?.uid;
   }
 
-  /*void _clientTypeUser(BuildContext context, User user) async {
-    await _auth.signInWithCredential(credential).then((currentUser) =>
-        FirebaseFirestore.instance
-            .collection('vendor_users')
-            .doc(currentUser.user?.uid)
-            .set({
-          "uid": currentUser.user?.uid,
-          "email": currentUser.user?.email,
-          "password": "Google User",
-          "userType": "Client",
-          "firstName": (currentUser.user?.displayName)?.split(' ').first,
-          "lastName": (currentUser.user?.displayName)?.split(' ').last,
-          "userImage": currentUser.user?.photoURL,
-          "userProjectFavourites": ["test"],
-          "userVendorFavourites": ["test"],
-
-
-        }));
-    Navigator.pushNamed(context, '/JointProjectListScreen');
-  }*/
-
+  // If user is Client when using Google sign up, this will set their details in the Firestore collection.
   Future<void> clientTypeUser(BuildContext context, User? user) async {
-        FirebaseFirestore.instance
-            .collection('vendor_users')
-            .doc(user?.uid)
-            .set({
-          "uid": user?.uid,
-          "email": user?.email,
-          "password": "Google User",
-          "userType": "Client",
-          "firstName": (user?.displayName)?.split(' ').first,
-          "lastName": (user?.displayName)?.split(' ').last,
-          "userImage": user?.photoURL,
-          "userProjectFavourites": ["test"],
-          "userVendorFavourites": ["test"],
-
-
-        });
+    FirebaseFirestore.instance.collection('vendor_users').doc(user?.uid).set({
+      "uid": user?.uid,
+      "email": user?.email,
+      "password": "Google User",
+      "userType": "Client",
+      "firstName": (user?.displayName)?.split(' ').first,
+      "lastName": (user?.displayName)?.split(' ').last,
+      "userImage": user?.photoURL,
+      "userProjectFavourites": ["test"],
+      "userVendorFavourites": ["test"],
+    });
   }
 
-  /*void _vendorTypeUser(BuildContext context, OAuthCredential credential) async {
-    await _auth.signInWithCredential(credential).then((currentUser) =>
-        FirebaseFirestore.instance
-            .collection('vendor_users')
-            .doc(currentUser.user?.uid)
-            .set({
-          "uid": currentUser.user?.uid,
-          "email": currentUser.user?.email,
-          "password": "Google User",
-          "userType": "Vendor",
-          "firstName": (currentUser.user?.displayName)?.split(' ').first,
-          "lastName": (currentUser.user?.displayName)?.split(' ').last,
-          "userImage": currentUser.user?.photoURL,
-          "userProjectFavourites": ["test"],
-          "userVendorFavourites": ["test"],
-        }));
-    Navigator.pushNamed(context, '/JointProjectListScreen');
-  }*/
-
+  // If user is Vendor when using Google sign up, this will set their details in the Firestore collection.
   Future<void> vendorTypeUser(BuildContext context, User? user) async {
-    FirebaseFirestore.instance
-        .collection('vendor_users')
-        .doc(user?.uid)
-        .set({
+    FirebaseFirestore.instance.collection('vendor_users').doc(user?.uid).set({
       "uid": user?.uid,
       "email": user?.email,
       "password": "Google User",
@@ -237,17 +180,14 @@ class FirebaseAuthentication {
       "userImage": user?.photoURL,
       "userProjectFavourites": ["test"],
       "userVendorFavourites": ["test"],
-
-
     });
   }
 
-  //Option to reset Password if forgotten
-  Future<void> resetPassword(
-      String email, BuildContext context) async {
+  //vOption to reset Password if forgotten
+  Future<void> resetPassword(String email, BuildContext context) async {
     try {
-      print("this is reset email $email");
       await _auth.sendPasswordResetEmail(email: email);
+      // Confirmation message displayed.
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
         content: const Text(
@@ -259,16 +199,15 @@ class FirebaseAuthentication {
       await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-              title: const Text("Error Occurred"),
-              content: Text(e.toString()),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                    },
-                    child: const Text("OK"))
-              ]));
+                  title: const Text("Error Occurred"),
+                  content: Text(e.toString()),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+                        },
+                        child: const Text("OK"))
+                  ]));
     }
   }
-
 }

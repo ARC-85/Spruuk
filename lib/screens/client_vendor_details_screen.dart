@@ -1,35 +1,15 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/widgets/cost_range.dart';
-import 'package:spruuk/widgets/date_picker.dart';
-import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
-import 'package:spruuk/widgets/project_area.dart';
-import 'package:spruuk/widgets/project_location.dart';
-import 'package:spruuk/widgets/text_input.dart';
-import 'dart:io';
-import 'package:date_format/date_format.dart';
-
 import 'package:spruuk/widgets/text_label.dart';
 
+// Stateful class for screen showing vendor details to Client user
 class ClientVendorDetailsScreen extends ConsumerStatefulWidget {
   static const routeName = '/ClientVendorDetailsScreen';
 
@@ -98,6 +78,7 @@ class _ClientVendorDetailsScreen
   // Controller for scrollbars, taken from https://stackoverflow.com/questions/69853729/flutter-the-scrollbars-scrollcontroller-has-no-scrollposition-attached
   final ScrollController _scrollController = ScrollController();
 
+  // Function to take client to list of vendor's projects
   Future<void> _onPressedFunction() async {
     Navigator.pushNamed(context, '/ClientVendorProjectsListScreen',
         arguments: vendorUser?.uid);
@@ -107,11 +88,11 @@ class _ClientVendorDetailsScreen
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
 
+    // Check if vendor already favourited by client
     if (currentUser1 != null && currentUser1!.userVendorFavourites != null) {
       vendorFavourited = currentUser1!.userVendorFavourites!
           .any((_userId) => _userId == vendorUser!.uid);
     }
-    print("vendor favourited = $vendorFavourited");
 
     return Scaffold(
       appBar: AppBar(title: const Text("Vendor Details"), actions: [
@@ -259,6 +240,7 @@ class _ClientVendorDetailsScreen
                   ],
                 ),
               if (vendorUser != null)
+                // Allows for navigation to vendor user's projects
                 InkWell(
                   child: Container(
                     alignment: Alignment.center,
@@ -316,6 +298,7 @@ class _ClientVendorDetailsScreen
                                       ),
                                     ),
                             ),
+                            // Floating action buttons to allow favouriting the vendor.
                             Stack(
                               children: [
                                 if (vendorFavourited == false)

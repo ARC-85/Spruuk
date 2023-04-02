@@ -1,26 +1,18 @@
-import 'dart:io';
-
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/widgets/dropdown_menu.dart';
 import 'package:spruuk/widgets/text_input.dart';
 
+// Stateful class for Authentication screen
 class AuthenticationScreen extends ConsumerStatefulWidget {
+  // Defining route name
   static const routeName = '/AuthenticationScreen';
   const AuthenticationScreen({Key? key}) : super(key: key);
   @override
@@ -49,9 +41,11 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Initiate authentication provider
     _auth = ref.watch(authenticationProvider);
   }
 
+  // Dialogue box for asking what user type is when user signs in using Google Authentication (available as input for Email/Password sign-in method)
   void _showUserTypeDialog(User? user) {
     showDialog(
         context: context,
@@ -156,13 +150,14 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Consumer(builder: (context, ref, _) {
-          // final _auth = ref.watch(authenticationProvider);
-
+          // Function for logging in User with Email/Password system
           Future<void> _onPressedRegisterFunction() async {
+            // Validate form inputs
             if (!_formKey.currentState!.validate()) {
               return;
             }
             loading();
+            // Login and listen for change of authentication state to confirm
             await _auth
                 ?.loginWithEmailAndPassword(
                     _email.text, _password.text, context)
@@ -174,11 +169,14 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                           }
                         }));
             if (!mounted) return;
+            // Navigate to authentication check to validate change of authentication state
             Navigator.pushNamed(context, '/AuthenticationChecker');
           }
 
+          // Function for logging in User with Google sign-in
           Future<void> _loginWithGoogle() async {
             loadingGoogle();
+            // Check to see if it's the first time logging in, which will require a selection of user type (Vendor or Client)
             _firstTime = (await _auth?.loginWithGoogle(context).whenComplete(
                 () => _auth?.authStateChange.listen((event) async {
                       if (event == null) {
@@ -186,6 +184,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                         return;
                       }
                     })))!;
+            // If first time then revert to dialogue asking about user type
             if (_firstTime == true) {
               _showUserTypeDialog(_auth?.user);
             } else {
@@ -194,6 +193,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
             }
           }
 
+          // Function for resetting password, which will send an email and user can choose a new one
           Future<void> _resetPasswordFunction() async {
             loading();
             await _auth?.resetPassword(_email.text, context);
@@ -205,6 +205,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
             children: [
               Stack(
                 children: <Widget>[
+                  // Background colour
                   Container(
                     width: screenDimensions.width,
                     height: screenDimensions.height * 0.65,
@@ -220,6 +221,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                       ),
                     ),
                   ),
+                  // Spruuk logo
                   Positioned(
                       top: -screenDimensions.height * 0.11,
                       child: SizedBox(
@@ -235,6 +237,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                     child: SizedBox(
                         height: screenDimensions.height * 0.45,
                         width: screenDimensions.width,
+                        // Scrollable section to accommodate inputs
                         child: Scrollbar(
                             controller: _scrollController,
                             thumbVisibility: true,
@@ -269,6 +272,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           25)),
+                                              // Text input widget used for email address
                                               child: CustomTextInput(
                                                 hintText: 'Email Address',
                                                 textEditingController: _email,
@@ -290,6 +294,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           25)),
+                                              // Text input widget used for password
                                               child: CustomTextInput(
                                                 hintText: 'Password',
                                                 textEditingController:
@@ -302,6 +307,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                                         ],
                                       ),
                                     ),
+                                    // Reset password feature
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 24.0),
@@ -330,6 +336,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                   ),
                 ],
               ),
+              // Email/password login button
               Container(
                 padding: const EdgeInsets.only(top: 32.0),
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -357,6 +364,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                         ),
                       ),
               ),
+              // Google sign-in login button
               Container(
                 padding: const EdgeInsets.only(top: 32.0),
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -389,6 +397,7 @@ class _AuthenticationScreenState extends ConsumerState<AuthenticationScreen> {
                       ),
               ),
               const Spacer(),
+              // Link to set up an account if one doesn't exist
               Padding(
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: RichText(

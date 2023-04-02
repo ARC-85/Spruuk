@@ -1,3 +1,4 @@
+// Class for setting up Response model.
 class ResponseModel {
   String responseId;
   String? responseRequestId;
@@ -16,18 +17,18 @@ class ResponseModel {
   // Class constructor
   ResponseModel(
       {this.responseId = "",
-        this.responseRequestId = "",
-        this.responseUserId = "",
-        this.responseUserFirstName = "",
-        this.responseUserLastName = "",
-        this.responseUserImage = "",
-        this.responseUserEmail = "",
-        this.responseTitle = "",
-        this.responseDescription = "",
-        this.responseCreatedDay = 0,
-        this.responseCreatedMonth = 0,
-        this.responseCreatedYear = 0,
-        this.responseMessageIds = const [""]});
+      this.responseRequestId = "",
+      this.responseUserId = "",
+      this.responseUserFirstName = "",
+      this.responseUserLastName = "",
+      this.responseUserImage = "",
+      this.responseUserEmail = "",
+      this.responseTitle = "",
+      this.responseDescription = "",
+      this.responseCreatedDay = 0,
+      this.responseCreatedMonth = 0,
+      this.responseCreatedYear = 0,
+      this.responseMessageIds = const [""]});
 
   // A factory constructor to create ResponseModel object from JSON
   factory ResponseModel.fromJson(Map<String, dynamic> json) {
@@ -54,18 +55,19 @@ class ResponseModel {
   Map<String, dynamic> toJson() => _responseToJson(this);
 }
 
-Map<String, dynamic> _responseToJson(ResponseModel instance) => <String, dynamic>{
-  'responseId': instance.responseId,
-  'responseRequestId': instance.responseRequestId,
-  'responseUserId': instance.responseUserId,
-  'responseUserFirstName': instance.responseUserFirstName,
-  'responseUserLastName': instance.responseUserLastName,
-  'responseUserImage': instance.responseUserImage,
-  'responseUserEmail': instance.responseUserEmail,
-  'responseTitle': instance.responseTitle,
-  'responseDescription': instance.responseDescription,
-  'responseCreatedDay': instance.responseCreatedDay,
-  'responseCreatedMonth': instance.responseCreatedMonth,
-  'responseCreatedYear': instance.responseCreatedYear,
-  'responseMessageIds': instance.responseMessageIds,
-};
+Map<String, dynamic> _responseToJson(ResponseModel instance) =>
+    <String, dynamic>{
+      'responseId': instance.responseId,
+      'responseRequestId': instance.responseRequestId,
+      'responseUserId': instance.responseUserId,
+      'responseUserFirstName': instance.responseUserFirstName,
+      'responseUserLastName': instance.responseUserLastName,
+      'responseUserImage': instance.responseUserImage,
+      'responseUserEmail': instance.responseUserEmail,
+      'responseTitle': instance.responseTitle,
+      'responseDescription': instance.responseDescription,
+      'responseCreatedDay': instance.responseCreatedDay,
+      'responseCreatedMonth': instance.responseCreatedMonth,
+      'responseCreatedYear': instance.responseCreatedYear,
+      'responseMessageIds': instance.responseMessageIds,
+    };

@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
+// Class for setting up User model.
 class UserModel {
   String uid;
   String? firstName;

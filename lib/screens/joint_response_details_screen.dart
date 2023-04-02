@@ -1,44 +1,25 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/message_model.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/response_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/message_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/response_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/widgets/cost_range.dart';
-import 'package:spruuk/widgets/date_picker.dart';
-import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/message_card.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
-import 'package:spruuk/widgets/project_area.dart';
-import 'package:spruuk/widgets/project_location.dart';
-import 'package:spruuk/widgets/screen_arguments.dart';
-import 'package:spruuk/widgets/text_input.dart';
-import 'dart:io';
 import 'package:date_format/date_format.dart';
-
 import 'package:spruuk/widgets/text_label.dart';
 
+// Stateful class for screen showing individual response details, including message dialogue, to Client and Vendor users
 class JointResponseDetailsScreen extends ConsumerStatefulWidget {
   static const routeName = '/JointResponseDetailsScreen';
 
@@ -101,7 +82,6 @@ class _JointResponseDetailsScreen
             .then((value) {
           setState(() {
             allResponseMessages = value;
-            print("this is all messages $allResponseMessages");
             _isLoading = false;
           });
         });
@@ -178,7 +158,6 @@ class _JointResponseDetailsScreen
   @override
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
-    final _responseProvider = ref.watch(responseProvider);
     final _messageProvider = ref.watch(messageProvider);
 
     if (initialResponse?.responseCreatedYear != null) {
@@ -232,19 +211,15 @@ class _JointResponseDetailsScreen
         // Checking if widget mounted when using multiple awaits
         if (!mounted) return;
         setState(() {
-          print("message added");
           // Reset TextEditingController
           _messageContent = TextEditingController(text: '');
         });
       } catch (error) {
         Fluttertoast.showToast(msg: error.toString());
       }
-
-      try {} catch (error) {
-        Fluttertoast.showToast(msg: error.toString());
-      }
     }
 
+    // Function for navigating to initial request related to response
     Future<void> _onPressedViewRequestFunction() async {
       if (currentUser1?.userType == "Vendor") {
         Navigator.pushNamed(context, '/VendorRequestDetailsScreen',
@@ -450,15 +425,15 @@ class _JointResponseDetailsScreen
                                                 width: screenDimensions.width,
                                                 child: const Align(
                                                   alignment:
-                                                  Alignment.centerLeft,
+                                                      Alignment.centerLeft,
                                                   child: MyTextLabel(
                                                       textLabel:
-                                                      "Vendor Name: ",
+                                                          "Vendor Name: ",
                                                       color: null,
                                                       textStyle: TextStyle(
                                                         color: Colors.white,
                                                         fontWeight:
-                                                        FontWeight.bold,
+                                                            FontWeight.bold,
                                                         fontSize: 18.0,
                                                       )),
                                                 )),
@@ -466,16 +441,16 @@ class _JointResponseDetailsScreen
                                                 width: screenDimensions.width,
                                                 child: Align(
                                                   alignment:
-                                                  Alignment.centerLeft,
+                                                      Alignment.centerLeft,
                                                   child: MyTextLabel(
                                                       textLabel:
-                                                      "${initialResponse?.responseUserFirstName} ${initialResponse?.responseUserLastName}",
+                                                          "${initialResponse?.responseUserFirstName} ${initialResponse?.responseUserLastName}",
                                                       color: null,
                                                       textStyle:
-                                                      const TextStyle(
+                                                          const TextStyle(
                                                         color: Colors.white70,
                                                         fontWeight:
-                                                        FontWeight.normal,
+                                                            FontWeight.normal,
                                                         fontSize: 16.0,
                                                       )),
                                                 )),

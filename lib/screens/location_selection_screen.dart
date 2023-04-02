@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:spruuk/providers/project_provider.dart';
 
+// Stateful class for screen showing Google Map with draggable marker for user to set locations of projects and requests
 class LocationSelectionScreen extends ConsumerStatefulWidget {
   static const routeName = '/LocationSelectionScreen';
   const LocationSelectionScreen({
@@ -42,9 +41,7 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
     super.didChangeDependencies();
   }
 
-  //LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
   GoogleMapController? _controller;
-  //Location _location = Location();
   double? lat;
   double? lng;
 
@@ -57,7 +54,6 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
   // Setting up the map, taken from https://levelup.gitconnected.com/how-to-add-google-maps-in-a-flutter-app-and-get-the-current-location-of-the-user-dynamically-2172f0be53f6
   void _onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
-    print("on map is called");
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
@@ -65,6 +61,7 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
     );
   }
 
+  // Getting permissions to use user's current location
   Future<void> getPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled!) {
@@ -88,7 +85,6 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
     getPermissions();
     lat = ref.watch(projectLatLngProvider)?.latitude;
     lng = ref.watch(projectLatLngProvider)?.longitude;
-    print("this is lat $lat");
     final screenDimensions = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -140,5 +136,4 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
       )),
     );
   }
-
 }

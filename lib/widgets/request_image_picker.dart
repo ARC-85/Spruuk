@@ -1,13 +1,10 @@
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:spruuk/providers/request_provider.dart';
 
 class MyRequestImagePicker extends ConsumerStatefulWidget {
   const MyRequestImagePicker({
@@ -123,21 +120,21 @@ class _MyRequestImagePicker extends ConsumerState<MyRequestImagePicker> {
 
   void _getFromCamera() async {
     XFile? pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.camera);
+        await ImagePicker().pickImage(source: ImageSource.camera);
     _cropImage(pickedFile!.path);
     Navigator.pop(context);
   }
 
   void _getFromGallery() async {
     XFile? pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     _cropImage(pickedFile!.path);
     Navigator.pop(context);
   }
 
   void _getFromWebGallery() async {
     XFile? pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       var f = await pickedFile.readAsBytes();
       setState(() {
@@ -208,15 +205,15 @@ class _MyRequestImagePicker extends ConsumerState<MyRequestImagePicker> {
             radius: 90,
             backgroundImage: !kIsWeb
                 ? widget.requestImageUrl != null
-                ? Image.network(widget.requestImageUrl!).image
-                : requestImageFile == null
-                ? const AssetImage("assets/images/circular_house.png")
-                : Image.file(requestImageFile!).image
+                    ? Image.network(widget.requestImageUrl!).image
+                    : requestImageFile == null
+                        ? const AssetImage("assets/images/circular_house.png")
+                        : Image.file(requestImageFile!).image
                 : widget.requestImageUrl != null
-                ? Image.network(widget.requestImageUrl!).image
-                : webRequestImage == null
-                ? const AssetImage("assets/images/circular_house.png")
-                : Image.memory(webRequestImage!).image,
+                    ? Image.network(widget.requestImageUrl!).image
+                    : webRequestImage == null
+                        ? const AssetImage("assets/images/circular_house.png")
+                        : Image.memory(webRequestImage!).image,
           ),
         ),
       ],

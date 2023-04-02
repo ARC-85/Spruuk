@@ -3,17 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
-import 'package:spruuk/models/project_model.dart';
-import 'package:spruuk/models/search_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
-import 'package:spruuk/widgets/project_card.dart';
 import 'package:spruuk/widgets/vendor_card.dart';
 
+// Stateful class for screen showing list of favourite vendors to Client user
 class ClientFavouriteVendorsListScreen extends ConsumerStatefulWidget {
   static const routeName = '/ClientFavouriteVendorsListScreen';
   const ClientFavouriteVendorsListScreen({Key? key}) : super(key: key);
@@ -57,6 +53,7 @@ class _ClientFavouriteVendorsListScreen
 
       final authData = ref.watch(fireBaseAuthProvider);
 
+      // Providers for sequentially loading data relating to current user, then creating a list from that user's favourite vendors
       ref
           .watch(userProvider)
           .getCurrentUserData(authData.currentUser!.uid)
@@ -81,6 +78,7 @@ class _ClientFavouriteVendorsListScreen
     }
   }
 
+  // Function for refreshing list
   Future<void> _refreshFavouriteVendorList() async {
     final authData = ref.watch(fireBaseAuthProvider);
     ref
@@ -117,8 +115,8 @@ class _ClientFavouriteVendorsListScreen
                 size: 25,
               )),
           IconButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/ClientFavouriteProjectsMapScreen'),
+              onPressed: () => Navigator.pushNamed(
+                  context, '/ClientFavouriteProjectsMapScreen'),
               icon: const Icon(
                 Icons.map_outlined,
                 size: 25,
@@ -162,22 +160,22 @@ class _ClientFavouriteVendorsListScreen
                     child: _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : RefreshIndicator(
-                        onRefresh: () => _refreshFavouriteVendorList(),
-                        child: favouriteVendors != null && favouriteVendors!.isNotEmpty
-                            ? ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap:
-                            true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
-                            itemCount: favouriteVendors!.length,
-                            itemBuilder: (ctx, index) => MyVendorCard(
-                              vendorUser: favouriteVendors![index],
-                              user: currentUser1!,
-                              listIndex: index,
-                            ))
-                            : const Center(
-                          child: Text('No favourite projects'),
-                        )
-                    )),
+                            onRefresh: () => _refreshFavouriteVendorList(),
+                            child: favouriteVendors != null &&
+                                    favouriteVendors!.isNotEmpty
+                                ? ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap:
+                                        true, // Required to prevent error in vertical viewport given unbounded height https://stackoverflow.com/questions/50252569/vertical-viewport-was-given-unbounded-height
+                                    itemCount: favouriteVendors!.length,
+                                    itemBuilder: (ctx, index) => MyVendorCard(
+                                          vendorUser: favouriteVendors![index],
+                                          user: currentUser1!,
+                                          listIndex: index,
+                                        ))
+                                : const Center(
+                                    child: Text('No favourite projects'),
+                                  ))),
               ),
             ],
           );

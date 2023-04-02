@@ -1,24 +1,26 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
 
 class MyLateDatePicker extends ConsumerStatefulWidget {
-  MyLateDatePicker({Key? key, this.completionDay, this.completionMonth, this.completionYear, this.completionDayLate, this.completionMonthLate, this.completionYearLate}) : super(key: key);
+  MyLateDatePicker(
+      {Key? key,
+      this.completionDay,
+      this.completionMonth,
+      this.completionYear,
+      this.completionDayLate,
+      this.completionMonthLate,
+      this.completionYearLate})
+      : super(key: key);
   int? completionDay;
   int? completionMonth;
   int? completionYear;
   int? completionDayLate;
   int? completionMonthLate;
   int? completionYearLate;
-
 
   @override
   ConsumerState<MyLateDatePicker> createState() => _MyLateDatePicker();
@@ -29,7 +31,6 @@ class _MyLateDatePicker extends ConsumerState<MyLateDatePicker> {
   DateTime? initialDateLate;
   bool newDateToggle = false;
 
-
   // Set up variable for completion date, taken from https://github.com/theideasaler/calendar_date_picker2/blob/main/example/lib/main.dart
   List<DateTime?> _rangeDatePickerValueWithDefaultValue = [
     DateTime.now().subtract(const Duration(days: 1)),
@@ -38,9 +39,9 @@ class _MyLateDatePicker extends ConsumerState<MyLateDatePicker> {
 
   // Set up for getting completion date text
   String _getValueText(
-      CalendarDatePicker2Type datePickerType,
-      List<DateTime?> values,
-      ) {
+    CalendarDatePicker2Type datePickerType,
+    List<DateTime?> values,
+  ) {
     var valueText = (values.isNotEmpty ? values[0] : null)
         .toString()
         .replaceAll('00:00:00.000', '');
@@ -48,8 +49,8 @@ class _MyLateDatePicker extends ConsumerState<MyLateDatePicker> {
     if (datePickerType == CalendarDatePicker2Type.multi) {
       valueText = values.isNotEmpty
           ? values
-          .map((v) => v.toString().replaceAll('00:00:00.000', ''))
-          .join(', ')
+              .map((v) => v.toString().replaceAll('00:00:00.000', ''))
+              .join(', ')
           : 'null';
     } else if (datePickerType == CalendarDatePicker2Type.range) {
       if (values.isNotEmpty) {
@@ -68,13 +69,21 @@ class _MyLateDatePicker extends ConsumerState<MyLateDatePicker> {
 
   // Date picker widget, taken from https://pub.dev/packages/calendar_date_picker2
   Widget _buildDefaultRangeDatePickerWithValue() {
-    if (widget.completionDay != null && widget.completionMonth != null && widget.completionYear != null && newDateToggle == false) {
-      initialDate = DateTime(widget.completionYear!, widget.completionMonth!, widget.completionDay!);
+    if (widget.completionDay != null &&
+        widget.completionMonth != null &&
+        widget.completionYear != null &&
+        newDateToggle == false) {
+      initialDate = DateTime(widget.completionYear!, widget.completionMonth!,
+          widget.completionDay!);
     } else {
       initialDate = null;
     }
-    if (widget.completionDayLate != null && widget.completionMonthLate != null && widget.completionYearLate != null && newDateToggle == false) {
-      initialDateLate = DateTime(widget.completionYearLate!, widget.completionMonthLate!, widget.completionDayLate!);
+    if (widget.completionDayLate != null &&
+        widget.completionMonthLate != null &&
+        widget.completionYearLate != null &&
+        newDateToggle == false) {
+      initialDateLate = DateTime(widget.completionYearLate!,
+          widget.completionMonthLate!, widget.completionDayLate!);
     } else {
       initialDateLate = null;
     }
@@ -111,25 +120,27 @@ class _MyLateDatePicker extends ConsumerState<MyLateDatePicker> {
         //const Text('Single Date Picker (With default value)'),
         CalendarDatePicker2(
           config: config,
-          initialValue: initialDate != null && initialDateLate != null ? <DateTime?> [initialDate, initialDateLate] : _rangeDatePickerValueWithDefaultValue,
-          onValueChanged: (values) =>
-              setState(() {
-                newDateToggle = true; // used to shift date if new date marker selected.
-                _rangeDatePickerValueWithDefaultValue = values;
-                print("this is rangeDatePickerValueWithDefaultValue $_rangeDatePickerValueWithDefaultValue");
-                if(_rangeDatePickerValueWithDefaultValue.length > 1) {
-                  ref.read(projectLatestDateProvider.notifier).state = _rangeDatePickerValueWithDefaultValue;
-                }
-                }),
+          initialValue: initialDate != null && initialDateLate != null
+              ? <DateTime?>[initialDate, initialDateLate]
+              : _rangeDatePickerValueWithDefaultValue,
+          onValueChanged: (values) => setState(() {
+            newDateToggle =
+                true; // used to shift date if new date marker selected.
+            _rangeDatePickerValueWithDefaultValue = values;
+            print(
+                "this is rangeDatePickerValueWithDefaultValue $_rangeDatePickerValueWithDefaultValue");
+            if (_rangeDatePickerValueWithDefaultValue.length > 1) {
+              ref.read(projectLatestDateProvider.notifier).state =
+                  _rangeDatePickerValueWithDefaultValue;
+            }
+          }),
         ),
-
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-
     final screenDimensions = MediaQuery.of(context).size;
     return Center(
       child: SizedBox(
@@ -137,21 +148,11 @@ class _MyLateDatePicker extends ConsumerState<MyLateDatePicker> {
         child: Container(
             height: 355,
             width: 400,
-            margin:
-            const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 2),
-            padding:
-            const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 2),
+            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius:
-                BorderRadius.circular(
-                    25)),
+                color: Colors.white, borderRadius: BorderRadius.circular(25)),
             child: _buildDefaultRangeDatePickerWithValue()),
-
       ),
     );
   }

@@ -1,29 +1,26 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 
+// Stateful class for screen allowing Client user to select request location
 class ClientRequestLocationSelectionScreen extends ConsumerStatefulWidget {
   static const routeName = '/ClientRequestLocationSelectionScreen';
   const ClientRequestLocationSelectionScreen({
     Key? key,
-
   }) : super(key: key);
-
 
   @override
   ConsumerState<ClientRequestLocationSelectionScreen> createState() =>
       _ClientRequestLocationSelectionScreen();
 }
 
-class _ClientRequestLocationSelectionScreen extends ConsumerState<ClientRequestLocationSelectionScreen> {
+class _ClientRequestLocationSelectionScreen
+    extends ConsumerState<ClientRequestLocationSelectionScreen> {
   bool firstLoad = true;
 
   @override
@@ -62,6 +59,7 @@ class _ClientRequestLocationSelectionScreen extends ConsumerState<ClientRequestL
     );
   }
 
+  // Function for getting permissions to use user's current location
   Future<void> getPermissions() async {
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled!) {
@@ -98,41 +96,40 @@ class _ClientRequestLocationSelectionScreen extends ConsumerState<ClientRequestL
       ]),
       body: SafeArea(
           child: SizedBox(
-            height: screenDimensions.height,
-            width: screenDimensions.width,
-            child: Stack(
-              children: [
-                GoogleMap(
-                  initialCameraPosition:
+        height: screenDimensions.height,
+        width: screenDimensions.width,
+        child: Stack(
+          children: [
+            GoogleMap(
+              initialCameraPosition:
                   CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
-                  mapType: MapType.normal,
-                  onMapCreated: _onMapCreated,
-                  myLocationEnabled: true,
-                  markers: <Marker>{
-                    // taken from https://stackoverflow.com/questions/55003179/flutter-drag-marker-and-get-new-position
-                    Marker(
-                        onTap: () {
-                          print('Tapped');
-                        },
-                        draggable: true,
-                        markerId: MarkerId('Marker'),
-                        position:
+              mapType: MapType.normal,
+              onMapCreated: _onMapCreated,
+              myLocationEnabled: true,
+              markers: <Marker>{
+                // taken from https://stackoverflow.com/questions/55003179/flutter-drag-marker-and-get-new-position
+                Marker(
+                    onTap: () {
+                      print('Tapped');
+                    },
+                    draggable: true,
+                    markerId: MarkerId('Marker'),
+                    position:
                         lat != null ? LatLng(lat!, lng!) : const LatLng(0, 0),
-                        onDragEnd: ((newPosition) {
-                          lat = newPosition.latitude;
-                          lng = newPosition.longitude;
-                          ref.read(requestLatLngProvider!.notifier).state =
-                              newPosition;
-                          setState(() {
-                            _onMapCreated(_controller!);
-                          });
-                        }))
-                  },
-                ),
-              ],
+                    onDragEnd: ((newPosition) {
+                      lat = newPosition.latitude;
+                      lng = newPosition.longitude;
+                      ref.read(requestLatLngProvider!.notifier).state =
+                          newPosition;
+                      setState(() {
+                        _onMapCreated(_controller!);
+                      });
+                    }))
+              },
             ),
-          )),
+          ],
+        ),
+      )),
     );
   }
-
 }

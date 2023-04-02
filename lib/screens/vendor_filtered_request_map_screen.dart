@@ -1,23 +1,20 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
 import 'package:spruuk/screens/joint_project_list_screen.dart';
 
+// Stateful class for screen showing map of filtered requests to Vendor users
 class VendorFilteredRequestMapScreen extends ConsumerStatefulWidget {
   static const routeName = '/VendorFilteredRequestMapScreen';
   const VendorFilteredRequestMapScreen({
@@ -29,7 +26,8 @@ class VendorFilteredRequestMapScreen extends ConsumerStatefulWidget {
       _VendorFilteredRequestMapScreen();
 }
 
-class _VendorFilteredRequestMapScreen extends ConsumerState<VendorFilteredRequestMapScreen> {
+class _VendorFilteredRequestMapScreen
+    extends ConsumerState<VendorFilteredRequestMapScreen> {
   bool firstLoad = true;
   // Bool variables for animation while loading
   bool _isLoading = false;
@@ -144,7 +142,7 @@ class _VendorFilteredRequestMapScreen extends ConsumerState<VendorFilteredReques
                   cardTitle = request.requestTitle;
                   cardSubtitle = request.requestBriefDescription;
                   cardImage = request.requestImages != null &&
-                      request.requestImages!.isNotEmpty
+                          request.requestImages!.isNotEmpty
                       ? request.requestImages![0]
                       : null;
                   cardMinPrice = request.requestMinCost;
@@ -176,143 +174,141 @@ class _VendorFilteredRequestMapScreen extends ConsumerState<VendorFilteredReques
       ]),
       body: SafeArea(
           child: Column(
-            children: [
-              SizedBox(
-                height: screenDimensions.height * 0.72,
-                width: screenDimensions.width,
-                child: Stack(
-                  children: [
-                    if (lat != null)
-                      GoogleMap(
-                        initialCameraPosition:
+        children: [
+          SizedBox(
+            height: screenDimensions.height * 0.72,
+            width: screenDimensions.width,
+            child: Stack(
+              children: [
+                if (lat != null)
+                  GoogleMap(
+                    initialCameraPosition:
                         CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
-                        mapType: MapType.normal,
-                        onMapCreated: _onMapCreated,
-                        myLocationEnabled: true,
-                        markers: filteredRequests != null &&
+                    mapType: MapType.normal,
+                    onMapCreated: _onMapCreated,
+                    myLocationEnabled: true,
+                    markers: filteredRequests != null &&
                             filteredRequests!.isNotEmpty &&
                             _markers!.isNotEmpty
-                            ? _markers!
-                            : {},
-                      ),
-                  ],
+                        ? _markers!
+                        : {},
+                  ),
+              ],
+            ),
+          ),
+          Flexible(
+              child: Stack(children: [
+            if (cardTitle == null || cardTitle!.isEmpty)
+              Container(
+                alignment: Alignment.center,
+                height: screenDimensions.height * 0.18,
+                width: screenDimensions.width,
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
                 ),
+                child: const Text("Select a request",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
               ),
-              Flexible(
-                  child: Stack(
+            if (cardTitle != null &&
+                cardTitle!.isNotEmpty &&
+                currentUser1 != null)
+              InkWell(
+                onTap: () {
+                  if (currentUser1!.userType == "Vendor") {
+                    Navigator.pushNamed(context, '/VendorRequestDetailsScreen',
+                        arguments: cardId);
+                  } else {
+                    Navigator.pushNamed(context, '/ClientRequestDetailsScreen',
+                        arguments: cardId);
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                  ),
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        if(cardTitle == null || cardTitle!.isEmpty)
-                          Container(
-                            alignment: Alignment.center,
-                            height: screenDimensions.height * 0.18,
-                            width: screenDimensions.width,
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        SizedBox(
+                            width: screenDimensions.width * 0.2,
+                            height: screenDimensions.width * 0.2,
+                            child: cardImage != null
+                                ? Image.network(cardImage!, fit: BoxFit.cover)
+                                : const CircleAvatar(
+                                    radius: 60,
+                                    backgroundImage: AssetImage(
+                                        "assets/images/circular_avatar.png"))),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 20,
                             ),
-                            child: const Text("Select a request",
-                                style: TextStyle(
+                            Text(cardTitle!,
+                                style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 )),
-                          ),
-                        if(cardTitle != null && cardTitle!.isNotEmpty && currentUser1 != null)
-                          InkWell(
-                            onTap: () {
-                              if (currentUser1!.userType == "Vendor") {
-                                Navigator.pushNamed(context, '/VendorRequestDetailsScreen', arguments: cardId);
-                              } else {
-                                Navigator.pushNamed(context, '/ClientRequestDetailsScreen', arguments: cardId);
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
-                              ),
-
-                              child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    SizedBox(
-                                        width: screenDimensions.width * 0.2,
-                                        height: screenDimensions.width * 0.2,
-                                        child: cardImage != null
-                                            ? Image.network(cardImage!,
-                                            fit: BoxFit.cover)
-                                            : const CircleAvatar(
-                                            radius: 60,
-                                            backgroundImage: AssetImage(
-                                                "assets/images/circular_avatar.png"))),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(cardTitle!,
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            )),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          cardSubtitle!,
-                                          style: const TextStyle(
-                                            fontSize: 19,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.white70,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(
-                                          height: 15,
-                                        ),
-                                        Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            children: [
-                                              RichText(
-                                                text: TextSpan(
-                                                    text: "Price Range:",
-                                                    style: const TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.normal,
-                                                      color: Colors.white54,
-                                                    ),
-                                                    children: [
-                                                      TextSpan(
-                                                          text:
-                                                          "€$cardMinPrice - €$cardMaxPrice",
-                                                          style: const TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight: FontWeight.normal,
-                                                            color: Colors.lightBlueAccent,
-                                                          ))
-                                                    ]),
-                                              ),
-                                            ])
-                                      ],
-                                    )
-                                  ]),
+                            const SizedBox(
+                              height: 10,
                             ),
-                          ),
-
-
-                      ]
-                  )
+                            Text(
+                              cardSubtitle!,
+                              style: const TextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white70,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
+                                        text: "Price Range:",
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white54,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                              text:
+                                                  "€$cardMinPrice - €$cardMaxPrice",
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.lightBlueAccent,
+                                              ))
+                                        ]),
+                                  ),
+                                ])
+                          ],
+                        )
+                      ]),
+                ),
               ),
-            ],
-          )),
+          ])),
+        ],
+      )),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:spruuk/screens/loading_screen.dart';
 import 'package:spruuk/screens/error_screen.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/widgets/text_label.dart';
 
+// Stateless class for Splash screen
 class SplashScreen extends ConsumerStatefulWidget {
   static const routeName = '/SplashScreen';
   SplashScreen({Key? key}) : super(key: key);
@@ -63,8 +63,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     radius: 90,
                     child: CircleAvatar(
                         radius: 150,
-                        backgroundImage: AssetImage(
-                            "assets/images/310-1-3D_View_2.jpg")),
+                        backgroundImage:
+                            AssetImage("assets/images/310-1-3D_View_2.jpg")),
                   )),
               const MyTextLabel(
                   textLabel: "Showcasing Local Projects",

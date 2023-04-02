@@ -1,4 +1,3 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,23 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
-import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/request_model.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/request_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/widgets/cost_range.dart';
-import 'package:spruuk/widgets/date_picker.dart';
-import 'package:spruuk/widgets/image_picker.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
-import 'package:spruuk/widgets/project_area.dart';
-import 'package:spruuk/widgets/project_location.dart';
 import 'package:spruuk/widgets/request_area.dart';
 import 'package:spruuk/widgets/request_cost_range.dart';
 import 'package:spruuk/widgets/request_image_picker.dart';
@@ -35,8 +23,10 @@ import 'dart:io';
 
 import 'package:spruuk/widgets/text_label.dart';
 
+// Enum used to switch between showing some or all project details
 enum AdvancedStatus { basic, advanced }
 
+// Stateful class for screen showing individual request details to Client user for potential updating
 class ClientRequestDetailsScreen extends ConsumerStatefulWidget {
   static const routeName = '/ClientRequestDetailsScreen';
 
@@ -63,16 +53,15 @@ class _ClientRequestDetailsScreen
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (doneOnce == false) {
+      // Variable for request ID based on arguments passed during navigation
       _requestId = ModalRoute.of(context)?.settings.arguments;
       ref.watch(requestProvider).getRequestById(_requestId).then((value) {
         setState(() {
           initialRequest = value;
         });
       }).then((value) {
-        // Setting initial inputs
+        // Setting initial variables based on passed request
         final currentUserLocation = ref.watch(userProvider).currentUserLocation;
-        // _requestTitle.text = initialRequest!.requestTitle!;
-        //_requestBriefDescription.text = initialRequest!.requestBriefDescription!;
         if (initialRequest!.requestLongDescription != null) {
           _requestLongDescription.text =
               initialRequest!.requestLongDescription!;
@@ -152,6 +141,8 @@ class _ClientRequestDetailsScreen
   String? requestStyle;
   int? requestArea;
   bool requestConsented = false;
+
+  // Variables for image files on Android app
   String? requestImage;
   String? requestImage2;
   File? requestImageFile;
@@ -159,6 +150,7 @@ class _ClientRequestDetailsScreen
   File? requestImageFile3;
   File? requestImageFile4;
 
+  // Variables for image files on Web app
   Uint8List? webRequestImage;
   Uint8List? webRequestImage2;
   Uint8List? webRequestImage3;
@@ -1077,10 +1069,12 @@ class _ClientRequestDetailsScreen
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 20.0,
                                                   )),
+                                            // Show image if there has been one chosen previously or in update.
                                             if (requestImageFile != null ||
                                                 webRequestImage != null ||
                                                 initialRequest!
                                                     .requestImages!.isNotEmpty)
+                                              // Make sure there hasn't been a new image chosen, or an old one missing, before sending image to be displayed.
                                               MyRequestImagePicker(
                                                 requestImage2Provider:
                                                     requestImage2Provider,

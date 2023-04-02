@@ -1,26 +1,20 @@
 import 'dart:io';
-
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:spruuk/firebase/firebase_authentication.dart';
 import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/widgets/dropdown_menu.dart';
 import 'package:spruuk/widgets/text_input.dart';
 import 'package:spruuk/widgets/text_label.dart';
 
+// Stateful class for screen allowing users to update their names and profile pictures.
 class ProfileUpdateScreen extends ConsumerStatefulWidget {
   static const routeName = '/ProfileUpdateScreen';
   const ProfileUpdateScreen({Key? key}) : super(key: key);
@@ -277,7 +271,6 @@ class _ProfileUpdateScreen extends ConsumerState<ProfileUpdateScreen> {
               }
               // Checking if widget mounted when using multiple awaits
               if (!mounted) return;
-              print("this is currentUser1 uid ${currentUser1?.uid}");
               // Using email and password to sign up in Firebase, passing details on user.
               await _userProvider.updateUser(UserModel(
                   uid: currentUser1!.uid,

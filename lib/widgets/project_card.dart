@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:spruuk/models/project_model.dart';
 import 'package:spruuk/models/user_model.dart';
@@ -44,7 +43,6 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
         currentUser1 = value;
       });
     });
-    //favourited = currentUser1!.userProjectFavourites.any((_projectId) => _projectId == widget.project.projectId);
   }
 
   @override
@@ -88,86 +86,83 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
           } else {
             ref
                 .read(userProvider)
-                .removeProjectFavouriteToClient(
-                project.projectId);
+                .removeProjectFavouriteToClient(project.projectId);
             ref
                 .read(projectProvider)
-                .removeClientFavouriteToProject(
-                user.uid, project.projectId);
-
+                .removeClientFavouriteToProject(user.uid, project.projectId);
           }
         },
         child: Card(
-            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-            child: InkWell(
-              child: Container(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    SizedBox(
-                        width: screenDimensions.width * 0.9,
-                        height: screenDimensions.width * 0.9,
-                        child: project.projectImages != null &&
-                            project.projectImages!.isNotEmpty
-                            ? Image.network(project.projectImages![0]!,
-                            fit: BoxFit.cover)
-                            : const CircleAvatar(
-                            radius: 60,
-                            backgroundImage: AssetImage(
-                                "assets/images/circular_avatar.png"))),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(project.projectTitle,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black45,
-                        )),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      project.projectBriefDescription,
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+          child: InkWell(
+            child: Container(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  SizedBox(
+                      width: screenDimensions.width * 0.9,
+                      height: screenDimensions.width * 0.9,
+                      child: project.projectImages != null &&
+                              project.projectImages!.isNotEmpty
+                          ? Image.network(project.projectImages![0]!,
+                              fit: BoxFit.cover)
+                          : const CircleAvatar(
+                              radius: 60,
+                              backgroundImage: AssetImage(
+                                  "assets/images/circular_avatar.png"))),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(project.projectTitle,
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                         color: Colors.black45,
+                      )),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    project.projectBriefDescription,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black45,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                            text: "Price Range:",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black45,
+                            ),
+                            children: [
+                              TextSpan(
+                                  text:
+                                      "€${project.projectMinCost} - €${project.projectMaxCost}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.blue,
+                                  ))
+                            ]),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                              text: "Price Range:",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black45,
-                              ),
-                              children: [
-                                TextSpan(
-                                    text:
-                                    "€${project.projectMinCost} - €${project.projectMaxCost}",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.blue,
-                                    ))
-                              ]),
-                        ),
-                        if (_userType == UserType.client)
+                      if (_userType == UserType.client)
                         Stack(
                           children: [
                             if (favourited == false)
@@ -176,18 +171,18 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                                   ref
                                       .read(userProvider)
                                       .addProjectFavouriteToClient(
-                                      project.projectId);
+                                          project.projectId);
                                   ref
                                       .read(projectProvider)
                                       .addClientFavouriteToProject(
-                                      user.uid, project.projectId);
+                                          user.uid, project.projectId);
                                   // Had to incorporate this user refresh as a work around because it wasn't reading in didChangeDependencies
                                   final authData =
-                                  ref.watch(fireBaseAuthProvider);
+                                      ref.watch(fireBaseAuthProvider);
                                   ref
                                       .watch(userProvider)
                                       .getCurrentUserData(
-                                      authData.currentUser!.uid)
+                                          authData.currentUser!.uid)
                                       .then((value) {
                                     setState(() {
                                       currentUser1 = value;
@@ -196,10 +191,11 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                                   });
                                 },
                                 materialTapTargetSize:
-                                MaterialTapTargetSize.padded,
+                                    MaterialTapTargetSize.padded,
                                 backgroundColor:
-                                const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6)
-                                    .withOpacity(1),
+                                    const Color.fromRGBO(0, 0, 95, 1)
+                                        .withOpacity(0.6)
+                                        .withOpacity(1),
                                 child: const Icon(
                                   Icons.favorite_border_outlined,
                                 ),
@@ -210,17 +206,17 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                                   ref
                                       .read(userProvider)
                                       .removeProjectFavouriteToClient(
-                                      project.projectId);
+                                          project.projectId);
                                   ref
                                       .read(projectProvider)
                                       .removeClientFavouriteToProject(
-                                      user.uid, project.projectId);
+                                          user.uid, project.projectId);
                                   final authData =
-                                  ref.watch(fireBaseAuthProvider);
+                                      ref.watch(fireBaseAuthProvider);
                                   ref
                                       .watch(userProvider)
                                       .getCurrentUserData(
-                                      authData.currentUser!.uid)
+                                          authData.currentUser!.uid)
                                       .then((value) {
                                     setState(() {
                                       currentUser1 = value;
@@ -229,32 +225,35 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
                                   });
                                 },
                                 materialTapTargetSize:
-                                MaterialTapTargetSize.padded,
+                                    MaterialTapTargetSize.padded,
                                 backgroundColor:
-                                const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
+                                    const Color.fromRGBO(0, 0, 95, 1)
+                                        .withOpacity(0.6),
                                 child: const Icon(
                                   Icons.favorite,
                                 ),
                               )
                           ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                ],
               ),
-              onTap: () {
-                if (_userType == UserType.vendor) {
-                  Navigator.pushNamed(context, '/VendorProjectDetailsScreen', arguments: project.projectId);
-                } else {
-                  Navigator.pushNamed(context, '/ClientProjectDetailsScreen', arguments: project.projectId);
-                }
-              },
             ),
-            /*ListTile(
+            onTap: () {
+              if (_userType == UserType.vendor) {
+                Navigator.pushNamed(context, '/VendorProjectDetailsScreen',
+                    arguments: project.projectId);
+              } else {
+                Navigator.pushNamed(context, '/ClientProjectDetailsScreen',
+                    arguments: project.projectId);
+              }
+            },
+          ),
+          /*ListTile(
               leading: SizedBox(
                   width: 100,
                   height: 100,
@@ -268,6 +267,6 @@ class _MyProjectCard extends ConsumerState<MyProjectCard> {
               title: Text(project.projectTitle),
               subtitle: Text(project.projectBriefDescription),
             )*/
-            ));
+        ));
   }
 }

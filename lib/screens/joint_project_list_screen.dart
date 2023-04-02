@@ -8,12 +8,13 @@ import 'package:spruuk/models/user_model.dart';
 import 'package:spruuk/providers/authentication_provider.dart';
 import 'package:spruuk/providers/project_provider.dart';
 import 'package:spruuk/providers/user_provider.dart';
-import 'package:spruuk/screens/joint_project_list_screen.dart';
 import 'package:spruuk/widgets/nav_drawer.dart';
 import 'package:spruuk/widgets/project_card.dart';
 
+// Enum to determine user types for displaying relevant content
 enum UserType { vendor, client }
 
+// Stateful class for screen showing lists of projects to both vendor (user-specific) and client (non-specific) users
 class JointProjectListScreen extends ConsumerStatefulWidget {
   static const routeName = '/JointProjectListScreen';
   const JointProjectListScreen({Key? key}) : super(key: key);
@@ -51,30 +52,10 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
 
   @override
   void didChangeDependencies() {
-    /*try {
-      final authData = ref.watch(fireBaseAuthProvider);
-      user = authData.currentUser;
-      if (user != null) {
-        currentUser1 = ref.read(userProvider).currentUserData;
-        allProjects = ref.watch(projectProvider).allProjects!;
-        allVendorProjects = ref.watch(projectProvider).allVendorProjects!;
-        print("this is all projects $allProjects");
-        print("this is the person ${currentUser1?.firstName}");
-        print("this is the vendor projects $allVendorProjects");
-      }
-    } catch (e) {
-      print('Error: $e');
-    }*/
-
     if (firstLoad = true) {
       _isLoading = true;
 
-      print("heya!!");
-
       final authData = ref.watch(fireBaseAuthProvider);
-
-      //ref.read(userProvider).getCurrentUserData(authData.currentUser!.uid);
-      //currentUser1 = ref.read(userProvider).currentUserData;
 
       ref
           .watch(userProvider)
@@ -119,6 +100,7 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
     super.didChangeDependencies();
   }
 
+  // Function for refreshing list
   Future<void> _refreshProjectList(String uid) async {
     ref.read(projectProvider).getAllVendorProjects(uid);
     ref.watch(projectProvider).getAllProjects();
@@ -129,35 +111,31 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
     });
   }
 
-  ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     final screenDimensions = MediaQuery.of(context).size;
 
+    // Initial check to see user type
     if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
     } else {
       _userType = UserType.vendor;
     }
 
-    print("this is all projects $allProjects");
-    print("this is the person ${currentUser1?.firstName}");
-    print("this is the vendor projects $allVendorProjects");
-    print("this is the userType $_userType");
-
-    //print("this is all project title ${allProjects[0].projectTitle}");
-
     return Scaffold(
         appBar: AppBar(
-          title: _userType == UserType.client ? const Text("All Projects") : const Text("My Projects"), actions: [
-          IconButton(
-              onPressed: () => Navigator.pushNamed(context, '/JointProjectMapScreen'),
-              icon: const Icon(
-                Icons.map_outlined,
-                size: 25,
-              )),
-        ]
-        ),
+            title: _userType == UserType.client
+                ? const Text("All Projects")
+                : const Text("My Projects"),
+            actions: [
+              IconButton(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/JointProjectMapScreen'),
+                  icon: const Icon(
+                    Icons.map_outlined,
+                    size: 25,
+                  )),
+            ]),
         resizeToAvoidBottomInset: false,
         drawer: NavDrawer(),
         body: SafeArea(child: Consumer(builder: (context, ref, _) {
@@ -214,7 +192,8 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
                                     : const Center(
                                         child: Text('No projects'),
                                       )
-                                : allVendorProjects != null && allVendorProjects!.isNotEmpty
+                                : allVendorProjects != null &&
+                                        allVendorProjects!.isNotEmpty
                                     ? ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap:
@@ -231,15 +210,14 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
                                         child: Text('No projects'),
                                       ))),
               ),
+              // Project add floating action button available for Vendor users
               if (_userType == UserType.vendor)
                 Positioned(
                   top: screenDimensions.height * 0.8,
                   width: screenDimensions.width * 1.7,
                   child: FloatingActionButton(
                     onPressed: () {
-
-                        Navigator.pushNamed(context, '/VendorAddProjectScreen');
-
+                      Navigator.pushNamed(context, '/VendorAddProjectScreen');
                     },
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     backgroundColor:
@@ -249,19 +227,18 @@ class _JointProjectListScreen extends ConsumerState<JointProjectListScreen> {
                     ),
                   ),
                 ),
+              // Search floating action button available for Clietn users
               if (_userType == UserType.client)
                 Positioned(
                   top: screenDimensions.height * 0.8,
                   width: screenDimensions.width * 0.3,
                   child: FloatingActionButton(
                     onPressed: () {
-
                       Navigator.pushNamed(context, '/JointSearchScreen');
-
                     },
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     backgroundColor:
-                    const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
+                        const Color.fromRGBO(242, 151, 101, 1).withOpacity(1),
                     child: const Icon(
                       Icons.search,
                     ),

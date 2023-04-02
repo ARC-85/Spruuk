@@ -1,3 +1,4 @@
+// Class for setting up Project model.
 class ProjectModel {
   String projectId;
   String projectTitle;
@@ -16,7 +17,6 @@ class ProjectModel {
   int? projectCompletionMonth;
   int? projectCompletionYear;
   List<String?>? projectImages;
-  //List<Review> projectReviews;
   List<String?>? projectFavouriteUserIds;
   String? projectStyle;
   int? projectArea;

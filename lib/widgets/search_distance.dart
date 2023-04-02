@@ -1,15 +1,8 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:spruuk/providers/project_provider.dart';
-import 'package:spruuk/widgets/text_label.dart';
 
 class MySearchDistance extends ConsumerStatefulWidget {
   MySearchDistance({Key? key, this.searchDistanceFrom}) : super(key: key);
@@ -27,7 +20,7 @@ class _MySearchDistance extends ConsumerState<MySearchDistance> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.searchDistanceFrom !=null && newSearchDistanceToggle == false) {
+    if (widget.searchDistanceFrom != null && newSearchDistanceToggle == false) {
       _initialSearchDistanceValue = widget.searchDistanceFrom;
       _currentSearchDistanceValue = widget.searchDistanceFrom!.toDouble();
     } else {
@@ -74,7 +67,9 @@ class _MySearchDistance extends ConsumerState<MySearchDistance> {
               ),
             ),
             child: Slider(
-              value: _initialSearchDistanceValue == null ? _currentSearchDistanceValue : _initialSearchDistanceValue!.toDouble(),
+              value: _initialSearchDistanceValue == null
+                  ? _currentSearchDistanceValue
+                  : _initialSearchDistanceValue!.toDouble(),
               min: 1,
               max: 200,
               divisions: 50,
