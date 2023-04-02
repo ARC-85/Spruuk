@@ -128,10 +128,9 @@ class _JointResponseListScreen extends ConsumerState<JointResponseListScreen> {
                 : const Text("My Responses"),
             actions: [
               IconButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/JointProjectListScreen'),
+                  onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(
-                    Icons.home,
+                    Icons.cancel,
                     size: 25,
                   )),
             ]),

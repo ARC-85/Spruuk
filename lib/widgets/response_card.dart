@@ -17,9 +17,9 @@ enum UserType { vendor, client }
 class MyResponseCard extends ConsumerStatefulWidget {
   const MyResponseCard(
       {Key? key,
-        required this.response,
-        required this.user,
-        required this.listIndex})
+      required this.response,
+      required this.user,
+      required this.listIndex})
       : super(key: key);
   final ResponseModel response;
   final UserModel user;
@@ -34,6 +34,7 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
   UserModel? currentUser1;
   bool? firstBuild;
   UserType? _userType;
+  RequestModel? initialRequest;
 
   @override
   void didChangeDependencies() {
@@ -47,6 +48,17 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
         currentUser1 = value;
       });
     });
+
+    if (widget.response.responseRequestId != null) {
+      ref
+          .watch(requestProvider)
+          .getRequestById(widget.response.responseRequestId)
+          .then((value) {
+        setState(() {
+          initialRequest = value;
+        });
+      });
+    }
   }
 
   Future<void> _refresh() async {}
@@ -59,15 +71,25 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
     final user = widget.user;
     final listIndex = widget.listIndex;
 
-
     if (currentUser1?.userType == "Client") {
       _userType = UserType.client;
     } else {
       _userType = UserType.vendor;
     }
 
+    if (widget.response.responseRequestId != null) {
+      ref
+          .watch(requestProvider)
+          .getRequestById(widget.response.responseRequestId)
+          .then((value) {
+        setState(() {
+          initialRequest = value;
+        });
+      });
+    }
+
     return Dismissible(
-      // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
+        // Used to delete items withing the ListView, as suggested https://stackoverflow.com/questions/55142992/flutter-delete-item-from-listview
         key: UniqueKey(),
         onDismissed: (direction) {
           if (_userType == UserType.vendor) {
@@ -90,63 +112,143 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
                         SizedBox(
                             width: screenDimensions.width * 0.2,
                             height: screenDimensions.width * 0.2,
-                            child: response.responseUserImage != null
-                                ? Image.network(response.responseUserImage!, fit: BoxFit.cover)
-                                : const CircleAvatar(
-                                radius: 60,
-                                backgroundImage: AssetImage(
-                                    "assets/images/circular_avatar.png"))),
+                            child: _userType == UserType.client
+                                ? response.responseUserImage != null
+                                    ? Image.network(response.responseUserImage!,
+                                        fit: BoxFit.cover)
+                                    : const CircleAvatar(
+                                        radius: 60,
+                                        backgroundImage: AssetImage(
+                                            "assets/images/circular_avatar.png"))
+                                : initialRequest?.requestUserImage != null
+                                    ? Image.network(
+                                        initialRequest!.requestUserImage!,
+                                        fit: BoxFit.cover)
+                                    : const CircleAvatar(
+                                        radius: 60,
+                                        backgroundImage: AssetImage(
+                                            "assets/images/circular_avatar.png"))),
                         const SizedBox(
                           width: 10,
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Text(response.responseTitle,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                )),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text("${response.responseUserFirstName} ${response.responseUserLastName}"!,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                )),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              response.responseUserEmail,
-                              style: const TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white70,
+                        Container(
+                          width: screenDimensions.width * 0.65,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 20,
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-
-                          ],
+                              const Text("Response title: ",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  )),
+                              Text(response.responseTitle,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white70,
+                                  )),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              if (_userType == UserType.client)
+                                const Text(
+                                    "Vendor: ",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    )),
+                              if (_userType == UserType.client)
+                                Text(
+                                    "${response.responseUserFirstName} ${response.responseUserLastName}",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white70,
+                                    )),
+                              if (_userType == UserType.vendor &&
+                                  initialRequest?.requestTitle != null)
+                                const Text(
+                                    "Request title: ",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    )),
+                              if (_userType == UserType.vendor &&
+                                  initialRequest?.requestTitle != null)
+                                Text(
+                                    initialRequest!.requestTitle,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white70,
+                                    )),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              if (_userType == UserType.client)
+                                const Text(
+                                  "Vendor Email: ",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              if (_userType == UserType.client)
+                                Text(
+                                  response.responseUserEmail,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white70,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              if (_userType == UserType.vendor &&
+                                  initialRequest?.requestUserEmail != null)
+                                const Text(
+                                  "Client Email: ",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              if (_userType == UserType.vendor &&
+                                  initialRequest?.requestUserEmail != null)
+                                Text(
+                                  initialRequest!.requestUserEmail,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white70,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                            ],
+                          )
                         )
                       ]),
                 ),
                 onTap: () {
                   Navigator.pushNamed(context, '/JointResponseDetailsScreen',
                       arguments: response.responseId);
-                }
-            )
-        ));
+                })));
   }
 }
