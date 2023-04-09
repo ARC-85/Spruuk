@@ -108,17 +108,9 @@ class _ClientFavouriteVendorsListScreen
     return Scaffold(
         appBar: AppBar(title: const Text("Favourite Vendors"), actions: [
           IconButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/JointProjectListScreen'),
+              onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(
-                Icons.home,
-                size: 25,
-              )),
-          IconButton(
-              onPressed: () => Navigator.pushNamed(
-                  context, '/ClientFavouriteProjectsMapScreen'),
-              icon: const Icon(
-                Icons.map_outlined,
+                Icons.cancel,
                 size: 25,
               )),
         ]),

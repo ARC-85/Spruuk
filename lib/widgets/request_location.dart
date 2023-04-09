@@ -56,7 +56,7 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
     _location.onLocationChanged.listen((l) {
       _controller?.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 15),
+          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 10),
         ),
       );
     });
@@ -76,7 +76,7 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
           if (currentUserLocation != null)
             GoogleMap(
               initialCameraPosition:
-                  CameraPosition(target: currentUserLocation!, zoom: 17),
+                  CameraPosition(target: currentUserLocation!, zoom: 12),
               mapType: MapType.normal,
               // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
               onMapCreated: (controller) {
@@ -103,7 +103,7 @@ class _MyRequestLocation extends ConsumerState<MyRequestLocation> {
                 _controller?.animateCamera(CameraUpdate.newCameraPosition(
                     CameraPosition(
                         target: lat != null ? LatLng(lat!, lng!) : newLatLng,
-                        zoom: 17)));
+                        zoom: 12)));
                 setState(() {
                   showMapButton = true;
                 });

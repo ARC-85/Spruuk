@@ -64,7 +64,7 @@ class _JointResponseListScreen extends ConsumerState<JointResponseListScreen> {
           currentUser1 = value;
           _isLoading = false;
         });
-      }).then((value) => ref
+      }).then((value) => currentUser1?.userType == "Vendor" ? ref
                   .watch(responseProvider)
                   .getAllVendorResponses(currentUser1?.uid)
                   .then((value) {
@@ -72,7 +72,7 @@ class _JointResponseListScreen extends ConsumerState<JointResponseListScreen> {
                   allVendorResponses = value;
                   _isLoading = false;
                 });
-              }));
+              }) : allVendorResponses = null);
 
       if (_requestId != null) {
         ref

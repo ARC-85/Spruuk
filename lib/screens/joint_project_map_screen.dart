@@ -34,7 +34,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
   bool firstLoad = true;
   // Bool variables for animation while loading
   bool _isLoading = false;
-  UserType? _userType;
+  String? _userType;
   UserModel? currentUser1;
   User? user;
   FirebaseAuthentication? _auth;
@@ -73,6 +73,11 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
         setState(() {
           currentUser1 = value;
           _isLoading = false;
+        });
+      })
+      .then((value) {
+        setState(() {
+          _userType = currentUser1?.userType;
         });
       });
 
@@ -135,7 +140,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
     _controller = _cntlr;
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
       ),
     );
   }
@@ -172,12 +177,17 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _setMarkersAllProjects(context);
+    if (_userType == "Vendor") {
+      allProjects = allVendorProjects;
+      _setMarkersAllProjects(context);
+    } else {
+      _setMarkersAllProjects(context);
+    }
     final screenDimensions = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
-          title: _userType == UserType.client
+          title: _userType == "Client"
               ? const Text("All Projects Map")
               : const Text("My Projects Map"),
           actions: [
@@ -199,7 +209,7 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
                 if (lat != null)
                   GoogleMap(
                     initialCameraPosition:
-                        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+                        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
                     mapType: MapType.normal,
                     onMapCreated: _onMapCreated,
                     myLocationEnabled: true,
@@ -264,60 +274,63 @@ class _JointProjectMapScreen extends ConsumerState<JointProjectMapScreen> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Text(cardTitle!,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                )),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              cardSubtitle!,
-                              style: const TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white70,
+                        Container(
+                          width: screenDimensions.width * 0.72,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 20,
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  RichText(
-                                    text: TextSpan(
-                                        text: "Price Range:",
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.white54,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                              text:
-                                                  "€$cardMinPrice - €$cardMaxPrice",
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.lightBlueAccent,
-                                              ))
-                                        ]),
-                                  ),
-                                ])
-                          ],
+                              Text(cardTitle!,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  )),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                cardSubtitle!,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.white70,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceAround,
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                          text: "Price Range:",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.white54,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                                text:
+                                                "€$cardMinPrice - €$cardMaxPrice",
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.lightBlueAccent,
+                                                ))
+                                          ]),
+                                    ),
+                                  ])
+                            ],
+                          )
                         )
                       ]),
                 ),

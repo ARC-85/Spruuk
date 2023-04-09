@@ -94,55 +94,62 @@ class _MyRequestCard extends ConsumerState<MyRequestCard> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Text(request.requestTitle,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black45,
-                      )),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    request.requestBriefDescription,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black45,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                            text: "Price Range:",
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    child: Column(
+                      children:[
+                        Text(request.requestTitle,
                             style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                               color: Colors.black45,
-                            ),
-                            children: [
-                              TextSpan(
-                                  text:
-                                      "€${request.requestMinCost} - €${request.requestMaxCost}",
+                            )),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          request.requestBriefDescription,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black45,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                  text: "Price Range:",
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.normal,
-                                    color: Colors.blue,
-                                  ))
-                            ]),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                                    color: Colors.black45,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                        text:
+                                        "€${request.requestMinCost} - €${request.requestMaxCost}",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.blue,
+                                        ))
+                                  ]),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                      ]
+                    )
+                  )
                 ],
               ),
             ),

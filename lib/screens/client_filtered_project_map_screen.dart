@@ -126,7 +126,7 @@ class _ClientFilteredProjectMapScreen
     print("on map is called");
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
       ),
     );
   }
@@ -187,7 +187,7 @@ class _ClientFilteredProjectMapScreen
                 if (lat != null)
                   GoogleMap(
                     initialCameraPosition:
-                        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+                        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
                     mapType: MapType.normal,
                     onMapCreated: _onMapCreated,
                     myLocationEnabled: true,
@@ -279,7 +279,7 @@ class _ClientFilteredProjectMapScreen
                                   fontWeight: FontWeight.normal,
                                   color: Colors.white70,
                                 ),
-                                maxLines: 2,
+                                maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(
@@ -293,7 +293,7 @@ class _ClientFilteredProjectMapScreen
                                       text: TextSpan(
                                           text: "Price Range:",
                                           style: const TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.normal,
                                             color: Colors.white54,
                                           ),
@@ -302,7 +302,7 @@ class _ClientFilteredProjectMapScreen
                                                 text:
                                                     "€$cardMinPrice - €$cardMaxPrice",
                                                 style: const TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                   fontWeight: FontWeight.normal,
                                                   color: Colors.lightBlueAccent,
                                                 ))

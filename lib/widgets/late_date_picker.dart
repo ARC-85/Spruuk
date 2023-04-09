@@ -148,8 +148,8 @@ class _MyLateDatePicker extends ConsumerState<MyLateDatePicker> {
         child: Container(
             height: 355,
             width: 400,
-            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 2),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(25)),
             child: _buildDefaultRangeDatePickerWithValue()),
