@@ -54,7 +54,7 @@ class _ClientRequestLocationSelectionScreen
     print("on map is called");
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
       ),
     );
   }
@@ -102,7 +102,7 @@ class _ClientRequestLocationSelectionScreen
           children: [
             GoogleMap(
               initialCameraPosition:
-                  CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+                  CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               myLocationEnabled: true,

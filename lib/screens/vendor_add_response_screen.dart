@@ -548,7 +548,7 @@ class _VendorAddResponseScreen extends ConsumerState<VendorAddResponseScreen> {
                                                           : const LatLng(
                                                               53.37466222698207,
                                                               -9.1528495028615),
-                                                      zoom: 17),
+                                                      zoom: 12),
                                               mapType: MapType.normal,
                                               // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
                                               onMapCreated: (controller) {

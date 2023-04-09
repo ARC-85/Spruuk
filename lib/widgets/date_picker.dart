@@ -78,7 +78,7 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
       controlsHeight: 50,
       controlsTextStyle: const TextStyle(
         color: Colors.black,
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: FontWeight.bold,
       ),
       dayTextStyle: const TextStyle(
@@ -138,8 +138,8 @@ class _MyDatePicker extends ConsumerState<MyDatePicker> {
         child: Container(
             height: 405,
             width: 400,
-            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 2),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(25)),
             child: _buildDefaultSingleDatePickerWithValue()),

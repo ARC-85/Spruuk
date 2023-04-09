@@ -101,61 +101,64 @@ class _MyMessageCard extends ConsumerState<MyMessageCard> {
                       const SizedBox(
                         width: 10,
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            formattedMessageTime != null
-                                ? formattedMessageTime!
-                                : "Message Error",
-                            textAlign: TextAlign.center,
-                            softWrap: true,
-                            style: currentUser1?.uid == message.messageUserId
-                                ? const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 16.0,
-                                  )
-                                : const TextStyle(
-                                    color: Colors.black45,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 16.0,
-                                  ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Container(
-                            width: 250,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              message.messageContent != null
-                                  ? message.messageContent!
+                      Container(
+                        width: screenDimensions.width * 0.64,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              formattedMessageTime != null
+                                  ? formattedMessageTime!
                                   : "Message Error",
-                              textAlign: TextAlign.left,
+                              textAlign: TextAlign.center,
                               softWrap: true,
-                              overflow: TextOverflow.ellipsis,
                               style: currentUser1?.uid == message.messageUserId
                                   ? const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 16.0,
-                                    )
+                                color: Colors.white,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16.0,
+                              )
                                   : const TextStyle(
-                                      color: Colors.black45,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 16.0,
-                                    ),
+                                color: Colors.black45,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16.0,
+                              ),
                               maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                        ],
+                            Container(
+                              width: 250,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                message.messageContent != null
+                                    ? message.messageContent!
+                                    : "Message Error",
+                                textAlign: TextAlign.left,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                                style: currentUser1?.uid == message.messageUserId
+                                    ? const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 16.0,
+                                )
+                                    : const TextStyle(
+                                  color: Colors.black45,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 16.0,
+                                ),
+                                maxLines: 3,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
                       )
                     ]),
               ),

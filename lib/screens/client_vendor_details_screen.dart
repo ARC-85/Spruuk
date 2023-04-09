@@ -365,9 +365,6 @@ class _ClientVendorDetailsScreen
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 15,
-                        ),
                       ],
                     ),
                   ),

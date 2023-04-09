@@ -58,7 +58,11 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
     }
   }
 
-  Future<void> _refresh() async {}
+  Future<void> _onPressedJointResponseFunction() async {
+    print("tap registered");
+    Navigator.pushNamed(context, '/JointResponseDetailsScreen',
+        arguments: widget.response.responseId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,17 +76,6 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
       _userType = UserType.client;
     } else {
       _userType = UserType.vendor;
-    }
-
-    if (widget.response.responseRequestId != null) {
-      ref
-          .watch(requestProvider)
-          .getRequestById(widget.response.responseRequestId)
-          .then((value) {
-        setState(() {
-          initialRequest = value;
-        });
-      });
     }
 
     return Dismissible(
@@ -128,120 +121,128 @@ class _MyResponseCard extends ConsumerState<MyResponseCard> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Container(
-                            width: screenDimensions.width * 0.65,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                const Text("Response title: ",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    )),
-                                Text(response.responseTitle,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white70,
-                                    )),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                if (_userType == UserType.client)
-                                  const Text("Vendor: ",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      )),
-                                if (_userType == UserType.client)
-                                  Text(
-                                      "${response.responseUserFirstName} ${response.responseUserLastName}",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.white70,
-                                      )),
-                                if (_userType == UserType.vendor &&
-                                    initialRequest?.requestTitle != null)
-                                  const Text("Request title: ",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      )),
-                                if (_userType == UserType.vendor &&
-                                    initialRequest?.requestTitle != null)
-                                  Text(initialRequest!.requestTitle,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.white70,
-                                      )),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                if (_userType == UserType.client)
-                                  const Text(
-                                    "Vendor Email: ",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                        InkWell(
+                            child: Container(
+                                width: screenDimensions.width * 0.64,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(
+                                      height: 20,
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                if (_userType == UserType.client)
-                                  Text(
-                                    response.responseUserEmail,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white70,
+                                    const Text("Response title: ",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        )),
+                                    Text(response.responseTitle,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white70,
+                                        )),
+                                    const SizedBox(
+                                      height: 10,
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                if (_userType == UserType.vendor &&
-                                    initialRequest?.requestUserEmail != null)
-                                  const Text(
-                                    "Client Email: ",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                    if (_userType == UserType.client)
+                                      const Text("Vendor: ",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          )),
+                                    if (_userType == UserType.client)
+                                      Text(
+                                          "${response.responseUserFirstName} ${response.responseUserLastName}",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.white70,
+                                          )),
+                                    if (_userType == UserType.vendor &&
+                                        initialRequest?.requestTitle != null)
+                                      const Text("Request title: ",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          )),
+                                    if (_userType == UserType.vendor &&
+                                        initialRequest?.requestTitle != null)
+                                      Text(initialRequest!.requestTitle,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.white70,
+                                          )),
+                                    const SizedBox(
+                                      height: 10,
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                if (_userType == UserType.vendor &&
-                                    initialRequest?.requestUserEmail != null)
-                                  Text(
-                                    initialRequest!.requestUserEmail,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white70,
+                                    if (_userType == UserType.client)
+                                      const Text(
+                                        "Vendor Email: ",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    if (_userType == UserType.client)
+                                      Text(
+                                        response.responseUserEmail,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white70,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    if (_userType == UserType.vendor &&
+                                        initialRequest?.requestUserEmail !=
+                                            null)
+                                      const Text(
+                                        "Client Email: ",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    if (_userType == UserType.vendor &&
+                                        initialRequest?.requestUserEmail !=
+                                            null)
+                                      Text(
+                                        initialRequest!.requestUserEmail,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white70,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    const SizedBox(
+                                      height: 15,
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                              ],
-                            ))
+                                  ],
+                                )),
+                            onTap: () {
+                              print("tap registered");
+                              Navigator.pushNamed(
+                                  context, '/JointResponseDetailsScreen',
+                                  arguments: widget.response.responseId);
+                            })
                       ]),
                 ),
                 onTap: () {
-                  Navigator.pushNamed(context, '/JointResponseDetailsScreen',
-                      arguments: response.responseId);
+                  _onPressedJointResponseFunction();
                 })));
   }
 }

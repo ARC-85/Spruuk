@@ -119,7 +119,7 @@ class _ClientVendorProjectsMapScreen
     _controller = _cntlr;
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
       ),
     );
   }
@@ -179,7 +179,7 @@ class _ClientVendorProjectsMapScreen
                 if (lat != null)
                   GoogleMap(
                     initialCameraPosition:
-                        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+                        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
                     mapType: MapType.normal,
                     onMapCreated: _onMapCreated,
                     myLocationEnabled: true,
@@ -258,7 +258,7 @@ class _ClientVendorProjectsMapScreen
                                     fontWeight: FontWeight.normal,
                                     color: Colors.white70,
                                   ),
-                                  maxLines: 2,
+                                  maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(

@@ -417,7 +417,7 @@ class _VendorRequestDetailsScreen
                                                           : const LatLng(
                                                               53.37466222698207,
                                                               -9.1528495028615),
-                                                      zoom: 17),
+                                                      zoom: 12),
                                               mapType: MapType.normal,
                                               // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
                                               onMapCreated: (controller) {
@@ -761,6 +761,7 @@ class _VendorRequestDetailsScreen
               ),
               if (initialRequest != null)
                 Container(
+                  height: screenDimensions.height * 0.13,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(0, 0, 95, 1).withOpacity(0.6),
@@ -771,7 +772,7 @@ class _VendorRequestDetailsScreen
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(
-                        height: 15,
+                        height: 12,
                         child: Divider(
                           color: Colors.white,
                           height: 1,
@@ -784,7 +785,7 @@ class _VendorRequestDetailsScreen
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           CircleAvatar(
-                            radius: 40,
+                            radius: screenDimensions.height * 0.05,
                             backgroundImage:
                                 initialRequest?.requestUserImage == null
                                     ? const AssetImage(
@@ -794,7 +795,7 @@ class _VendorRequestDetailsScreen
                                         .image,
                           ),
                           const SizedBox(
-                            height: 20,
+                            height: 12,
                           ),
                           Column(
                             children: [
@@ -808,7 +809,7 @@ class _VendorRequestDetailsScreen
                                 ),
                               ),
                               const SizedBox(
-                                height: 4,
+                                height: 3,
                               ),
                               Text(
                                 initialRequest!.requestUserEmail!,
@@ -886,13 +887,14 @@ class _VendorRequestDetailsScreen
                           )
                         ],
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      const Expanded(
+                        child: SizedBox(
+                          height: 10,
+                        ),
+                      )
                     ],
                   ),
                 ),
-              const Spacer(),
             ],
           );
         }),

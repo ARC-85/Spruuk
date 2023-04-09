@@ -56,7 +56,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
     _location.onLocationChanged.listen((l) {
       _controller?.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 15),
+          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 10),
         ),
       );
     });
@@ -85,7 +85,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
           if (currentUserLocation != null)
             GoogleMap(
               initialCameraPosition:
-                  CameraPosition(target: currentUserLocation!, zoom: 17),
+                  CameraPosition(target: currentUserLocation!, zoom: 12),
               mapType: MapType.normal,
               // Setting up map, taken from https://www.fluttercampus.com/guide/257/move-google-map-camera-postion-flutter/
               onMapCreated: (controller) {
@@ -116,7 +116,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
                 _controller?.animateCamera(CameraUpdate.newCameraPosition(
                     CameraPosition(
                         target: lat != null ? LatLng(lat!, lng!) : newLatLng,
-                        zoom: 17)));
+                        zoom: 12)));
                 setState(() {
                   showMapButton = true;
                 });
@@ -128,7 +128,7 @@ class _MyProjectLocation extends ConsumerState<MyProjectLocation> {
                 Icons.location_on_outlined,
               ),
             ),
-          if (showMapButton != false)
+          if (showMapButton != false && currentUserLocation != null)
             FloatingActionButton(
               onPressed: () {
                 // Provider is initialised to prevent no marker appearing on location screen, i.e. if lat/lng are still null.

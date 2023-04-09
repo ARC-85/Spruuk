@@ -56,7 +56,7 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
     _controller = _cntlr;
     _controller?.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+        CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
       ),
     );
   }
@@ -104,7 +104,7 @@ class _LocationSelectionScreen extends ConsumerState<LocationSelectionScreen> {
           children: [
             GoogleMap(
               initialCameraPosition:
-                  CameraPosition(target: LatLng(lat!, lng!), zoom: 15),
+                  CameraPosition(target: LatLng(lat!, lng!), zoom: 10),
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               myLocationEnabled: true,
